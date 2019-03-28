@@ -2,10 +2,17 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import  'materialize-css/dist/css/materialize.min.css'
 import {Row,Col,Card} from 'react-materialize';
+import Column from './column';
 import './App.css';
 import Modal from 'react-modal';
 
-
+//Within the App file, keep a list of all cards in this way
+/*
+  cards:[
+     0=>[cardId=>1,cardState=>In progress,toDoItem="blah",toDoItemDetail="check chec"],
+     1=>[cardId=>2,cardState=>Finished,toDoItem="PCO",todoItemDetail="using socketio to replace old rest api"]
+  ]
+*/
 const customStyles={
     content:{
 top                   : '50%',
@@ -24,9 +31,14 @@ class App extends Component {
    super();
 
    this.state = {
-     modalIsOpen: false
+     triggerRerender: false,
+     data:[
+       {cardId:1,cardState:"InProg",toDoItem:"Testing for crx"},
+       {cardId:2,cardState:"ToDo",toDoItem:"Writing a new code base"},
+       {cardId:3,cardState:"Done",toDoItem:"Ask her out"},
+        {cardId:4,cardState:"Done",toDoItem:"Ask her out"}
+     ]
    };
-
    this.openModal = this.openModal.bind(this);
    this.afterOpenModal = this.afterOpenModal.bind(this);
    this.closeModal = this.closeModal.bind(this);
@@ -45,7 +57,14 @@ class App extends Component {
    this.setState({modalIsOpen: false});
  }
 
+componetDidUpdate(){
 
+}
+ returnFilteredData(status){
+  console.log('Check');
+   const data=this.state.data.filter(card=>card.cardState==status);
+   return data;
+ }
   render() {
     return (
       <div className="App">
@@ -67,165 +86,10 @@ class App extends Component {
     </header>
 
     <div class="row">
-   <div class="col s2" >
-    <blockquote className="todo">
-      <h4> All tickets  </h4>
-    </blockquote>
-
-     <div class="card blue-grey darken-1">
-       <div class="card-content white-text">
-         <span class="card-title">Integrate Google SSO with NotJIRA</span>
-         <p>Integrate google sso login with NotJIRA,with passport.js</p>
-       </div>
-       <div class="card-action">
-         <a href="#" onClick={()=>{
-             this.openModal();
-           }}>Reassign</a>
-           <Modal
-         isOpen={this.state.modalIsOpen}
-         onAfterOpen={this.afterOpenModal}
-         onRequestClose={this.closeModal}
-         style={customStyles}
-         contentLabel="Example Modal"
-       ></Modal>
-         <a href="#">Mark as done</a>
-       </div>
-     </div>
-
-
-
-
-   </div>
-
-  <div class="col s2" >
-   <blockquote className="team-completed">
-     <h4> team completed </h4>
-   </blockquote>
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">Remove CSS reset</span>
-        <p>Remove old version of CSS reset to improve performance</p>
-      </div>
-      <div class="card-action">
-        <a href="#"></a>
-        <a href="#">Reopen task</a>
-      </div>
+      <Column colName="In_progress" colType="InProg" data={this.returnFilteredData("InProg")}  parent={this}/>
+      <Column colName="To do"  colType="ToDo" data={this.returnFilteredData("ToDo")} parent={this}/>
+      <Column colName="Completed" colType="Done" data={this.returnFilteredData("Done")} parent={this}/>
     </div>
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">Add scroll bar to navigation</span>
-        <p>Adding navigation to projects page</p>
-      </div>
-      <div class="card-action">
-        <a href="#">This is a link</a>
-        <a href="#">This is a link</a>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="col s2" >
-   <blockquote className="bugs">
-     <h4>Bugs/blockers</h4>
-   </blockquote>
-
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">Incorrect permission level displayed</span>
-        <p>Permission checks arent being performed prior to performing API call</p>
-      </div>
-      <div class="card-action">
-        <a href="#" >Assign</a>
-        <a href="#">Close</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="col s2" >
-   <blockquote className="todo">
-     <h4>Your tasks</h4>
-   </blockquote>
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">Update selenium server</span>
-        <p>Update selenium server</p>
-      </div>
-      <div class="card-action">
-        <a href="#">Reassign</a>
-        <a href="#">Mark as done</a>
-      </div>
-    </div>
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">AWS ES failed</span>
-        <p>Track down all shards information</p>
-      </div>
-      <div class="card-action">
-        <a href="#">Reassign</a>
-        <a href="#">Mark as done</a>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="col s2" >
-   <blockquote className="in-progress">
-     <h4> In progress</h4>
-   </blockquote>
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">Migrate app from AWS to GCP</span>
-        <p>Migrate service provider to google cloud computing platform</p>
-      </div>
-      <div class="card-action">
-        <a href="#">Reassign</a>
-        <a href="#">Mark as done</a>
-      </div>
-    </div>
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">Upgrade node.js version</span>
-        <p>Upgrade the version of node.js</p>
-      </div>
-      <div class="card-action">
-        <a href="#">This is a link</a>
-        <a href="#">This is a link</a>
-      </div>
-    </div>
-
-  </div>
-  <div class="col s2" >
-   <blockquote className="team-completed">
-     <h4>You finished</h4>
-   </blockquote>
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">POC for new UI</span>
-        <p>Create a new UI for notJIRA</p>
-      </div>
-      <div class="card-action">
-        <a href="#">Reopen task</a>
-      </div>
-    </div>
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">Integrate NotJIRA with socketio POC</span>
-        <p> Investigate how to integrate socketio and NotJIRA in both prod and dev</p>
-      </div>
-      <div class="card-action">
-        <a href="#">This is a link</a>
-        <a href="#">This is a link</a>
-      </div>
-    </div>
-
-  </div>
-
-  </div>
-
-
-
-
-
       </div>
     );
   }
