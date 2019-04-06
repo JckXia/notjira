@@ -18,7 +18,10 @@
 .env.test.local
 .env.production.local
 /src
-/playGround
+/config/dev.js
+/playground
+
+
 
 npm-debug.log*
 yarn-debug.log*
