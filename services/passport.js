@@ -1,38 +1,44 @@
-const express=require('express');
-const passport=require('passport');
+const express = require('express');
+const passport = require('passport');
 var session = require('express-session');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override');
 var GitHubStrategy = require('passport-github2').Strategy;
 var partials = require('express-partials');
-const request=require('request');
-const keys=require('../config/keys');
+const keys = require('../config/keys');
+const User = require('../BackEnd/models/user.model');
 
 
-passport.serializeUser(function(user,done){
-  done(null,user);
+passport.serializeUser(function(user, done) {
+  console.log(user.id);
+  done(null, user.id);
 });
-passport.deserializeUser(function(obj,done){
-   done(null,obj);
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id).then(user => {
+    done(null, user);
+  });
 });
 
 passport.use(new GitHubStrategy({
     clientID: keys.clientId,
     clientSecret: keys.clientSecret,
     callbackURL: "http://localhost:8080/auth/github/callback",
-    auth_type:"reauthenticate"
+    auth_type: "reauthenticate"
   },
-  function(accessToken, refreshToken, profile, done) {
+  async (accessToken, refreshToken, profile, done) => {
 
-    console.log('ACCESS_TOKEN',accessToken);
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
+    console.log('ACCESS_TOKEN', accessToken);
 
-      // To keep the example simple, the user's GitHub profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the GitHub account with a user record in your database,
-      // and return that user instead.
-      return done(null, profile);
+    const existingUser = await User.findOne({
+      gitHubId: profile.id
     });
+
+    if (existingUser) {
+        return done(null,existingUser);
+    }
+    const user=await new User({
+      gitHubId:profile.id
+    }).save();
+    console.log(user);
+    done(null,user);
   }
 ));

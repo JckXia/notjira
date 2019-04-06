@@ -11,7 +11,6 @@ router.get('/auth/github/callback',passport.authenticate('github'),(req,res)=>{
 });
 
 router.get('/',(req,res)=>{
- 
   res.send(req.user);
 });
 
