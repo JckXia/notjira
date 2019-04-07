@@ -6,13 +6,15 @@ const cookieSession=require('cookie-session');
 const mongoose=require('mongoose');
 const passport=require('passport');
 const MongoClient=require('mongodb').MongoClient;
-
+var GitHubStrategy = require('passport-github2').Strategy;
+const User=require('./models/user.model');
 //Import routes
 const project=require('./routes/project.route');
 const user=require('./routes/user.route');
 const card=require('./routes/card.route');
 const github=require('./routes/github.route');
 const auth=require('./routes/auth.route');
+const keys = require('../config/keys');
 //Connect to mongoose and monogdb
 let dev_db_url="mongodb://127.0.0.1:27017/JiraBackEnd";
 
@@ -32,6 +34,44 @@ MongoClient.connect(dev_db_url,{useNewUrlParser:true},function(err,db){
   console.log('Mongodb is running on port',db.topology.s.port);
 });
 
+console.log('Running passport related functions');
+passport.serializeUser(function(user, done) {
+  console.log(user.id);
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id).then(user => {
+    done(null, user);
+  });
+});
+
+passport.use(new GitHubStrategy({
+    clientID: keys.clientId,
+    clientSecret: keys.clientSecret,
+    callbackURL: "http://localhost:8080/auth/github/callback",
+    auth_type: "reauthenticate"
+  },
+  async (accessToken, refreshToken, profile, done) => {
+
+    console.log('ACCESS_TOKEN', accessToken);
+
+    const existingUser = await User.findOne({
+      gitHubId: profile.id
+    });
+
+    if (existingUser) {
+        return done(null,existingUser);
+    }
+    const user=await new User({
+      gitHubId:profile.id
+    }).save();
+    console.log(user);
+    done(null,user);
+  }
+));
+
+//require('../services/passport');
 app.use(
   cookieSession({
     maxAge:30*24*60*60*1000,
@@ -43,7 +83,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 // --------------------------------------------- //
-require('../services/github.passport');
+
 
 //Use body parser
 app.use(bodyParser.urlencoded({extended: false}));

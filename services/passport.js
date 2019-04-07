@@ -6,7 +6,7 @@ var partials = require('express-partials');
 const keys = require('../config/keys');
 const User = require('../BackEnd/models/user.model');
 
-
+console.log('Passport get runs');
 passport.serializeUser(function(user, done) {
   console.log(user.id);
   done(null, user.id);

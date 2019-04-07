@@ -3,7 +3,6 @@ const router=express.Router();
 const passport=require('passport');
 const login_controller=require('../controllers/localLogin.controller.js');
 const jwt=require('jsonwebtoken');
-const ensureAuthenticated=require('../util/authenticator');
 //Github authentication routes ----------------------------------------------- //
 router.get('/auth/github',passport.authenticate('github'),function(req,res){});
 
