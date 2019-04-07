@@ -36,7 +36,7 @@ MongoClient.connect(dev_db_url,{useNewUrlParser:true},function(err,db){
 
 console.log('Running passport related functions');
 
-/*
+/* DEPRECATED CODE. Unstable?
 passport.serializeUser(function(user, done) {
   console.log(user.id);
   done(null, user.id);
@@ -85,7 +85,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 // --------------------------------------------- //
-
 
 //Use body parser
 app.use(bodyParser.urlencoded({extended: false}));
