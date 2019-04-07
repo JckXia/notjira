@@ -43,7 +43,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 // --------------------------------------------- //
-require('../services/passport');
+require('../services/github.passport');
+
 //Use body parser
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
