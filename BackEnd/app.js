@@ -35,6 +35,8 @@ MongoClient.connect(dev_db_url,{useNewUrlParser:true},function(err,db){
 });
 
 console.log('Running passport related functions');
+
+/*
 passport.serializeUser(function(user, done) {
   console.log(user.id);
   done(null, user.id);
@@ -49,7 +51,7 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GitHubStrategy({
     clientID: keys.clientId,
     clientSecret: keys.clientSecret,
-    callbackURL: "http://localhost:8080/auth/github/callback",
+    callbackURL: "/auth/github/callback",
     auth_type: "reauthenticate"
   },
   async (accessToken, refreshToken, profile, done) => {
@@ -70,8 +72,8 @@ passport.use(new GitHubStrategy({
     done(null,user);
   }
 ));
-
-//require('../services/passport');
+*/
+require('../services/gitpass')(passport);
 app.use(
   cookieSession({
     maxAge:30*24*60*60*1000,
