@@ -1,0 +1,50 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+blockquote{
+ margin: 20px 0;
+ padding-left: 1.5rem; /* Just change the color value and that's it*/
+}
+
+.todo{
+   border-left: 5px solid red;
+}
+.team-completed{
+   border-left: 5px solid green;
+}
+.in-progress{
+     border-left: 5px solid blue;
+}
+.bugs{
+     border-left: 5px solid brown;
+}
