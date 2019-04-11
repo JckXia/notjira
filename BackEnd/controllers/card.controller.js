@@ -1,11 +1,25 @@
 const Card = require('../models/card.model.js');
-
-
-
+const authHelper=require('../util/authenticationHelper');
+const authTypes=require('../util/constants/authenticationType');
 module.exports = {
 
   //Getting all cards
   testGetAllCard: function(req, res) {
+     authHelper.isAuthenticated(req,res);
+    const authType=authHelper.authenticationMethod(req);
+    console.log(authType);
+    switch(authType){
+        case authTypes.GITHUB_SSO:
+
+
+        break;
+
+        case authTypes.LOCAL_AUTH:
+
+
+        break;
+    }
+
     Card.find({}, (err, cards) => {
       if (err) {
         throw err;
@@ -18,6 +32,7 @@ module.exports = {
      Create a card given some data
   */
   create_card: (req, res) => {
+    authHelper.isAuthenticated(req,res);
     let newCard = new Card({
       card_state: req.query.card_state,
       toDoItemTitle: req.query.toDoItemTitle,
