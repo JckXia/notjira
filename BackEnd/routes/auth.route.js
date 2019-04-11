@@ -22,6 +22,7 @@ router.get('/auth/github/logout',(req,res)=>{
 //Local authentication routes -------------------------------------------------- //
 router.post('/auth/local/register',login_controller.register);
 router.post('/auth/local/login',login_controller.login);
+ 
 // -------------------------------------------------------------------------------//
 
 router.get('/testAuth',login_controller.getUserInfoAuth);

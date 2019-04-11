@@ -71,7 +71,7 @@ module.exports = {
 
     });
   },
-  getUserInfoAuth:(req,res)=>{
+  getUserInfoAuth: (req,res)=>{
     let token=req.headers['x-access-token'];
     if(!token) {
       return res.status(401).send({

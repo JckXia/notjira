@@ -1,20 +1,21 @@
 const Card = require('../models/card.model.js');
-const authHelper=require('../util/authenticationHelper');
-const authTypes=require('../util/constants/authenticationType');
+const authHelper = require('../util/authenticationHelper');
+const projectPermissionHelper = require('../util/projectPermissionHelper')
+const authTypes = require('../util/constants/authenticationType');
 module.exports = {
 
   //Getting all cards
   testGetAllCard: function(req, res) {
-     authHelper.isAuthenticated(req,res);
-    const authType=authHelper.authenticationMethod(req);
+    authHelper.isAuthenticated(req, res);
+    const authType = authHelper.authenticationMethod(req);
     console.log(authType);
-    switch(authType){
-        case authTypes.GITHUB_SSO:
+    switch (authType) {
+      case authTypes.GITHUB_SSO:
 
 
         break;
 
-        case authTypes.LOCAL_AUTH:
+      case authTypes.LOCAL_AUTH:
 
 
         break;
@@ -30,22 +31,43 @@ module.exports = {
 
   /*
      Create a card given some data
+     Only admin and participant of a project has the ability to create project cards
   */
-  create_card: (req, res) => {
-    authHelper.isAuthenticated(req,res);
-    let newCard = new Card({
-      card_state: req.query.card_state,
-      toDoItemTitle: req.query.toDoItemTitle,
-      toDoItemDetail: req.query.toDoItemDetail,
-      assignedTo: req.query.assignees,
-      isGitTask: req.query.gitTask
-    });
-    newCard.save(function(err) {
-      if (err) {
-        throw err;
-      }
-      res.send(newCard);
-    });
+  create_card: async (req, res) => {
+  //    const k=authHelper.getLocalAuthUserInformation('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYWEwZTA3MWI2NDdjMjZmNDU2ZmE1OCIsImlhdCI6MTU1NDk0NzM4NiwiZXhwIjoxNTU1MDMzNzg2fQ.23rry4W6vpHWbfcNRFM5qYLqARBB1fDhqxGTqMyPvi4');
+    if (!authHelper.isAuthenticated(req, res)) {
+      return res.status(403).redirect('/login');
+    }
+    const authType=authHelper.authenticationMethod(req);
+    let userId=null;
+    switch(authType){
+      case authTypes.GITHUB_SSO:
+        userId=req.user.id;
+      break;
+
+      case authTypes.LOCAL_AUTH:
+      userId=await authHelper.getLocalAuthUserId(req);
+      break;
+    }
+   // 5caa97fe8cc5ea5cc8418472'
+    if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) &&
+      await projectPermissionHelper.userIsParticipantOfProject(userId,req.query.project_id)) {
+
+      let newCard=new Card({
+        card_state: req.query.card_state,
+        toDoItemTitle: req.query.toDoItemTitle,
+        toDoItemDetail: req.query.toDoItemDetail,
+        assignedTo: req.query.assignees,
+        isGitTask: req.query.gitTask
+      });
+
+      newCard.save((err)=>{
+        if(err){
+          throw err;
+        }
+        res.send(newCard);
+      });
+    }
   },
 
   //Model.findByIdAndUpdate(id, { name: 'jason bourne' }, options, callback)
@@ -131,8 +153,8 @@ module.exports = {
     effect:adding a git branch
   */
   addBranchToCard: (req, res) => {
-    let card_id=  req.params.id;
-    let gitBranch=req.query.gitBranch;
+    let card_id = req.params.id;
+    let gitBranch = req.query.gitBranch;
     Card.updateOne({
       _id: card_id
     }, {
@@ -150,9 +172,9 @@ module.exports = {
   /*
    Removes a branch from the card information
   */
-  removeBranchFromCard:(req,res)=>{
-    let card_id=  req.params.id;
-    let gitBranch=req.query.gitBranch;
+  removeBranchFromCard: (req, res) => {
+    let card_id = req.params.id;
+    let gitBranch = req.query.gitBranch;
     Card.updateOne({
       _id: card_id
     }, {
