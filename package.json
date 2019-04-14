@@ -18,6 +18,7 @@
     "react-materialize": "^3.0.2",
     "react-modal": "^3.8.1",
     "react-scripts": "2.1.8",
+    "superagent": "^5.0.2",
     "util": "^0.11.1"
   },
   "scripts": {

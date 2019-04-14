@@ -65,6 +65,7 @@ module.exports = {
         });
         res.status(200).send({
           auth: true,
+          id:user._id,
           token: token
         });
       });
@@ -73,6 +74,7 @@ module.exports = {
   },
   getUserInfoAuth: (req,res)=>{
     let token=req.headers['x-access-token'];
+
     if(!token) {
       return res.status(401).send({
         auth:false,message:'No token provided!'
