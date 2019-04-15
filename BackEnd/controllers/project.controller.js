@@ -16,14 +16,13 @@ module.exports = {
   */
   get_one_project: async function(req, res) {
 
-
     //Only project admin and participants have access to this route
 
     const userId = await authHelper.getAuthenticatedUserId(req, res);
     if (userId == null) {
       return res.status(403).send('Forbidden access');
     }
-    console.log(userId);
+    
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.params.id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.params.id)) {
 
@@ -117,8 +116,8 @@ module.exports = {
       repo_owner_name: req.query.repoOwnerName,
       project_admin_pk: req.query.projectAdminPk,
       project_admin_userName: req.query.projectAdminUserName,
-      project_creator_name:req.query.projectCreatorName,
-      project_creator_pk:req.query.projectCreatorPk,
+      project_creator_name: req.query.projectCreatorName,
+      project_creator_pk: req.query.projectCreatorPk,
       project_participants: req.query.projectParticipants,
       project_creation_date: today
     });
@@ -137,20 +136,27 @@ module.exports = {
                     both  project participant and admin
   */
   get_project_participants: async (req, res) => {
-    const userId = authHelper.getAuthenticatedUserId(req, res);
+
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
+      return res.status(403).send('Forbidden access');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.params.id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.params.id)) {
       let id = req.params.id;
+      console.log(id);
       Project.findOne({
         _id: id
       }, function(err, project) {
         if (err) {
           throw err;
         }
+
         return res.status(200).send(project.project_participants);
       });
+    } else {
+      return res.status(403).send('Forbidden access');
     }
-    return res.status(403).send('Forbidden access');
   },
 
   /*
@@ -159,7 +165,10 @@ module.exports = {
                       Both project participant and admin
   */
   get_project_cards: async (req, res) => {
-    const userId = authHelper.getAuthenticatedUserId(req, res);
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
+      return res.status(403).send('Forbidden access');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.params.id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.params.id)) {
       let id = req.params.id;
@@ -171,8 +180,9 @@ module.exports = {
         }
         return res.status(200).send(project.project_cards);
       });
+    } else {
+      return res.status(403).send('Forbidden access');
     }
-    return res.status(403).send('Forbidden access');
   },
 
   /*
@@ -180,9 +190,14 @@ module.exports = {
     Project admin and participant
   */
   add_card_to_project: async (req, res) => {
-    const userId = authHelper.getAuthenticatedUserId(req, res);
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
+      return res.status(403).send('Forbidden access');
+    }
+
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.params.id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.params.id)) {
+
       let project_id = req.params.id;
       let card_id = req.query.card_id;
       Project.updateOne({
@@ -195,10 +210,12 @@ module.exports = {
         if (err) {
           throw err;
         }
+        console.log('update', updateResult);
         return res.status(200).send(updateResult)
       });
+    } else {
+      return res.status(403).send('Forbidden access');
     }
-    return res.status(403).send('Forbidden access');
   },
 
   /*
@@ -207,9 +224,13 @@ module.exports = {
     Project admin and assignee
   */
   remove_card_from_project: async (req, res) => {
-    const userId = authHelper.getAuthenticatedUserId(req, res);
     let project_id = req.params.id;
     let card_id = req.query.card_id;
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
+      return res.status(403).send('Forbidden access');
+    }
+
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.params.id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.params.id)) {
       if (await projectPermissionHelper.cardIsUnderProject(card_id, project_id)) {
@@ -221,20 +242,26 @@ module.exports = {
           }
         }, (err, updateResult) => {
           if (err) {
-            throw err;
+            return res.status(500).send('SERVER ERROR');
           }
           return res.status(200).send(updateResult)
         });
+      } else {
+        return res.status(403).send('Forbidden access');
       }
+    } else {
+      return res.status(403).send('Forbidden access');
     }
-    return res.status(403).send('Forbidden access');
   },
 
   /*
    Add a participant to the project
   */
   add_project_participant: async (req, res) => {
-    const userId = authHelper.getAuthenticatedUserId(req, res);
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
+      return res.status(403).send('Forbidden');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.params.id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.params.id)) {
       let projectParticipant = req.query.projectParticipant;
@@ -251,8 +278,9 @@ module.exports = {
         }
         return res.status(200).send(updateResult);
       });
+    } else {
+      return res.status(403).send('Forbidden');
     }
-    return res.status(403).send('Forbidden');
   },
 
   /*
@@ -262,23 +290,28 @@ module.exports = {
                               deleted is
   */
   remove_project_participant: async (req, res) => {
-    const userId = authHelper.getAuthenticatedUserId(req, res);
-
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
+      return res.status(403).send('Forbidden access');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.params.id) ||
-      await projectPermissionHelper.userIsParticipantOfProject(userId, req.params.id)) {}
-    let participant = req.query.projectParticipant;
-    let project_id = req.params.id;
-    Project.updateOne({
-      _id: project_id
-    }, {
-      $pull: {
-        project_participants: participant
-      }
-    }, (err, updateResult) => {
-      if (err) {
-        throw err;
-      }
-      res.status(200).send(updateResult);
-    });
+      await projectPermissionHelper.userIsParticipantOfProject(userId, req.params.id)) {
+      let participant = req.query.projectParticipant;
+      let project_id = req.params.id;
+      Project.updateOne({
+        _id: project_id
+      }, {
+        $pull: {
+          project_participants: participant
+        }
+      }, (err, updateResult) => {
+        if (err) {
+          throw err;
+        }
+        return res.status(200).send(updateResult);
+      });
+    } else {
+      return res.status(403).send('Access forbidden');
+    }
   }
 }

@@ -25,19 +25,30 @@ async function userIsParticipantOfProject(user_id, project_id)  {
 
 async function cardIsUnderProject(card_id,project_id){
   const project=await Project.findOne({_id:project_id});
+
   if(project){
     const cards=project.project_cards;
-     if(tasks){
-        cards.foreach((card)=>{
-          if(card === card_id){
+
+     if(cards){
+
+       for(let i=0;i<cards.length;i++){
+          if(cards[i] == card_id){
+
             return true;
           }
-        });
+       }
      }
   }
   return false;
 }
+
+async function userIsCreatorOfProject(user_id,project_id){
+  
+}
+
 module.exports = {
   userIsAdminOfProject,
-  userIsParticipantOfProject
+  userIsParticipantOfProject,
+  cardIsUnderProject,
+  userIsCreatorOfProject
 };
