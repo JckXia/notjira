@@ -1,5 +1,6 @@
 const superagent = require('superagent');
 
+//Returns an object containg the user information, its id, token etc
 async function createUser(userName, passWord) {
   const userCreationResponse = await superagent.post('localhost:8080/auth/local/register')
     .query({

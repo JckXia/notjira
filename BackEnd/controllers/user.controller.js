@@ -1,4 +1,5 @@
 const User=require('../models/user.model.js');
+const authHelper=require('../util/authenticationHelper');
 
 module.exports={
   //Testing getting all users from the database
@@ -11,27 +12,39 @@ module.exports={
      })
    },
    //Testing get a user by their id
-   getUserById:function(req,res){
+   //Authenticated user
+   getUserById:async function(req,res){
+     const userId=await authHelper.getAuthenticatedUserId(req,res);
+     if(userId == null){
+       return res.status(403).send('Forbidden');
+     }
      let id=req.params.id;
-     User.findOne({_id:id},(err,user)=>{
-       if(err){
-         throw err;
-       }
-       res.send(user);
-     })
+     const user=await User.findOne({_id:id});
+     if(user){
+       return res.status(200).send(user);
+     }
+    return res.status(404).send('User Not found');
    },
 
    //Testing etting a user by their username
-   getUserName:function(req,res){
+   getUserName:async function(req,res){
+     const userId=await authHelper.getAuthenticatedUserId(req,res);
+     if(userId==null){
+       return res.status(403).send('Forbidden');
+     }
     let userName=req.query.username;
     User.find({username:userName},(err,users)=>{
       if(err){
         throw err;
       }
-      res.send(users);
-    })
+      return res.status(200).send(users);
+    });
    },
-   addProjectToUserProfile:(req,res)=>{
+   addProjectToUserProfile:async (req,res)=>{
+     const userId=await authHelper.getAuthenticatedUserId(req,res);
+     if(userId == null){
+       return res.status(403).send('Forbidden');
+     }
      let projectId=req.query.project_id;
      let userid=req.params.id;
 
@@ -39,10 +52,14 @@ module.exports={
        if(err){
          throw err;
        }
-       res.send(model);
+       return res.send(model);
      })
    },
-   removeProjectFromUserProfile:(req,res)=>{
+   removeProjectFromUserProfile:async (req,res)=>{
+     const userId=await authHelper.getAuthenticatedUserId(req,res);
+     if(userId == null){
+       return res.status(403).send('Forbidden');
+     }
      let projectId=req.query.project_id;
      let userid=req.params.id;
 
@@ -50,7 +67,7 @@ module.exports={
        if(err){
          throw err;
        }
-       res.send(model);
+      return res.send(model);
      })
    }
 

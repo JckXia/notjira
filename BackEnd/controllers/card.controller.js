@@ -21,6 +21,9 @@ module.exports = {
   create_card: async (req, res) => {
     //    const k=authHelper.getLocalAuthUserInformation('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYWEwZTA3MWI2NDdjMjZmNDU2ZmE1OCIsImlhdCI6MTU1NDk0NzM4NiwiZXhwIjoxNTU1MDMzNzg2fQ.23rry4W6vpHWbfcNRFM5qYLqARBB1fDhqxGTqMyPvi4');
     const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if(userId == null){
+      return res.status(403).send('Forbidden');
+    }
     // 5caa97fe8cc5ea5cc8418472'
 
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
@@ -53,6 +56,9 @@ module.exports = {
   update_card_information: async (req, res) => {
 
     const userId = authHelper.getAuthenticatedUserId(req, res);
+    if(userId == null){
+      return res.status(403).send('Forbidden');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
 
@@ -77,7 +83,9 @@ module.exports = {
   */
   add_assignees_to_task: async (req, res) => {
     const userId = authHelper.getAuthenticatedUserId(req, res);
-
+    if(userId == null){
+      return res.status(403).send('Forbidden');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
       let newAssigneeId = req.query.newAssigneeId;
@@ -104,6 +112,9 @@ module.exports = {
   */
   remove_assigness_from_task: async (req, res) => {
     const userId = authHelper.getAuthenticatedUserId(req, res);
+    if(userId == null){
+      return res.status(403).send('Forbidden');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
 
@@ -130,7 +141,9 @@ module.exports = {
   */
   see_card_item_detail: async (req, res) => {
     const userId = authHelper.getAuthenticatedUserId(req, res);
-
+    if(userId == null){
+      return res.status(403).send('Forbidden');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
       let card_id = req.params.id;
@@ -151,6 +164,9 @@ module.exports = {
   */
   addBranchToCard: async (req, res) => {
     const userId = authHelper.getAuthenticatedUserId(req, res);
+    if(userId == null){
+      return res.status(403).send('Forbidden');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
       let card_id = req.params.id;
@@ -175,6 +191,9 @@ module.exports = {
   */
   removeBranchFromCard: async (req, res) => {
     const userId = authHelper.getAuthenticatedUserId(req, res);
+    if(userId == null){
+      return res.status(403).send('Forbidden');
+    }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
 

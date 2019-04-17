@@ -108,7 +108,7 @@ describe('contact ', function() {
       .query(postData);
     participantAddingRes = JSON.stringify(participantAddingRes);
     participantAddingRes = JSON.parse(participantAddingRes);
-  //  console.log('ADDDDING PARTICIPANT RES', participantAddingRes);
+    //  console.log('ADDDDING PARTICIPANT RES', participantAddingRes);
 
     let project = await superagent.get('localhost:8080/project/' + projectId)
       .set('x-access-token', adminUserCreationResp.token);
@@ -135,11 +135,11 @@ describe('contact ', function() {
 
     //Get all project participants
 
-    let participants=await superagent.get('localhost:8080/project/'+projectId+'/participants')
-                                    .set('x-access-token',adminUserCreationResp.token);
-     participants=JSON.stringify(participants);
-     participants=JSON.parse(participants);
-     console.log(participants);
+    let participants = await superagent.get('localhost:8080/project/' + projectId + '/participants')
+      .set('x-access-token', adminUserCreationResp.token);
+    participants = JSON.stringify(participants);
+    participants = JSON.parse(participants);
+    console.log(participants);
 
   });
 

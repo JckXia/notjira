@@ -22,7 +22,7 @@ module.exports = {
     if (userId == null) {
       return res.status(403).send('Forbidden access');
     }
-    
+
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.params.id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.params.id)) {
 
