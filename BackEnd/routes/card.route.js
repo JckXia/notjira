@@ -10,5 +10,6 @@ router.post('/add_assignee/:id',card_controller.add_assignees_to_task);
 router.post('/remove_assignee/:id',card_controller.remove_assigness_from_task);
 router.get('/:id',card_controller.see_card_item_detail);
 router.post('/addBranch/:id',card_controller.addBranchToCard);
+router.post('/update/state/card_state/:id',card_controller.updateCardState);
 router.post('/removeBranch/:id',card_controller.removeBranchFromCard);
 module.exports=router;

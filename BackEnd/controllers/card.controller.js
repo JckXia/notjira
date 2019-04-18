@@ -21,7 +21,7 @@ module.exports = {
   create_card: async (req, res) => {
     //    const k=authHelper.getLocalAuthUserInformation('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYWEwZTA3MWI2NDdjMjZmNDU2ZmE1OCIsImlhdCI6MTU1NDk0NzM4NiwiZXhwIjoxNTU1MDMzNzg2fQ.23rry4W6vpHWbfcNRFM5qYLqARBB1fDhqxGTqMyPvi4');
     const userId = await authHelper.getAuthenticatedUserId(req, res);
-    if(userId == null){
+    if (userId == null) {
       return res.status(403).send('Forbidden');
     }
     // 5caa97fe8cc5ea5cc8418472'
@@ -41,9 +41,9 @@ module.exports = {
         if (err) {
           throw err;
         }
-          return res.send(newCard);
+        return res.status(200).send(newCard);
       });
-    }else{
+    } else {
       res.status(403).send('Forbidden access!');
     }
   },
@@ -54,26 +54,70 @@ module.exports = {
   //req contains card field to be updated
   // one of (all) : toDoItem, toDoItemDetail
   update_card_information: async (req, res) => {
-
-    const userId = authHelper.getAuthenticatedUserId(req, res);
-    if(userId == null){
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
       return res.status(403).send('Forbidden');
     }
+    // 5caa97fe8cc5ea5cc8418472'
+
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
-
-      let card_id = req.params.id;
       let field_to_be_updated = req.params.field;
+      if (field_to_be_updated != 'toDoItemTitle' && field_to_be_updated != 'toDoItemDetail') {
+        return res.status(404).send('Illegal arguments!');
+      }
+      if (field_to_be_updated == 'toDoItem') {
+        let newValue = req.query.newValue;
+
+        if (newValue != 'Done' && newValue != 'inProg' && newValue != 'toDo') {
+          return res.status(500).send('Illegal arguments!');
+        }
+      }
+
       Card.findOneAndUpdate({
-        _id: card_id
+        _id: req.params.id
       }, {
         [field_to_be_updated]: req.query.newValue
       }, function(err, model) {
         if (err) {
           throw err;
         }
-        res.send(model);
+        return res.send(model);
       });
+    } else {
+      res.status(403).send('Forbidden access!');
+    }
+  },
+
+  updateCardState: async (req, res) => {
+
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
+      return res.status(403).send('Forbidden');
+    }
+    // 5caa97fe8cc5ea5cc8418472'
+
+    if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
+      await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
+      let field_to_be_updated = 'card_state';
+
+      let newValue = req.query.newValue;
+      if (newValue != 'Done' && newValue != 'inProg' && newValue != 'toDo') {
+        return res.status(500).send('Illegal arguments!');
+      }
+
+      Card.findOneAndUpdate({
+        _id: req.params.id
+      }, {
+        [field_to_be_updated]: req.query.newValue
+      }, function(err, model) {
+        if (err) {
+          throw err;
+        }
+        return res.send(model);
+      });
+    } else {
+      res.status(403).send('Forbidden access!');
     }
   },
 
@@ -82,12 +126,15 @@ module.exports = {
     Effect: Push the user id to an arrayS
   */
   add_assignees_to_task: async (req, res) => {
-    const userId = authHelper.getAuthenticatedUserId(req, res);
-    if(userId == null){
+    //    const k=authHelper.getLocalAuthUserInformation('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYWEwZTA3MWI2NDdjMjZmNDU2ZmE1OCIsImlhdCI6MTU1NDk0NzM4NiwiZXhwIjoxNTU1MDMzNzg2fQ.23rry4W6vpHWbfcNRFM5qYLqARBB1fDhqxGTqMyPvi4');
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
       return res.status(403).send('Forbidden');
     }
+    // 5caa97fe8cc5ea5cc8418472'
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
+
       let newAssigneeId = req.query.newAssigneeId;
       let cardId = req.params.id;
       Card.update({
@@ -102,9 +149,11 @@ module.exports = {
         }
         res.send(model);
       })
+    } else {
+      res.status(403).send('Forbidden access!');
     }
-
   },
+
 
   /*
     request paramter contains:user id
@@ -112,7 +161,7 @@ module.exports = {
   */
   remove_assigness_from_task: async (req, res) => {
     const userId = authHelper.getAuthenticatedUserId(req, res);
-    if(userId == null){
+    if (userId == null) {
       return res.status(403).send('Forbidden');
     }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
@@ -140,12 +189,14 @@ module.exports = {
     effect: get a card detail by card id
   */
   see_card_item_detail: async (req, res) => {
-    const userId = authHelper.getAuthenticatedUserId(req, res);
-    if(userId == null){
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
       return res.status(403).send('Forbidden');
     }
+    // 5caa97fe8cc5ea5cc8418472'
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
+
       let card_id = req.params.id;
       Card.find({
         _id: card_id
@@ -153,8 +204,10 @@ module.exports = {
         if (err) {
           throw err;
         }
-        res.send(model);
+        return res.status(200).send(model);
       });
+    } else {
+      res.status(403).send('Forbidden access!');
     }
   },
 
@@ -163,26 +216,30 @@ module.exports = {
     effect:adding a git branch
   */
   addBranchToCard: async (req, res) => {
-    const userId = authHelper.getAuthenticatedUserId(req, res);
-    if(userId == null){
+    const userId = await authHelper.getAuthenticatedUserId(req, res);
+    if (userId == null) {
       return res.status(403).send('Forbidden');
     }
+    // 5caa97fe8cc5ea5cc8418472'
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
       await projectPermissionHelper.userIsParticipantOfProject(userId, req.query.project_id)) {
-      let card_id = req.params.id;
-      let gitBranch = req.query.gitBranch;
-      Card.updateOne({
-        _id: card_id
-      }, {
-        $push: {
-          taskBranches: gitBranch
-        }
-      }, function(err, updateResult) {
-        if (err) {
-          throw err;
-        }
-        res.send(updateResult);
-      })
+
+        let card_id = req.params.id;
+        let gitBranch = req.query.gitBranch;
+        Card.updateOne({
+          _id: card_id
+        }, {
+          $push: {
+            taskBranches: gitBranch
+          }
+        }, function(err, updateResult) {
+          if (err) {
+            throw err;
+          }
+          res.send(updateResult);
+        })
+    } else {
+      res.status(403).send('Forbidden access!');
     }
   },
 
@@ -191,7 +248,7 @@ module.exports = {
   */
   removeBranchFromCard: async (req, res) => {
     const userId = authHelper.getAuthenticatedUserId(req, res);
-    if(userId == null){
+    if (userId == null) {
       return res.status(403).send('Forbidden');
     }
     if (await projectPermissionHelper.userIsAdminOfProject(userId, req.query.project_id) ||
