@@ -1,68 +1,127 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Backend restructure
 
-## Available Scripts
+TODO:
 
-In the project directory, you can run:
+1. Create a file in config file , importing GitHub personal access token
+2. Create the following managers
+    1. getProjectAdmin(projectName)
+    2. getProjectCollaborators(projectName)
+    3. findUserGivenId(UserId)
+    4. findUserGivenName(UserName)
+    5. getProjectBranches(project)
+    6. getProjectTasks(projectName)
+    7. getProjectPullRequests(projectName)
+3. Implement the following api routes
+All below are  to be done using a personal access token
 
-### `npm start`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. Create branch.     /github/:repoName/:taskId/create_branch
+ 	
+  	in body
+  	Data required: she key of the branch we are branching from 
+				Name of the newly created branch
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+        API restrictions: Authenticated users.
+			          Project admin  or
+				 Project assignee
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Create pull requests  /github/:repoName/:taskId/create_pull
 
-### `npm run build`
+	Data required: The sha references of the branch we are attempting to make a PR for 
+	
+	API restrictions: Authenticated users 
+				  Project adminor
+				 Project participants (NOTE, project participants in this instance ==project collaborator)
+ 
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. Create repo.     /github/create_repo
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+	Data required: Name 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+4. Delete repo   /github/:repoName
+  	
+	Data required:name/pk
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+	API restrictions: Authenticated user
+			          Project creator	
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+4.Add a model called tasks  (TODO. In the backlog)
+  	Task:{
+	 taskName:’Finding replacement for lodash’;
+	branch:’PLAT-7641’
+  	subTasks:’[]’; //This is a recursive structure
+	hasPrOpen:true
+	}	
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Task associated API calls:
+	
+      1. Create a task  /task/:projectRepo/:cardId/create_task
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+      2. Create a branch for this task.  /task/:projectId/
+ 	
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+5.Revise the card API. (For simplicity sake, we will go with this option)
+	-New card data schema:
+	Card:{
+       	taskName:’taskingThis’,
+	//TODO:refactor the branch into its own model
+ 	branch:’PLAT-41231-solveTaskingthis’
+	hasPrOpen:true
+	}
 
-### Code Splitting
+New Card API calls:
+	
+	1.Create card.  POST   /card/:projectName/create_card
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+	2, Delete card  DELETE /card/project/:projectName/card/:cardId/delete_card
 
-### Analyzing the Bundle Size
+	3. Create branch for card /card/projec:projectName/card/:cardId/create_branch
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+	
+1.  
+		
 
-### Making a Progressive Web App
+Work flow:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+User click login
 
-### Advanced Configuration
+User directed to SSO page
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+User logs in 
 
-### Deployment
+User on landing page, displaying the number of repos they have created (GET all projects of a given user)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+User clicks on a project, react  router redirects to project page (GET call, returning information in that repo)
 
-### `npm run build` fails to minify
+User clicks on 	create card, modal pops up, display the field for inputting the name of the card.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Once card has been created, it is of Todo state. 
+
+A button called create branch is shown if you click on the card again
+
+Click on the button redirects to a new page. 
+
+On the new page, we will see an input box.
+
+The input box will be profiled with {randNum}-{NameOfBranchToBeCreated}
+
+Any edit to it is allowed 
+
+Another drop down will display the available branches in that repository
+
+ A click to create button, will send a request to the create_branch API. This API will take the sha key of the reference as well as the name of the new branch to be created
+
+Once request Is finished, we navigate back to the project page for other tasks.
+
+By click on create branch, we have also changed the state of the library card. setState is called and its new state is written into a database
+
+
+ 
+
+
+
+
