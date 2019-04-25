@@ -6,7 +6,7 @@ let UserSchema=new Schema({
   'username':{type:String}, //Every user must have a user name
   'password':{type:String}, //This password is stored in database upon encryption
   'project_lists':{type:Array},
-  'SSO_TOKEN':{type:String}  //SSO token consistutes password
+  'token':{type:String}  //SSO token consistutes password
 });
 
 module.exports=mongoose.model('User',UserSchema);

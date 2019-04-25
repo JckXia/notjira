@@ -1,10 +1,10 @@
 const keys = require('../config/keys');
 const User = require('../BackEnd/models/user.model');
 var GitHubStrategy = require('passport-github2').Strategy;
-
-module.exports=function(passport){
+const Octokit = require('@octokit/rest');
+const request = require('superagent');
+module.exports = function(passport) {
   passport.serializeUser(function(user, done) {
-    console.log(user.id);
     done(null, user.id);
   });
 
@@ -21,21 +21,33 @@ module.exports=function(passport){
       auth_type: "reauthenticate"
     },
     async (accessToken, refreshToken, profile, done) => {
-
-      console.log('ACCESS_TOKEN', accessToken);
-
+ 
       const existingUser = await User.findOne({
         gitHubId: profile.id
       });
 
       if (existingUser) {
-          return done(null,existingUser);
+
+        const res = await User.findOneAndUpdate({
+          gitHubId: profile.id
+        }, {
+          access_token: accessToken
+        });
+
+        const resultUser = await User.findOne({
+          gitHubId: profile.id
+        });
+        //    console.log('EXIST ',existingUser);
+        return done(null, resultUser);
       }
-      const user=await new User({
-        gitHubId:profile.id
+
+      const user = await new User({
+        gitHubId: profile.id,
+        token: accessToken
       }).save();
       console.log(user);
-      done(null,user);
+      //  console.log(user);
+      done(null, user);
     }
   ));
 

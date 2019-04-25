@@ -18,6 +18,8 @@
 .env.test.local
 .env.production.local
 /src
+/config/dev.js
+
 
 /playground
 
