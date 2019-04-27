@@ -1,14 +1,15 @@
 const keys = require('../config/keys');
 const User = require('../BackEnd/models/user.model');
 var GitHubStrategy = require('passport-github2').Strategy;
-const Octokit = require('@octokit/rest');
 const request = require('superagent');
+const Octokit = require('@octokit/rest');
 module.exports = function(passport) {
   passport.serializeUser(function(user, done) {
-    done(null, user.id);
+      done(null,user.id);
   });
 
   passport.deserializeUser(function(id, done) {
+
     User.findById(id).then(user => {
       done(null, user);
     });
@@ -18,10 +19,12 @@ module.exports = function(passport) {
       clientID: keys.clientId,
       clientSecret: keys.clientSecret,
       callbackURL: "/auth/github/callback",
-      auth_type: "reauthenticate"
+      auth_type: "reauthenticate",
+      allow_signup:true
     },
     async (accessToken, refreshToken, profile, done) => {
- 
+
+        console.log('Access tok ',accessToken);
       const existingUser = await User.findOne({
         gitHubId: profile.id
       });
@@ -31,7 +34,7 @@ module.exports = function(passport) {
         const res = await User.findOneAndUpdate({
           gitHubId: profile.id
         }, {
-          access_token: accessToken
+          token: accessToken
         });
 
         const resultUser = await User.findOne({
@@ -41,8 +44,14 @@ module.exports = function(passport) {
         return done(null, resultUser);
       }
 
+      let userInfo=await request.get('https://api.github.com/user/32422811');
+      userInfo=JSON.stringify(userInfo);
+      userInfo=JSON.parse(userInfo);
+      userInfo=userInfo.text;
+      userInfo=JSON.parse(userInfo);
       const user = await new User({
         gitHubId: profile.id,
+        username:userInfo.login,
         token: accessToken
       }).save();
       console.log(user);

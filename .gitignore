@@ -19,6 +19,8 @@
 .env.production.local
 /src
 /config/dev.js
+/config/userTokenForTesting.js
+
 
 
 /playground

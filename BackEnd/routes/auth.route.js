@@ -4,16 +4,16 @@ const passport=require('passport');
 const login_controller=require('../controllers/localLogin.controller.js');
 const jwt=require('jsonwebtoken');
 //Github authentication routes ----------------------------------------------- //
-router.get('/auth/github/login',passport.authenticate('github',{scope:['repo']}));
+router.get('/auth/github/login',passport.authenticate('github',{scope:['repo','delete_repo']}));
 
 router.get('/auth/github/callback',passport.authenticate('github'),(req,res)=>{
   res.redirect('/auth/github/checkForUserToken');
 });
 
 router.get('/auth/github/checkForUserToken',(req,res)=>{
-   console.log(req.user);
+
    console.log(req.isAuthenticated());
-   res.send('PLAT');
+   res.send(req.user);
 });
 
 router.get('/auth/github/logout',(req,res)=>{

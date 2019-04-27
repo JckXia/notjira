@@ -4,7 +4,7 @@ const passport = require('passport');
 
 const Octokit = require('@octokit/rest');
 const keys = require('../config/keys');
-let token = '1346a51369b4fb13841cf0c10ed748460d2a5a13';
+let token = '';
 //7e6e8c9aba6706834bcfb2c8b7807820fc2d6a605cbb42f40f35c92424e43a9e
 let masterHash = 'b5aa826799211bdf5c0f6a0bf620531abe929c6c';
 

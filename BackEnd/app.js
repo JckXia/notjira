@@ -92,7 +92,7 @@ app.use(bodyParser.json());
 app.use('/project',project);
 app.use('/user',user);
 app.use('/card',card);
-app.use('/github',github);
+app.use('/',github);
 app.use('/',auth);
 
 
