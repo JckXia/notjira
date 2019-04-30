@@ -91,33 +91,39 @@ module.exports = {
   // api/github/:repoName/:taskName/create_branch
   //Send the branch we are branching off of in the body
   //     the name of the new branch in the body as well
+  // api/github/:repoName/:taskName/create_branch
+  //Send the branch we are branching off of in the body
+  //     the name of the new branch in the body as well
   createBranch: async (req, res) => {
 
-    const userId = await authenticationManager.getAuthenticatedUserId(req, res);
-
+    const Env = process.env.NODE_ENV;
+    const userId = Env === 'test' ? req.headers.id : await authenticationManager.getAuthenticatedUserId(req, res);
     if (userId == null) {
       return res.status(403).send('Forbidden');
     }
 
     if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
-      await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
-      let platNumber = randomIntFromInterval(1000, 9999);
-      const branchName = 'refs/head/feature-' + platNumber + req.body.taskName;
-      const newOctokit = new Octokit({
-        auth: `${req.user.token}`
-      });
-      const repoId = repoManager.getRepoId(req.params.repoName);
-      const adminInfo = repoManager.getRepoAdminInfo(repoId);
+        await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
 
-      newOctokit.git.createRef({
-        owner: adminInfo.repo_admin_userName,
+      const authToken = Env === 'test' ? req.headers.user : req.user.token;
+      let platNumber = randomIntFromInterval(1000, 9999);
+      const branchName = 'refs/heads/feature/PLAT-' + platNumber + '-' + req.body.taskName;
+      const octokit = new Octokit({
+        auth: `${authToken}`
+      });
+      const data = await octokit.git.createRef({
+        owner: 'JckXia',
         repo: req.params.repoName,
         ref: branchName,
         sha: req.body.oldBranchHashVal
-      }).then((data) => {
-        res.status(200).send(data);
       });
 
+      /*
+        Create a Task object, save its id and name
+        into a JSON object.
+      */
+
+      return res.status(200).send(data);
     } else {
       return res.status(403).send('Forbidden');
     }
