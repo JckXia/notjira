@@ -24,6 +24,12 @@ router.get('/auth/github/getUser',(req,res)=>{
   res.send(data);
 });
 
+router.post('/auth/github/checkUserStatus',(req,res)=>{
+   console.log(req.user);
+   const userIsLoggedIn=req.isAuthenticated();
+   res.send(userIsLoggedIn);
+});
+
 router.get('/auth/github/logout',(req,res)=>{
 
   req.logout();

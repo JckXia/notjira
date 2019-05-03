@@ -20,7 +20,7 @@ module.exports = {
     const Env = process.env.NODE_ENV;
 
     const userId = Env == 'test' ? req.headers.id : await authenticationManager.getAuthenticatedUserId(req, res);
-    const proxyUrl = req.body.proxyurl;
+    const proxyUrl = req.body.proxyUrl;
     if (userId == null) {
       return res.status(403).send('Forbidden! User not authenticated');
     }

@@ -18,7 +18,7 @@ module.exports=function(proxyUrl){
         payload: webHookEvent.body
       });
 
-      if(webHookEvetName == 'pull_request'){
+      if(webHookEventName == 'pull_request'){
           const payload=webHookEvent.body;
       }
     console.log(webHookEventName);
