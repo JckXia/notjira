@@ -17,6 +17,7 @@ class ToDoCard extends Component{
 
 handleDoneClick(){
   var oldData=this.props.originalData;
+  debugger;
   oldData.cardState="Done";
   this.props.parentComponent.setState((prevState)=>{
 

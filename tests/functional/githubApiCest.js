@@ -33,7 +33,7 @@ describe('Github API routes', async () => {
       const reqUrl = DNS + '/api/github/repo/create';
       const postData = {
         repoName: 'PAS'+Math.random(1,20),
-        proxyurl:'https://smee.io/At0G3RleQbMLBz3u'
+        proxyUrl:'https://smee.io/At0G3RleQbMLBz3u'
       };
 
       const user = await userManager.getUserByUserName('JckXia');
