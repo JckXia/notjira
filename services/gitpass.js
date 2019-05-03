@@ -44,7 +44,7 @@ module.exports = function(passport) {
         return done(null, resultUser);
       }
 
-      let userInfo=await request.get('https://api.github.com/user/32422811');
+      let userInfo=await request.get('https://api.github.com/user/'+profile.id);
       userInfo=JSON.stringify(userInfo);
       userInfo=JSON.parse(userInfo);
       userInfo=userInfo.text;

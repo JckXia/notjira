@@ -24,7 +24,7 @@ class Column extends Component{
         <blockquote className={this.props.colName}>
             <h4>{this.props.colName}</h4>
         </blockquote>
-
+ 
         {this.props.data.map((data)=>{
           console.log(data);
           return(

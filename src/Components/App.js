@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import  'materialize-css/dist/css/materialize.min.css'
 import {Row,Col,Card} from 'react-materialize';
 import Column from './column';
-import './App.css';
+import '../styles/App.css';
 import Modal from 'react-modal';
-
+import Header from './header.jsx';
+import Request from 'superagent';
 //Within the App file, keep a list of all cards in this way
 /*
   cards:[
@@ -32,6 +32,13 @@ class App extends Component {
 
    this.state = {
      triggerRerender: false,
+     userIsLoggedIn:false,
+     repos:null,
+     user :{
+       userid:null,
+       githubId:null,
+       userName:null
+     },
      data:[
        {cardId:1,cardState:"InProg",toDoItem:"Testing for crx"},
        {cardId:2,cardState:"ToDo",toDoItem:"Writing a new code base"},
@@ -43,6 +50,7 @@ class App extends Component {
    this.afterOpenModal = this.afterOpenModal.bind(this);
    this.closeModal = this.closeModal.bind(this);
  }
+
 
  openModal() {
    this.setState({modalIsOpen: true});
@@ -57,9 +65,23 @@ class App extends Component {
    this.setState({modalIsOpen: false});
  }
 
-componetDidUpdate(){
+async componentDidMount(){
+  let stateObject={...this.state};
+  const resp=await Request.get('/auth/github/checkForUserToken');
+ 
+  if(resp.body){
 
+    stateObject.user.userid=resp.body._id;
+    stateObject.user.githubId=resp.body.gitHubId;
+    stateObject.user.userName=resp.body.username;
+    stateObject.repos=resp.body.repo_lists;
+
+    this.setState(stateObject);
+    //SetState the data
+  }
+ console.log('Mounted');
 }
+
  returnFilteredData(status){
   console.log('Check');
    const data=this.state.data.filter(card=>card.cardState==status);
@@ -74,13 +96,7 @@ componetDidUpdate(){
         <div class="nav-wrapper">
 
           <a href="#" class="brand-logo">NotJIRA</a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="collapsible.html">Admin user</a></li>
-            <li><a href="sass.html">Go to projects page</a></li>
-            <li><a href="badges.html">Add teammates</a></li>
-            <li><a href="badges.html">Add new tasks</a></li>
-            <li><a href="collapsible.html">Logout</a></li>
-          </ul>
+            <Header auth={false}/>
         </div>
       </nav>
     </header>

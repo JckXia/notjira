@@ -69,6 +69,9 @@ module.exports={
        }
       return res.send(model);
      })
+   },
+   returnAllReposFromUserProfile:async(req,res)=>{
+      
    }
 
 };

@@ -32,7 +32,8 @@ describe('Github API routes', async () => {
     it('Authenticated users should be able to create and delete repository', async () => {
       const reqUrl = DNS + '/api/github/repo/create';
       const postData = {
-        repoName: 'PAS'+Math.random(1,20)
+        repoName: 'PAS'+Math.random(1,20),
+        proxyurl:'https://smee.io/At0G3RleQbMLBz3u'
       };
 
       const user = await userManager.getUserByUserName('JckXia');
@@ -52,7 +53,7 @@ describe('Github API routes', async () => {
           }
         });
 
-
+       /*
         const URL= DNS + '/api/github/repo/' +postData.repoName+ '/delete';
         const req =await superagent.post(URL)
         .set({
@@ -62,9 +63,10 @@ describe('Github API routes', async () => {
           user: userToken
         }).then((res)=>{
           if(res.status!=200){
-            throw `Error! ${res.status} Unsuccessful creation`;
+            throw `Error! ${res.status} Unsuccessful deletion`;
           }
         })
+        */
     }),
     it('Should deny create branch request for unauthenticated users', async () => {
 

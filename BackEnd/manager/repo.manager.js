@@ -89,7 +89,7 @@ async function addRepoCollaborators(repoId, collaborator) {
 }
 
 //add a new repo to the databse
-async function saveNewRepoToDataBase(repoName, repoAdminName, repoAdminPk, collaborators, tasks) {
+async function saveNewRepoToDataBase(repoName, repoAdminName, repoAdminPk, collaborators, tasks,webHookUrl) {
   const newRepo = await new Repo({
     repo_name: repoName,
     repo_owner_name: repoAdminName,
@@ -98,6 +98,7 @@ async function saveNewRepoToDataBase(repoName, repoAdminName, repoAdminPk, colla
     repo_creator_name: repoAdminName,
     repo_creator_pk: repoAdminPk,
     repo_collaborators: collaborators,
+    repo_web_hook:webHookUrl,
     taskItems: tasks
   }).save();
   return newRepo;

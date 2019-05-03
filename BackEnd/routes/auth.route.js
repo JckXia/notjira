@@ -7,13 +7,21 @@ const jwt=require('jsonwebtoken');
 router.get('/auth/github/login',passport.authenticate('github',{scope:['repo','delete_repo']}));
 
 router.get('/auth/github/callback',passport.authenticate('github'),(req,res)=>{
-  res.redirect('/auth/github/checkForUserToken');
+  res.redirect('/');
 });
 
 router.get('/auth/github/checkForUserToken',(req,res)=>{
 
    console.log(req.isAuthenticated());
+   console.log(req.user);
    res.send(req.user);
+});
+
+router.get('/auth/github/getUser',(req,res)=>{
+  let data=req.user.text;
+  console.log(data);
+//  data=JSON.parse(data);
+  res.send(data);
 });
 
 router.get('/auth/github/logout',(req,res)=>{

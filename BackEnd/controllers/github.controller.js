@@ -7,7 +7,9 @@ const authenticationManager = require('../manager/authentication.manager');
 const projectManager = require('../manager/project.manager');
 const repoManager = require('../manager/repo.manager');
 const userManager = require('../manager/user.manager');
+const EventSource = require('eventsource');
 const Octokit = require('@octokit/rest');
+const WebHooksApi = require('@octokit/webhooks');
 
 module.exports = {
 
@@ -18,7 +20,7 @@ module.exports = {
     const Env = process.env.NODE_ENV;
 
     const userId = Env == 'test' ? req.headers.id : await authenticationManager.getAuthenticatedUserId(req, res);
-
+    const proxyUrl = req.body.proxyurl;
     if (userId == null) {
       return res.status(403).send('Forbidden! User not authenticated');
     }
@@ -35,10 +37,27 @@ module.exports = {
 
       const user = await userManager.getUserById(userId);
 
-      const newRepo = await repoManager.saveNewRepoToDataBase(repoName, user.username, user.id, [], []);
+      const newRepo = await repoManager.saveNewRepoToDataBase(repoName, user.username, user.id, [], [], proxyUrl);
 
-      await userManager.addRepoToUserProfile(newRepo.id, newRepo.repo_name, user.username);
+      // ------Attempting to create webhook-------------------------------- //
+      await octokit.repos.createHook({
+        owner: user.username,
+        repo: repoName,
+        config: {
+          url: proxyUrl,
+          content_type: 'json',
+          secret: 'mysecret'
+        },
+        events: ['*']
+      }).then((res) => {
 
+      }).catch((e) => {
+        console.log(e);
+      });
+
+      require('../../services/githubWebHooks/webHookListener.js')(proxyUrl);
+      //--------------------------------------------------------------------------------- //
+      await userManager.addRepoToUserProfile(newRepo.id, newRepo.repo_name, user.username, proxyUrl);
       return res.status(201).send(newRepo);
     } catch (e) {
 
@@ -75,10 +94,10 @@ module.exports = {
       });
 
       //Remove repo from databse
-      const removeRepoFromDb=await repoManager.deleteRepoFromDataBase(repo.id);
+      const removeRepoFromDb = await repoManager.deleteRepoFromDataBase(repo.id);
 
       // TODO:Add a way to delete the cards
-      const removeRepoFromUserProfile=await userManager.removeRepoFromUserProfile(repo.id,repo.repo_name,repo.repo_creator_name);
+      const removeRepoFromUserProfile = await userManager.removeRepoFromUserProfile(repo.id, repo.repo_name, repo.repo_creator_name);
 
       //Remove this repo from the user's id
       return res.status(200).send('Good');
@@ -86,6 +105,36 @@ module.exports = {
       return res.status(403).send('Forbidden');
     }
 
+
+  },
+  // api/github/:ownerName/:repoName/webhook/create
+  //body:
+  // Url for webhook to listen to
+  createWebHook: async (req, res) => {
+    let authToken = '8e11925c246ecbe407ef9489a39e6b6652a4699b';
+    const octokit = new Octokit({
+      auth: `${authToken}`
+    });
+    //const proxyUrl='https://smee.io/ICTKamtcj5qxwrY';
+    const proxyUrl = req.body.proxyurl;
+    await octokit.repos.createHook({
+      owner: req.params.ownerName,
+      repo: req.params.repoName,
+      config: {
+        url: proxyUrl,
+        content_type: 'json',
+        secret: 'mysecret'
+      },
+      events: ['*']
+    }).then((res) => {
+      //  console.log(res);
+    }).catch((e) => {
+      //console.log(e);
+    });
+
+    require('../../services/githubWebHooks/webHookListener.js')(proxyUrl);
+
+    //Start listening for incoming messages on this channel
 
   },
   // api/github/:repoName/:taskName/create_branch
@@ -103,7 +152,7 @@ module.exports = {
     }
 
     if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
-        await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
+      await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
 
       const authToken = Env === 'test' ? req.headers.user : req.user.token;
       let platNumber = randomIntFromInterval(1000, 9999);

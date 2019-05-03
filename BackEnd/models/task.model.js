@@ -9,4 +9,5 @@ let TaskSchema=new Schema({
    'branch':{type:String},
    'pullRequest':{type:String}
 });
-module.exports=mongoose.model('Task',CardSchema);
+
+module.exports=mongoose.model('Task',TaskSchema);

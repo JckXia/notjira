@@ -73,9 +73,9 @@ componetDidUpdate(){
       <nav>
         <div class="nav-wrapper">
 
-          <a href="#" class="brand-logo">NotJIRA</a>
+          <a href="#" class="brand-logo">NotJIRAA</a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="collapsible.html">Admin user</a></li>
+
             <li><a href="sass.html">Go to projects page</a></li>
             <li><a href="badges.html">Add teammates</a></li>
             <li><a href="badges.html">Add new tasks</a></li>

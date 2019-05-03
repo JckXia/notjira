@@ -14,8 +14,8 @@ async function getUserByUserName(userName) {
   return user;
 }
 
-async function addRepoToUserProfile(repoId,repoName,userName) {
-  const repoObject={id:repoId,name:repoName};
+async function addRepoToUserProfile(repoId,repoName,userName,webHookUrl) {
+  const repoObject={id:repoId,name:repoName,webhookurl:webHookUrl};
   const addRepoToUser = await User.findOneAndUpdate({
     username: userName
   }, {
@@ -39,9 +39,16 @@ async function removeRepoFromUserProfile(repoId,repoName,userName){
    const user=await getUserByUserName(userName);
    return user;
 }
+
+async function returnAllReposFromUserProfile(userName){
+  const user= await getUserByUserName(userName);
+  return user.repo_lists;
+}
+
 module.exports = {
   getUserById,
   getUserByUserName,
   addRepoToUserProfile,
-  removeRepoFromUserProfile
+  removeRepoFromUserProfile,
+  returnAllReposFromUserProfile
 };

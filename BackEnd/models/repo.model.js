@@ -9,6 +9,7 @@ let RepoSchema=new Schema({
   'repo_creator_pk':{type:String},
   'repo_collaborators':{type:Array},
   'repo_creation_date':{type:String},
+  'repo_web_hook':{type:String},
   'taskItems':{type:Array}
 });
 module.exports=mongoose.model('Repo',RepoSchema);

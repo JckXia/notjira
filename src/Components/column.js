@@ -26,7 +26,7 @@ class Column extends Component{
         </blockquote>
 
         {this.props.data.map((data)=>{
-          console.log(data);
+           
           return(
                 <ToDoCard
                 id={data.cardId}
