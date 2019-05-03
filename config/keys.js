@@ -4,5 +4,6 @@ if(process.env.NODE_ENV == 'production'){
  module.exports=require('./prod');
 }else{
  //We are in development, return dev keys
- module.exports=require('./dev');
+ // module.exports=require('./dev');
+ module.exports=require('./devKeys.js');
 }
