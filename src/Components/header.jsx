@@ -17,17 +17,17 @@ class Header extends Component {
 
     //  /api/github/repo/create
 
-    /*
+
       const Data={
-        repoName:'TestingApiCallSsX',
+        repoName:'TestingApiCallSsXKFTR',
         proxyUrl:'https://smee.io/n2Zw6JWuJuWsf2gu'
       };
       SuperAgent.post('/api/github/repo/create')
                 .send(Data)
                 .then((res)=>{
-                  console.log(res);
+                  //console.log(res);
                 });
-*/
+
     // '/api/github/repo/:repoName/delete'
 
     /*
@@ -40,6 +40,7 @@ class Header extends Component {
     // SuperAgent.post('/api/github/gitDemo/task/create_branch')
     //b5aa826799211bdf5c0f6a0bf620531abe929c6
 
+/*
     const Data = {
       taskName: 'Checkout_new_branch',
       oldBranchHashVal: 'b5aa826799211bdf5c0f6a0bf620531abe929c6c'
@@ -47,6 +48,7 @@ class Header extends Component {
     SuperAgent.post('/api/github/gitDemo/task/create_branch').send(Data).then((res) => {
       console.log(res);
     });
+  */
     //console.log('Yep, we good!');
   }
   renderHeader() {
@@ -56,7 +58,6 @@ class Header extends Component {
       case false:
         return (<ul id="nav-mobile" class="right">
           <a class="waves-effect waves-light btn-large" href="/auth/github/login">Login with github</a>
-          <a class="waves-effect waves-light btn" onClick={this.testMakingAPICall}>Test making calls to API</a>
         </ul>);
       case true:
         return (<ul id="nav-mobile" class="right">
@@ -74,6 +75,9 @@ class Header extends Component {
           </li>
           <li>
             <a href="/auth/github/logout">Logout</a>
+          </li>
+          <li>
+            <a  onClick={this.testMakingAPICall}>Test making calls to API</a>
           </li>
         </ul>);
     }

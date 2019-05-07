@@ -24,7 +24,7 @@ async function getRepoById(repoId) {
   return repo;
 }
 
-async function getRepoByName(repoName){
+async function getRepoByName(repoName) {
   const repo = await Repo.findOne({
     repo_name: repoName
   });
@@ -34,7 +34,7 @@ async function getRepoByName(repoName){
 async function userIsAdminOfRepo(userId, repoName) {
 
   const repo = await getRepoByName(repoName);
- console.log(userId);
+  console.log(userId);
   const adminInfo = await getRepoAdminInfo(repo.id);
   console.log(adminInfo);
   if (userId == adminInfo.adminPk) {
@@ -88,8 +88,17 @@ async function addRepoCollaborators(repoId, collaborator) {
   return updateRepo;
 }
 
+function getDate() {
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+
+  today = mm + '/' + dd + '/' + yyyy;
+  return today;
+}
 //add a new repo to the databse
-async function saveNewRepoToDataBase(repoName, repoAdminName, repoAdminPk, collaborators, tasks,webHookUrl) {
+async function saveNewRepoToDataBase(repoName, repoAdminName, repoAdminPk, collaborators, tasks, webHookUrl, html_url) {
   const newRepo = await new Repo({
     repo_name: repoName,
     repo_owner_name: repoAdminName,
@@ -98,8 +107,10 @@ async function saveNewRepoToDataBase(repoName, repoAdminName, repoAdminPk, colla
     repo_creator_name: repoAdminName,
     repo_creator_pk: repoAdminPk,
     repo_collaborators: collaborators,
-    repo_web_hook:webHookUrl,
-    taskItems: tasks
+    repo_web_hook: webHookUrl,
+    taskItems: tasks,
+    date_created: getDate(),
+    repo_html_url: html_url
   }).save();
   return newRepo;
 }
@@ -146,15 +157,15 @@ async function getTasksFromRepo(repoId) {
 }
 
 module.exports = {
- getTasksFromRepo,
- getRepoId,
- addTaskToRepo,
- deleteRepoFromDataBase,
- saveNewRepoToDataBase,
- addRepoCollaborators,
- getRepoCollaborators,
- userIsCollaboratorOfRepo,
- userIsAdminOfRepo,
- getRepoById,
- getRepoByName
+  getTasksFromRepo,
+  getRepoId,
+  addTaskToRepo,
+  deleteRepoFromDataBase,
+  saveNewRepoToDataBase,
+  addRepoCollaborators,
+  getRepoCollaborators,
+  userIsCollaboratorOfRepo,
+  userIsAdminOfRepo,
+  getRepoById,
+  getRepoByName
 };

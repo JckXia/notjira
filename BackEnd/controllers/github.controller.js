@@ -35,9 +35,10 @@ module.exports = {
         name: repoName
       });
 
+      console.log(repoCreationResp.data.html_url);
       const user = await userManager.getUserById(userId);
 
-      const newRepo = await repoManager.saveNewRepoToDataBase(repoName, user.username, user.id, [], [], proxyUrl);
+      const newRepo = await repoManager.saveNewRepoToDataBase(repoName, user.username, user.id, [], [], proxyUrl,repoCreationResp.data.html_url);
 
       // ------Attempting to create webhook-------------------------------- //
       await octokit.repos.createHook({
@@ -57,7 +58,7 @@ module.exports = {
 
       require('../../services/githubWebHooks/webHookListener.js')(proxyUrl);
       //--------------------------------------------------------------------------------- //
-      await userManager.addRepoToUserProfile(newRepo.id, newRepo.repo_name, user.username, proxyUrl);
+      await userManager.addRepoToUserProfile(newRepo.id, newRepo.repo_name, user.username, proxyUrl,repoCreationResp.data.html_url,user.username);
       return res.status(201).send(newRepo);
     } catch (e) {
 
