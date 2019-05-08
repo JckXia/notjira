@@ -118,7 +118,7 @@ class App extends Component {
 
     return (<Router>
       <div className="App">
-        <Route path="/testRoute" exact="exact" component={this.Index}/>
+        <Route path="/testRoute" exact={true} component={this.Index}/>
       <UnauthenticatedPage auth={this.state.userIsLoggedIn} userData={data}/>
       </div>
     </Router>);

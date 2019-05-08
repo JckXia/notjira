@@ -51,16 +51,30 @@ class Header extends Component {
   */
     //console.log('Yep, we good!');
   }
+
+  createRepo=()=>{
+    const Data={
+      repoName:'TestingApiCallSsXKFTR'+Math.random(),
+      proxyUrl:'https://smee.io/n2Zw6JWuJuWsf2gu'
+    };
+    SuperAgent.post('/api/github/repo/create')
+              .send(Data)
+              .then((res)=>{
+                //console.log(res);
+                // TODO: Not a good solution. Need to change this somehow
+                window.location.reload();
+              });
+  };
   renderHeader() {
     //   const apiCallFunct=this.testMakingAPICall;
     switch (this.props.auth) {
 
       case false:
-        return (<ul id="nav-mobile" class="right">
-          <a class="waves-effect waves-light btn-large" href="/auth/github/login">Login with github</a>
+        return (<ul id="nav-mobile" className="right">
+          <a className="waves-effect waves-light btn-large" href="/auth/github/login">Login with github</a>
         </ul>);
       case true:
-        return (<ul id="nav-mobile" class="right">
+        return (<ul id="nav-mobile" className="right">
           <li>
             <a href="collapsible.html">Admin user</a>
           </li>
@@ -68,7 +82,7 @@ class Header extends Component {
             <a href="sass.html">Go to projects page</a>
           </li>
           <li>
-            <a href="badges.html">Add teammates</a>
+            <a onClick={this.createRepo}>Create repo</a>
           </li>
           <li>
             <a href="badges.html">Add new tasks</a>
@@ -76,9 +90,7 @@ class Header extends Component {
           <li>
             <a href="/auth/github/logout">Logout</a>
           </li>
-          <li>
-            <a  onClick={this.testMakingAPICall}>Test making calls to API</a>
-          </li>
+
         </ul>);
     }
   }
@@ -86,8 +98,8 @@ class Header extends Component {
   render() {
     return (<header>
       <nav>
-        <div class="nav-wrapper">
-          <a href="#" class="brand-logo">NotJira</a>
+        <div className="nav-wrapper">
+          <a href="#" className="brand-logo">NotJira</a>
           {this.renderHeader()}
         </div>
       </nav>

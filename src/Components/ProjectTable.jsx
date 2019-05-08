@@ -10,29 +10,56 @@ class ProjectTable extends Component {
     // Name
     // link to github
     // Creator name
+
+  //  console.log(this.props.headers);
     return (<thead>
       <tr>
-        <Cell content="Repo name"/>
-        <Cell content="Creation date"/>
-        <Cell content="link to repo"/>
-        <Cell content="Repo creator"/>
+        {this.props.headers.map((headerName)=>{
+
+          return(
+           <Cell content={headerName}/>
+          )
+        })}
+
       </tr>
     </thead>);
   }
 
+  deleteRepo=(source)=>{
+     console.log(source.target);
+     const repoName=source.target.id;
+     const deleteUrl='/api/github/repo/'+repoName+'/delete';
+     SuperAgent.post(deleteUrl).then((res)=>{
+       window.location.reload();
+     });
+    // const deleteUrl='/api/github/repo/'+repoName+'/delete';
+     /*
+     SuperAgent.post(deleteUrl)
+               .then((res)=>{
+                 //console.log(res);
+                 // TODO: Not a good solution. Need to change this somehow
+                 window.location.reload();
+               });
+               */
+  }
+
+
   renderProjectDataTable=()=>{
-      const data=[1,2,3];
+
+      console.log(this.props.rows);
       return(
         <tbody>
-          {data.map(()=>{
+          {this.props.rows.map((data)=>{
+
             return(
-            <tr>
-              <td>Test</td>
-              <td>Eclair</td>
-              <td>$0.87</td>
-              <td>$0.87</td>
-            </tr>
-          )
+              <tr>
+                <td>{data.name}</td>
+                <td>{data.date_created}</td>
+                 <td><a href={data.repo_html_url}>{data.repo_html_url}</a></td>
+                <td>{data.repo_creator}</td>
+                <td><a href="#" onClick={this.deleteRepo} id={data.name}>Delete</a></td>
+              </tr>
+            )
           })}
         </tbody>
       )

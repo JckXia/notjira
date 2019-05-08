@@ -11,22 +11,33 @@ class DisplayUserTask extends Component{
    return data;
   }
 
+
    renderUserData(){
   //   const apiCallFunct=this.testMakingAPICall;
 
+   const headerArr=['Repo name','Creation date','link to repo','repo creator','Delete'];
+   const repoData=this.props.userData.repos;
 
      switch(this.props.auth){
 
        case false:
          return (
 
-           <ul id="nav-mobile" class="center">
+           <ul id="nav-mobile" className="center">
              <h3>Light, agile solution to manage your github repos</h3>
            </ul>
          );
        case true:
+        if(repoData.length === 0){
+          return (
+            <ul id="nav-mobile" className="center">
+              <h4>Looks like you don't have a repo yet. Lets create some!</h4>
+            </ul>
+          )
+        }
        return (
-         <ProjectTable heading={""} rows={"k"}/>
+
+         <ProjectTable headers={headerArr} rows={repoData}/>
        );
      }
    }
