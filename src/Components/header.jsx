@@ -70,11 +70,11 @@ class Header extends Component {
     switch (this.props.auth) {
 
       case false:
-        return (<ul id="nav-mobile" className="right">
-          <a className="waves-effect waves-light btn-large" href="/auth/github/login">Login with github</a>
+        return (<ul id="nav-mobile" class="right">
+          <a class="waves-effect waves-light btn-large" href="/auth/github/login">Login with github</a>
         </ul>);
       case true:
-        return (<ul id="nav-mobile" className="right">
+        return (<ul id="nav-mobile" class="right">
           <li>
             <a href="collapsible.html">Admin user</a>
           </li>
@@ -98,8 +98,8 @@ class Header extends Component {
   render() {
     return (<header>
       <nav>
-        <div className="nav-wrapper">
-          <a href="#" className="brand-logo">NotJira</a>
+        <div class="nav-wrapper">
+          <a href="#" class="brand-logo">NotJira</a>
           {this.renderHeader()}
         </div>
       </nav>
