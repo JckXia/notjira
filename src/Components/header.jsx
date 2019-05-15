@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import SuperAgent from 'superagent';
-
+import FormDialog from './FormDialog';
 class Header extends Component {
 
   testMakingAPICall = () => {
@@ -82,8 +82,8 @@ class Header extends Component {
             <a href="sass.html">Go to projects page</a>
           </li>
           <li>
-            <a onClick={this.createRepo}>Create repo</a>
-          </li>
+           <FormDialog/>
+           </li>
           <li>
             <a href="badges.html">Add new tasks</a>
           </li>

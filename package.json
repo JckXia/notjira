@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^3.9.3",
     "@octokit/rest": "^16.25.0",
     "@octokit/webhooks": "^6.1.0",
     "bcryptjs": "^2.4.3",
