@@ -55,7 +55,7 @@ class ProjectTable extends Component {
               <tr>
                 <td>{data.name}</td>
                 <td>{data.date_created}</td>
-                 <td><a href={data.repo_html_url}>{data.repo_html_url}</a></td>
+                 <td><a href={data.repo_html_url} target="_blank">{data.repo_html_url}</a></td>
                 <td>{data.repo_creator}</td>
                 <td><a href="#" onClick={this.deleteRepo} id={data.name}>Delete</a></td>
               </tr>
