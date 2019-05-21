@@ -31,3 +31,20 @@
     transform: rotate(360deg);
   }
 }
+blockquote{
+ margin: 20px 0;
+ padding-left: 1.5rem; /* Just change the color value and that's it*/
+}
+
+.todo{
+   border-left: 5px solid red;
+}
+.team-completed{
+   border-left: 5px solid green;
+}
+.in-progress{
+     border-left: 5px solid blue;
+}
+.bugs{
+     border-left: 5px solid brown;
+}
