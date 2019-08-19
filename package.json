@@ -32,10 +32,10 @@
     "util": "^0.11.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-   "client": "npm run start --prefix src",
+    "start": "node BackEnd/app.js",
+   "client": "react-scripts start",
    "server": "nodemon BackEnd/app.js",
-   "dev": "concurrently \"npm run server\" \"npm start\"",
+   "dev": "concurrently \"npm run server\" \"npm run client\"",
    "build": "react-scripts build",
    "test": "react-scripts test",
    "eject": "react-scripts eject"
