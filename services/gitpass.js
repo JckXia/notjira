@@ -1,5 +1,5 @@
 const keys = require('../config/keys');
-const User = require('../BackEnd/models/user.model');
+const User = require('../back/models/user.model');
 var GitHubStrategy = require('passport-github2').Strategy;
 const request = require('superagent');
 const Octokit = require('@octokit/rest');

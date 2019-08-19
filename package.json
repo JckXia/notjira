@@ -32,9 +32,9 @@
     "util": "^0.11.1"
   },
   "scripts": {
-    "start": "node BackEnd/app.js",
+    "start": "node back/app.js",
    "client": "react-scripts start",
-   "server": "nodemon BackEnd/app.js",
+   "server": "nodemon back/app.js",
    "dev": "concurrently \"npm run server\" \"npm run client\"",
    "heroku-postbuild": "react-scripts build",
    "test": "react-scripts test",

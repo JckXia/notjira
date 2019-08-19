@@ -9,4 +9,4 @@ let UserSchema=new Schema({
   'token':{type:String}  //SSO token consistutes password
 });
 
-module.exports=mongoose.model('User',UserSchema);
+module.exports=mongoose.model('user',UserSchema);
