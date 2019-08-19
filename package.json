@@ -26,7 +26,7 @@
     "util": "^0.11.1"
   },
   "scripts": {
-    "start": "concurrently \"node back/app.js\" \"npm run client\"",
+    "start": "node back/app.js",
     "client": "npm run start --prefix jirafront",
     "server": "nodemon back/app.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
