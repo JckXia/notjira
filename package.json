@@ -30,7 +30,7 @@
     "client": "npm run start --prefix jirafront",
     "server": "nodemon back/app.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
+    "heroku-postbuild": " npm install --prefix jirafront && npm run build --prefix jirafront",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
