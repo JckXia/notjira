@@ -22,23 +22,17 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "proxy": "^0.2.4",
-    "react": "^16.8.5",
-    "react-dom": "^16.8.5",
-    "react-materialize": "^3.0.2",
-    "react-modal": "^3.8.1",
-    "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8",
     "superagent": "^5.0.2",
     "util": "^0.11.1"
   },
   "scripts": {
     "start": "concurrently \"node back/app.js\" \"npm run client\"",
-   "client": "react-scripts start",
-   "server": "nodemon back/app.js",
-   "dev": "concurrently \"npm run server\" \"npm run client\"",
-   "heroku-postbuild": "react-scripts build",
-   "test": "react-scripts test",
-   "eject": "react-scripts eject"
+    "client": "npm run start --prefix jirafront",
+    "server": "nodemon back/app.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
