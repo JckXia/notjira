@@ -15,7 +15,7 @@ const auth=require('./routes/auth.route');
 const keys = require('../config/keys');
 var proxy = require('http-proxy-middleware')
 //Connect to mongoose and monogdb
-let dev_db_url="mongodb://127.0.0.1:27017/JiraBackEnd";
+let dev_db_url= process.env.MONGODB_URI||"mongodb://127.0.0.1:27017/JiraBackEnd";
 
 mongoose.connect(dev_db_url,{useNewUrlParser:true},function(err,db){
    if(err){
@@ -56,11 +56,11 @@ app.use('/user',user);
 //app.use('/card',card);
 app.use('/',github);
 app.use('/',auth);
- 
+
 
 
 // Listen on port 3000 or process environment port for AWS deployments
-let port=8080||process.env.PORT;
+let port=process.env.PORT || 8080;
 
 app.listen(port,()=>{
   console.log('Application is upn and running on port ',port);

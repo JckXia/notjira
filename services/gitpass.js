@@ -16,8 +16,8 @@ module.exports = function(passport) {
   });
 
   passport.use(new GitHubStrategy({
-      clientID: keys.clientId,
-      clientSecret: keys.clientSecret,
+      clientID: keys.gitClientId,
+      clientSecret: keys.gitClientSecret,
       callbackURL: "/auth/github/callback",
       auth_type: "reauthenticate",
       allow_signup:true
