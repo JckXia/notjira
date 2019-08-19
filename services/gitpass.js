@@ -20,6 +20,7 @@ module.exports = function(passport) {
       clientSecret: keys.gitClientSecret,
       callbackURL: "/auth/github/callback",
       auth_type: "reauthenticate",
+      proxy:true,
       allow_signup:true
     },
     async (accessToken, refreshToken, profile, done) => {
