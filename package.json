@@ -36,7 +36,7 @@
    "client": "react-scripts start",
    "server": "nodemon BackEnd/app.js",
    "dev": "concurrently \"npm run server\" \"npm run client\"",
-   "build": "react-scripts build",
+   "heroku-postbuild": "react-scripts build",
    "test": "react-scripts test",
    "eject": "react-scripts eject"
   },
