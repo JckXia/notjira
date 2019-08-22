@@ -17,6 +17,8 @@ var proxy = require('http-proxy-middleware')
 //Connect to mongoose and monogdb
 let dev_db_url= process.env.MONGODB_URI||"mongodb://127.0.0.1:27017/JiraBackEnd";
 
+app.use(express.static('../jirafront/build'));
+
 mongoose.connect(dev_db_url,{useNewUrlParser:true},function(err,db){
    if(err){
      throw err;
@@ -57,21 +59,18 @@ app.use('/user',user);
 app.use('/',github);
 app.use('/',auth);
 
-if (process.env.NODE_ENV === 'production') {
-  // Express will serve up production assets
-  // like our main.js file, or main.css file!
-  app.use(express.static('jirafront/build'));
-
-  // Express will serve up the index.html file
-  // if it doesn't recognize the route
-  const path = require('path');
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'jirafront','build', 'index.html'));
-  });
+if(process.env.NODE_ENV == "production"){
+  console.log('Loading files that are needed in prod');
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve('../jirafront/build/index.html'));
+});
 }
+
 
 // Listen on port 3000 or process environment port for AWS deployments
 let port=process.env.PORT || 8080;
+
+
 
 app.listen(port,()=>{
   console.log('Application is upn and running on port ',port);
