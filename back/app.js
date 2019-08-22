@@ -59,12 +59,12 @@ app.use('/user',user);
 app.use('/',github);
 app.use('/',auth);
 
-if(process.env.NODE_ENV == "production"){
+ 
   console.log('Loading files that are needed in prod');
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve('../jirafront/build/index.html'));
+res.sendFile(path.resolve(__dirname, 'jirafront', 'build', 'index.html'));
 });
-}
+
 
 
 // Listen on port 3000 or process environment port for AWS deployments
