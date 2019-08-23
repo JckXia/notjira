@@ -20,3 +20,8 @@ NotJIRA
 	* 3. Add pull request creation and deletion to application 
 	* 4. Handle pull request merges and sees feed back for PR 
 	* 5. Deploy with heroku along the way 
+* Contribute:	
+	* 1. To install the application, run npm install at the root folder 
+	* 2. Setup github client id and secret keys
+	* 3. Make sure mongodb is running on local
+	* 4. Make a PR! :)
