@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import SuperAgent from 'superagent';
 import Column from './column';
 import Cell from './Cell';
+import DeleteFormDialog from './deleteFormDialog';
 import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 
 class ProjectTable extends Component {
@@ -32,17 +33,7 @@ class ProjectTable extends Component {
      SuperAgent.post(deleteUrl).then((res)=>{
        window.location.reload();
      });
-    // const deleteUrl='/api/github/repo/'+repoName+'/delete';
-     /*
-     SuperAgent.post(deleteUrl)
-               .then((res)=>{
-                 //console.log(res);
-                 // TODO: Not a good solution. Need to change this somehow
-                 window.location.reload();
-               });
-               */
   }
-
 
   renderProjectDataTable=()=>{
 
@@ -57,7 +48,7 @@ class ProjectTable extends Component {
                 <td>{data.date_created}</td>
                  <td><a href={data.repo_html_url} target="_blank">{data.repo_html_url}</a></td>
                 <td>{data.repo_creator}</td>
-                <td><a href="#" onClick={this.deleteRepo} id={data.name}>Delete</a></td>
+                <DeleteFormDialog data={data}/>
               </tr>
             )
           })}

@@ -8,10 +8,14 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SuperAgent from 'superagent';
 
-export default class FormDialog extends React.Component {
+
+
+
+export default class DeleteFormDialog extends React.Component {
   state = {
     open: false,
     repoName:'',
+    nameMatch:false,
     repoWebHookUrl:''
   };
 
@@ -26,7 +30,13 @@ export default class FormDialog extends React.Component {
   handleRepoNameChange=(e)=>{
 
     let state={...this.state};
+    const targetRepoName=this.props.data.name;
    state["repoName"]=e.target.value;
+   if(e.target.value == targetRepoName){
+     state["nameMatch"]=true;
+   }else{
+     state["nameMatch"]=false;
+   }
     this.setState(state);
   };
 
@@ -35,6 +45,18 @@ export default class FormDialog extends React.Component {
    state["repoWebHookUrl"]=e.target.value;
     this.setState(state);
   };
+  handleDeleteRepo=()=>{
+
+    const repoName=this.props.data.name;
+ 
+    if(this.state.nameMatch == true){
+
+    const deleteUrl='/api/github/repo/'+repoName+'/delete';
+    SuperAgent.post(deleteUrl).then((res)=>{
+      window.location.reload();
+    });
+  }
+  }
   handleCreateRepo=()=>{
     let state={...this.state};
     const Data={
@@ -50,23 +72,25 @@ export default class FormDialog extends React.Component {
               });
   };
   render() {
+
     return (
 
       <div>
-        <a onClick={this.handleClickOpen}>Create repo</a>
+          <td><a href="#" onClick={this.handleClickOpen} id={this.props.data.name}>Delete</a></td>
 
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Create a github repo!</DialogTitle>
+          <DialogTitle id="form-dialog-title">Danger! You are attempting to delete this repo</DialogTitle>
           <DialogContent>
             <DialogContentText>
-            To create a repoistory, please give us a repoistory and  a proxy url!
-            You can get the Url here at  <a href="https://smee.io" target="_blank">https://smee.io</a>
+            Please type the name of the repo <b>{this.props.data.name}</b> in the box to confirm deletion.
+            This action is irreversible
             </DialogContentText>
             <TextField
+            error={!this.state.nameMatch}
              required
              autoFocus
              margin="normal"
@@ -77,24 +101,14 @@ export default class FormDialog extends React.Component {
              fullWidth
              variant="outlined"
             />
-            <TextField
-             required
-             autoFocus
-             margin="normal"
-             id="webHook Url"
-             label="WebHook Url"
-             type="WebHookUrl"
-             onChange={this.handleRepoWebHookUrlChange}
-             fullWidth
-             variant="outlined"
-            />
+
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleCreateRepo} color="primary">
-              Create!
+            <Button onClick={this.handleDeleteRepo} color="primary">
+             Delete
             </Button>
           </DialogActions>
         </Dialog>
