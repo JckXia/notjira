@@ -12,11 +12,11 @@ NotJIRA
 * Completed:
 	* 1. Create / delete repoistory with a call to the API 
 	* 2. Authentication
+	* 3. Deployed current app to cloud 
 
-* Checklists:
-	* 1. Deploy current application to cloud 	
-	* 2. Modify database schema
-	* 3. Create mechanism for responding to webhook responses 
-	* 4. Add pull request creation and deletion to application 
-	* 5. Handle pull request merges and sees feed back for PR 
-	* 6. Deploy with heroku along the way 
+* Checklists:	
+	* 1. Modify database schema
+	* 2. Create mechanism for responding to webhook responses 
+	* 3. Add pull request creation and deletion to application 
+	* 4. Handle pull request merges and sees feed back for PR 
+	* 5. Deploy with heroku along the way 
