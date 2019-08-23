@@ -1,30 +1,27 @@
-# Rando
+NotJIRA
 
-A password generator built with React and Express.
+* Functionalities:
+	* 1. Ability to create/delete repositories 
+	* 2. Add/remove users as collaborators. 
+	* 3. Any changes made from github's site is to be synced over with the use of webhooks 
+	* 4. Ability to create/ delete branches for a repository 
+	* 5. Ability to create and delete pull requests 
+	* 6. Changes made to the pull requests are to be synced with the use of webhooks 
+	* 7. All deployments is to be done to heroku for now. (May move to AWS in the future) 
 
-This is a minimal demo of using Create React App to bootstrap a React project, connect the React app to an Express backend, and deploy the whole thing to Heroku.
+* Completed:
+	* 1. Create / delete repoistory with a call to the API 
+	* 2. Authentication
+	* 3. Deployed current app to cloud 
 
-Read the blog post: [Create React App with Express in
-Production](https://daveceddia.com/create-react-app-express-production/)
-
-## Prerequisites
-
-You need to [sign up](https://heroku.com/) for a Heroku account if you don't already have one, and install the [Heroku toolbelt](https://devcenter.heroku.com/articles/heroku-cli). (On a Mac with Homebrew, just run `brew install heroku`).
-
-## Deploy to Heroku
-
-To deploy:
-
-1. Clone this repo.
-2. Inside the repo directory, run `heroku create` (requires [Heroku toolbelt](https://devcenter.heroku.com/articles/heroku-cli)).
-3. Run `git push heroku master` to simultaneously deploy the frontend + backend to Heroku.
-
-### Using NPM
-
-Check out the `npm` branch if you're not using Yarn:
-
-`git checkout npm`
-
-And then once on that branch, the deploy command is:
-
-`git push heroku npm:master`
+* Checklists:	
+	* 1. Modify database schema
+	* 2. Create mechanism for responding to webhook responses 
+	* 3. Add pull request creation and deletion to application 
+	* 4. Handle pull request merges and sees feed back for PR 
+	* 5. Deploy with heroku along the way 
+* Contribute:	
+	* 1. To install the application, run npm install at the root folder 
+	* 2. Setup github client id and secret keys
+	* 3. Make sure mongodb is running on local
+	* 4. Make a PR! :)
