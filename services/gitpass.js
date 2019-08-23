@@ -1,5 +1,5 @@
 const keys = require('../config/keys');
-const User = require('../back/models/user.model');
+const User = require('../models/user.model');
 var GitHubStrategy = require('passport-github2').Strategy;
 const request = require('superagent');
 const Octokit = require('@octokit/rest');
@@ -29,7 +29,7 @@ module.exports = function(passport) {
       const existingUser = await User.findOne({
         gitHubId: profile.id
       });
-
+    //console.log(profile);
       if (existingUser) {
 
         const res = await User.findOneAndUpdate({
@@ -44,15 +44,17 @@ module.exports = function(passport) {
         //    console.log('EXIST ',existingUser);
         return done(null, resultUser);
       }
-
-      let userInfo=await request.get('https://api.github.com/user/'+profile.id);
+      /*
+      console.log('EXISTING USER: ',existingUser);
+      let userInfo=await request.get('https://api.github.com/users/'+profile.username);
       userInfo=JSON.stringify(userInfo);
       userInfo=JSON.parse(userInfo);
       userInfo=userInfo.text;
       userInfo=JSON.parse(userInfo);
+      */
       const user = await new User({
         gitHubId: profile.id,
-        username:userInfo.login,
+        username:profile.username,
         token: accessToken
       }).save();
       console.log(user);
@@ -60,5 +62,4 @@ module.exports = function(passport) {
       done(null, user);
     }
   ));
-
 }
