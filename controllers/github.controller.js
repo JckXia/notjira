@@ -42,7 +42,7 @@ module.exports = {
 
       // ------Attempting to create webhook-------------------------------- //
 
-      /*
+
       await octokit.repos.createHook({
         owner: user.username,
         repo: repoName,
@@ -55,11 +55,11 @@ module.exports = {
       }).then((res) => {
 
       }).catch((e) => {
-        console.log(e);
+        console.log('ERROR',e);
       });
 
-      require('../../services/githubWebHooks/webHookListener.js')(proxyUrl);
-*/
+     require('../services/githubWebHooks/webHookListener.js')(proxyUrl);
+
       //--------------------------------------------------------------------------------- //
       await userManager.addRepoToUserProfile(newRepo.id, newRepo.repo_name, user.username, proxyUrl,repoCreationResp.data.html_url,user.username);
       return res.status(201).send(newRepo);

@@ -107,6 +107,7 @@ class App extends Component {
     const data = this.state.data.filter(card => card.cardState == status);
     return data;
   }
+  
   Index(){
     return (<h2>Test route</h2>)
   }

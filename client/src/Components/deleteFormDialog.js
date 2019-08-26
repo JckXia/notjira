@@ -48,7 +48,7 @@ export default class DeleteFormDialog extends React.Component {
   handleDeleteRepo=()=>{
 
     const repoName=this.props.data.name;
- 
+
     if(this.state.nameMatch == true){
 
     const deleteUrl='/api/github/repo/'+repoName+'/delete';
