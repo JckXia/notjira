@@ -7,6 +7,8 @@ const gitHub_controller=require('../controllers/github.controller.js');
 //in our database.This way we wont have to do any creation action on our side
 
 router.post('/api/github/:repoName/task/create_branch',gitHub_controller.createBranch);
+router.get('/api/github/:repoName/branch',gitHub_controller.getAllBranch);
+router.post('/api/github/delete_branch',gitHub_controller.deleteBranch);
 
 router.post('/api/github/repo/create',gitHub_controller.createRepo);
 router.post('/api/github/repo/:repoName/delete',gitHub_controller.deleteRepo);

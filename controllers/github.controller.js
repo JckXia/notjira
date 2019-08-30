@@ -139,17 +139,24 @@ module.exports = {
     require('../../services/githubWebHooks/webHookListener.js')(proxyUrl);
     //Start listening for incoming messages on this channel
   },
-  // api/github/:repoName/:taskName/create_branch
-  //Send the branch we are branching off of in the body
-  //     the name of the new branch in the body as well
-  // api/github/:repoName/:taskName/create_branch
-  //Send the branch we are branching off of in the body
-  //     the name of the new branch in the body as well
 
+ //router.get('/api/github/:repoName/branch',gitHub_controller.getAllBranch);
+  getAllBranch:async(req,res)=>{
+    const octokit = new Octokit();
+     const data=await octokit.git.listRefs({
+       owner:req.body.owner,
+       repo:req.body.repo
+     });
+
+     if(data){
+      return res.status(200).send(data);
+     }
+     return res.status(404).send('NOT FOUND');
+  },
   createBranch: async (req, res) => {
 
     const Env = process.env.NODE_ENV;
-    const userId = Env === 'test' ? req.headers.id : await authenticationManager.getAuthenticatedUserId(req, res);
+    const userId = Env === 'test' ? req.body.authToken : await authenticationManager.getAuthenticatedUserId(req, res);
     if (userId == null) {
       return res.status(403).send('Forbidden');
     }
@@ -169,17 +176,41 @@ module.exports = {
         ref: branchName,
         sha: req.body.oldBranchHashVal
       });
-
-      /*
-        Create a Task object, save its id and name
-        into a JSON object.
-      */
-
       return res.status(200).send(data);
     } else {
       return res.status(403).send('Forbidden');
     }
   },
+  deleteBranch: async(req,res)=>{
+    const Env = process.env.NODE_ENV;
+     const userId=await authenticationManager.getAuthenticatedUserId(req,res);
+     if(userId ==null){
+       return res.status(403).send('Forbidden');
+     }
+     if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
+       await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
+
+       const authToken = Env === 'test' ? req.headers.user : req.user.token;
+       const octokit=new Octokit({
+         auth:`${authToken}`
+       });
+
+       let gitRef=req.body.ref;
+       if(gitRef.includes('refs/')){
+         gitRef=gitRef.replace('refs/','');
+       }
+       const data=await octokit.git.deleteRef({
+         owner:req.body.owner,
+         repo:req.body.repo,
+         ref: gitRef
+       });
+       return res.status(200).send(data);
+     } else {
+       return res.status(403).send('Forbidden');
+     }
+  },
+
+  //--------------------------------------------------------------//
   getPullRequests: async (req, res) => {
     await authHelper.getAuthenticatedUserId(req, res);
     const repo_owner_name = req.query.repo_owner_name;
@@ -198,8 +229,5 @@ module.exports = {
       }
       res.send(body);
     });
-  },
-  getAllBranches: async (req,res)=>{
-
   }
 }
