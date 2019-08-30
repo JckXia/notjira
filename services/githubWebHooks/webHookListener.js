@@ -6,22 +6,6 @@ module.exports=function(proxyUrl){
   const webhooks = new WebHooksApi({
     secret: 'mysecret'
   });
-
-  /*
-  source.onmessage = (event) => {
-  const webhookEvent = JSON.parse(event.data);
-  console.log('EVENT',webHookEvent);
-
-  webhooks.verifyAndReceive({
-    id: webhookEvent['x-request-id'],
-    name: webhookEvent['x-github-event'],
-    signature: webhookEvent['x-hub-signature'],
-    payload: webhookEvent.body
-  }).catch(console.error);
-
-}
-*/
-
   source.onmessage = async (event) => {
      console.log('EVENT ',event);
       const webHookEvent = JSON.parse(event.data);
@@ -39,8 +23,5 @@ module.exports=function(proxyUrl){
           const payload=webHookEvent.body;
       }
       console.log(webHookEventName);
-
-
     }
-
 }

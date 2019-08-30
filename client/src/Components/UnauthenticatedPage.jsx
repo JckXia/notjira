@@ -8,8 +8,7 @@ class UnauthenticatedPage extends Component {
   render(){
   return (
     <div>
-    <Header auth={this.props.auth}/>
-    <DisplayUserTask auth={this.props.auth} userData={this.props.userData}/>
+    <DisplayUserTask acquireProjectInfo={this.props.acquireProjectInfo} auth={this.props.auth} userData={this.props.userData}/>
 </div>
 );
 }

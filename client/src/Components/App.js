@@ -10,6 +10,7 @@ import Request from 'superagent';
 import UnauthenticatedPage from './UnauthenticatedPage';
 
 import {BrowserRouter as Router, Route, Link} from "react-router-dom";
+import RepoWorkSpace from './RepoWorkSpace';
 
 //Within the App file, keep a list of all cards in this way
 /*
@@ -107,22 +108,40 @@ class App extends Component {
     const data = this.state.data.filter(card => card.cardState == status);
     return data;
   }
+
+  Users() {
+  return <h2>Users</h2>;
+  }
+
+  acquireProjectInfo(repoName){
+    if(!this.state.userIsLoggedIn){
+    //Failure redirect
+      window.location.replace('/');
+    }
+
+
+    let stateObject={...this.state};
+    stateObject.currentRepo= {};
+    stateObject.currentRepo.name=repoName;
+    this.setState(stateObject);
+     //TODO: Use the cache. Such that we dont need to make calls to get more data
   
-  Index(){
-    return (<h2>Test route</h2>)
+        return repoName;
   }
 
 
-  render() {
+   render() {
     const data = {
       ...this.state
     };
 
+
     return (<Router>
       <div className="App">
-
-      <UnauthenticatedPage auth={this.state.userIsLoggedIn} userData={data}/>
-      </div>
+      <Header auth={this.state.userIsLoggedIn}/>
+    <Route exact path="/" render={(props)=><UnauthenticatedPage acquireProjectInfo={(obj)=>this.acquireProjectInfo(obj)} auth={this.state.userIsLoggedIn} userData={data} />}/>
+  <Route path ="/repo" render={(props)=><RepoWorkSpace repoName={this.state.currentRepo.name}/>}/>
+    </div>
     </Router>);
   }
 }

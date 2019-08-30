@@ -137,9 +137,7 @@ module.exports = {
     });
 
     require('../../services/githubWebHooks/webHookListener.js')(proxyUrl);
-
     //Start listening for incoming messages on this channel
-
   },
   // api/github/:repoName/:taskName/create_branch
   //Send the branch we are branching off of in the body
@@ -147,6 +145,7 @@ module.exports = {
   // api/github/:repoName/:taskName/create_branch
   //Send the branch we are branching off of in the body
   //     the name of the new branch in the body as well
+
   createBranch: async (req, res) => {
 
     const Env = process.env.NODE_ENV;
@@ -199,5 +198,8 @@ module.exports = {
       }
       res.send(body);
     });
+  },
+  getAllBranches: async (req,res)=>{
+
   }
 }

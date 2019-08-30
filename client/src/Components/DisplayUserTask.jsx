@@ -4,17 +4,10 @@ import Column from './column';
 import ProjectTable from './ProjectTable';
 class DisplayUserTask extends Component{
 
-  returnFilteredData(status){
-   console.log('Check');
-   console.log(this.props);
-   const data=this.props.userData.data.filter(card=>card.cardState==status);
-   return data;
-  }
+
 
 
    renderUserData(){
-  //   const apiCallFunct=this.testMakingAPICall;
-
    const headerArr=['Repo name','Creation date','link to repo','repo creator','Delete'];
    const repoData=this.props.userData.repos;
 
@@ -36,8 +29,7 @@ class DisplayUserTask extends Component{
           )
         }
        return (
-
-         <ProjectTable headers={headerArr} rows={repoData}/>
+         <ProjectTable acquireProjectInfo={this.props.acquireProjectInfo} headers={headerArr} rows={repoData}/>
        );
      }
    }

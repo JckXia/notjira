@@ -34,7 +34,9 @@ class ProjectTable extends Component {
        window.location.reload();
      });
   }
-
+  supplyRepoInfo=(data)=>{
+    this.props.acquireProjectInfo(data.name);
+  }
   renderProjectDataTable=()=>{
 
       console.log(this.props.rows);
@@ -44,7 +46,7 @@ class ProjectTable extends Component {
 
             return(
               <tr>
-                <td>{data.name}</td>
+                <td> <Link to="/repo" onClick={()=>this.supplyRepoInfo(data)}>{data.name}</Link></td>
                 <td>{data.date_created}</td>
                  <td><a href={data.repo_html_url} target="_blank">{data.repo_html_url}</a></td>
                 <td>{data.repo_creator}</td>

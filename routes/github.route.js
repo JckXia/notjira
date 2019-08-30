@@ -9,10 +9,14 @@ const gitHub_controller=require('../controllers/github.controller.js');
 router.post('/api/github/:repoName/task/create_branch',gitHub_controller.createBranch);
 
 router.post('/api/github/repo/create',gitHub_controller.createRepo);
-
 router.post('/api/github/repo/:repoName/delete',gitHub_controller.deleteRepo);
 router.post('/api/getPullRequests',gitHub_controller.getPullRequests);
 
 router.post('/api/github/:ownerName/:repoName/webhook/create',gitHub_controller.createWebHook);
+
+
+/*
+ Below are API end points that we can use to work with References
+*/
 
 module.exports=router;
