@@ -25,6 +25,7 @@ async function getRepoById(repoId) {
 }
 
 async function getRepoByName(repoName) {
+  console.log(repoName);
   const repo = await Repo.findOne({
     repo_name: repoName
   });

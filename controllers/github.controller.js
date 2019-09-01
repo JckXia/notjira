@@ -17,7 +17,6 @@ module.exports = {
   //Create a repository
   createRepo: async (req, res) => {
 
-
     const Env = process.env.NODE_ENV;
 
     const userId = Env == 'test' ? req.headers.id : await authenticationManager.getAuthenticatedUserId(req, res);
@@ -42,8 +41,6 @@ module.exports = {
       const newRepo = await repoManager.saveNewRepoToDataBase(repoName, user.username, user.id, [], [], proxyUrl,repoCreationResp.data.html_url);
 
       // ------Attempting to create webhook-------------------------------- //
-
-
       await octokit.repos.createHook({
         owner: user.username,
         repo: repoName,
@@ -253,6 +250,7 @@ module.exports = {
    //2. Make call to API, create associated branches along with it
    // TODO: We will need to reference the data somehow
     const requestBody=req.body;
+
     if(requestBody.taskTitle ==null || !requestBody.taskDesc==null || req.params.repoName ==null){
     return  res.status(400).send('Missing parameters');
     }
@@ -272,10 +270,16 @@ module.exports = {
   res.status(200).send('Successful');
 },
   //-------------------------------------------------------//
+//api/repo/:repoName
   getRepoData:async(req,res)=>{
     //When we click on the Link, which takes us to
     //the repoPage, which consists of the details.
-    //Data needed:
+  //  console.log('ROUTE REACHED');
+    const repoData=await repoManager.getRepoByName(req.params.repoName);
+        //const PId=await authenticationManager.getAuthenticatedUserId(req,res);
+    //console.log(repoData);
+    //console.log(PId);
+    //return res.status(200).send(repoData);
 
     const userId=await authenticationManager.getAuthenticatedUserId(req,res);
     if(userId ==null){
@@ -283,7 +287,9 @@ module.exports = {
     }
     if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
       await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
-         
+         const repoData=await repoManager.getRepoByName(req.params.repoName);
+
+         return res.status(200).send(repoData);
       }
   }
 }

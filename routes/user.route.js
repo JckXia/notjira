@@ -6,7 +6,7 @@ router.get('/',user_controller.testGetAllUsers);
 
 router.get('/username',user_controller.getUserName);
 
-router.get('/:userName/repo',user_controller.returnAllReposFromUserProfile);
+//router.get('/:userName/repo',user_controller.returnAllReposFromUserProfile);
 
 router.get('/:id',user_controller.getUserById);
 

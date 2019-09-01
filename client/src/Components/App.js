@@ -113,7 +113,7 @@ class App extends Component {
   return <h2>Users</h2>;
   }
 
-  acquireProjectInfo(repoName){
+  async acquireProjectInfo(repoName){
     if(!this.state.userIsLoggedIn){
     //Failure redirect
       window.location.replace('/');
@@ -125,7 +125,7 @@ class App extends Component {
     stateObject.currentRepo.name=repoName;
     this.setState(stateObject);
      //TODO: Use the cache. Such that we dont need to make calls to get more data
-  
+  //  const reqUrl=`/api/repo/data/${repoName};
         return repoName;
   }
 
