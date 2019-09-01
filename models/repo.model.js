@@ -14,4 +14,4 @@ let RepoSchema=new Schema({
   'date_created':{type:String},
   'repo_html_url':{type:String}
 });
-module.exports=mongoose.model('Repo',RepoSchema);
+module.exports=mongoose.model('repo',RepoSchema);

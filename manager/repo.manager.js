@@ -1,6 +1,6 @@
 const Repo = require('../models/repo.model');
-
-
+const Task=require('../models/task.model');
+const ObjectID=require('mongodb').ObjectID;
 //A call will be in the controller
 //These functions will be storing the data
 //that is returned from the call
@@ -125,17 +125,33 @@ async function deleteRepoFromDataBase(repoId) {
 
 //Add a task to the repos
 //TaskObject is of mongoose object task
-async function addTaskToRepo(repoId, TaskObject) {
-  const res = await Repo.findOneAndUpdate({
-    _id: repoId
+async function addTaskToRepo(req, res) {
+
+  const newTaskObject=await new Task({
+    task_state:'toDo',
+    taskTitle:req.body.taskTitle,
+    taskDesc:req.body.taskDesc,
+    assignedTo:[],
+    branch:[],
+    pullRequest:[],
+    repoName:req.params.repoName
+  }).save();
+
+ const basicTaskData={
+  taskTitle:req.body.taskTitle,
+  _id:newTaskObject._id
+};
+
+  const updateResult = await Repo.findOneAndUpdate({
+    repo_name: req.params.repoName
   }, {
     $push: {
-      repo_cards: TaskObject
+      taskItems: basicTaskData
     }
   });
 
-  const updateRepo = await getRepoById(repoId);
-  return updateRepo;
+  return newTaskObject;
+ //  console.log(newTaskObject);
 }
 
 /*
@@ -156,6 +172,20 @@ async function getTasksFromRepo(repoId) {
   return repo.repo_cards;
 }
 
+async function removeTaskFromRepo(taskId,repoId){
+
+  const result=await Repo.findOneAndUpdate({
+    _id:new ObjectID(repoId)
+  },{
+    $pull:{
+       taskItems:{
+         _id:new ObjectID(taskId)
+       }
+    }
+  });
+   return result;
+}
+
 module.exports = {
   getTasksFromRepo,
   getRepoId,
@@ -167,5 +197,6 @@ module.exports = {
   userIsCollaboratorOfRepo,
   userIsAdminOfRepo,
   getRepoById,
-  getRepoByName
+  getRepoByName,
+  removeTaskFromRepo
 };

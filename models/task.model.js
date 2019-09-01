@@ -4,10 +4,11 @@ const Schema=mongoose.Schema;
 let TaskSchema=new Schema({
    'task_state':{type:String,required:true,enum: ['toDo', 'inProg','Done']},
    'taskTitle':{type:String},
-   'taskDetail':{type:String},
+   'taskDesc':{type:String},
    'assignedTo':{type:Array},
-   'branch':{type:String},
-   'pullRequest':{type:String}
+   'branch':{type:Array},
+   'pullRequest':{type:Array},
+   'repoName':{type:String}
 });
 
-module.exports=mongoose.model('Task',TaskSchema);
+module.exports=mongoose.model('task',TaskSchema);

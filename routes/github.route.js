@@ -10,6 +10,8 @@ router.post('/api/github/:repoName/task/create_branch',gitHub_controller.createB
 router.get('/api/github/:repoName/branch',gitHub_controller.getAllBranch);
 router.post('/api/github/delete_branch',gitHub_controller.deleteBranch);
 
+router.post('/api/task/:repoName/create_task',gitHub_controller.createTask);
+router.post('/api/task/:repoName/delete_task',gitHub_controller.deleteTask);
 router.post('/api/github/repo/create',gitHub_controller.createRepo);
 router.post('/api/github/repo/:repoName/delete',gitHub_controller.deleteRepo);
 router.post('/api/getPullRequests',gitHub_controller.getPullRequests);

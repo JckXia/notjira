@@ -7,6 +7,7 @@ const authenticationManager = require('../manager/authentication.manager');
 const projectManager = require('../manager/project.manager');
 const repoManager = require('../manager/repo.manager');
 const userManager = require('../manager/user.manager');
+const taskManager=require('../manager/task.manager');
 const EventSource = require('eventsource');
 const Octokit = require('@octokit/rest');
 const WebHooksApi = require('@octokit/webhooks');
@@ -154,8 +155,11 @@ module.exports = {
      return res.status(404).send('NOT FOUND');
   },
   createBranch: async (req, res) => {
-
+   //Branch creation information may require TaskId
+   //This is such, that we are able to insert this branch adminInformation
+   //Into the branch object
     const Env = process.env.NODE_ENV;
+
     const userId = Env === 'test' ? req.body.authToken : await authenticationManager.getAuthenticatedUserId(req, res);
     if (userId == null) {
       return res.status(403).send('Forbidden');
@@ -176,7 +180,12 @@ module.exports = {
         ref: branchName,
         sha: req.body.oldBranchHashVal
       });
-      return res.status(200).send(data);
+
+      const addBranchToTaskRes=await taskManager.addGitBranchToTask(req,res);
+      if(addBranchToTaskRes.lastErrorObject.updatedExisting == true){
+        return res.status(200).send(data);
+      }
+      return res.status(500).send('Internal server err');
     } else {
       return res.status(403).send('Forbidden');
     }
@@ -209,7 +218,6 @@ module.exports = {
        return res.status(403).send('Forbidden');
      }
   },
-
   //--------------------------------------------------------------//
   getPullRequests: async (req, res) => {
     await authHelper.getAuthenticatedUserId(req, res);
@@ -229,5 +237,53 @@ module.exports = {
       }
       res.send(body);
     });
+  },
+  createPullRequest:async (req,res)=>{
+
+  },
+  deletePullRequest:async (req,res)=>{
+
+  },
+
+  //-------------------------------------------------------//
+ //api/task/:repoName/create_task
+  createTask:async(req,res)=>{
+   //TODO: the steps that we need to take for these calls:
+   //1. Create Task item, save the branch reference to the task item
+   //2. Make call to API, create associated branches along with it
+   // TODO: We will need to reference the data somehow
+    const requestBody=req.body;
+    if(requestBody.taskTitle ==null || !requestBody.taskDesc==null || req.params.repoName ==null){
+    return  res.status(400).send('Missing parameters');
+    }
+    const result=await repoManager.addTaskToRepo(req,res);
+
+  },
+  //api/task/:repoName/delete_task
+  deleteTask:async(req,res)=>{
+  // We will need to update tasks at two different
+  // places
+  // 1. We need to remove this task from Task collection
+  //2. We will need to remove the task id, from the repo
+  const requestBody=req.body;
+  const repoName=req.params.repoName;
+  await taskManager.removeTask(req,res);
+  await repoManager.removeTaskFromRepo(requestBody.taskId,requestBody.repoId);
+  res.status(200).send('Successful');
+},
+  //-------------------------------------------------------//
+  getRepoData:async(req,res)=>{
+    //When we click on the Link, which takes us to
+    //the repoPage, which consists of the details.
+    //Data needed:
+
+    const userId=await authenticationManager.getAuthenticatedUserId(req,res);
+    if(userId ==null){
+      return res.status(403).send('Forbidden');
+    }
+    if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
+      await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
+         
+      }
   }
 }
