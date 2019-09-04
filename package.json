@@ -24,6 +24,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "proxy": "^0.2.4",
+    "react-devtools": "^3.6.3",
     "superagent": "^5.0.2",
     "util": "^0.11.1"
   },

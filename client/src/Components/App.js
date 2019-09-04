@@ -140,7 +140,7 @@ class App extends Component {
       <div className="App">
       <Header auth={this.state.userIsLoggedIn}/>
     <Route exact path="/" render={(props)=><UnauthenticatedPage acquireProjectInfo={(obj)=>this.acquireProjectInfo(obj)} auth={this.state.userIsLoggedIn} userData={data} />}/>
-  <Route path ="/repo" render={(props)=><RepoWorkSpace repoName={this.state.currentRepo.name}/>}/>
+  <Route path ="/repo" auth={this.state.userIsLoggedIn} render={(props)=><RepoWorkSpace repoName={this.state.currentRepo.name}/>}/>
     </div>
     </Router>);
   }

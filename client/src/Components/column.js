@@ -1,44 +1,72 @@
-import React, { Component } from 'react';
-import ToDoCard from './ToDoCards';
 
-var data={
-   toDoCards:[
-    {cardId:1,cardState:"In_progress"},
-    {cardId:2,cardState:"To_do"},
-    {cardId:3,cardState:"Completed"}
-   ]
+import React from 'react';
+import styled from 'styled-components'
+import Task from './task';
+import {Droppable} from 'react-beautiful-dnd';
+const Container = styled.div`
+  margin:8px;
+  border:1px solid lightgrey;
+  border-radius:2px
+  width:33%;
+  display:flex;
+  flex-direction:column;
+`;
+const Title=styled.h3`
+  padding:8px
+`;
+const TaskList = styled.div `
+  padding: 20px
+  flex-grow:1
+  min-height:60%;
+  background:#d7deda;
+`;
+
+class TaskLists extends React.Component{
+  render(){
+     const {provided,innerRef}=this.props;
+     return (
+       <TaskList
+         ref={innerRef}
+         {...provided.droppableProps}
+         >
+         {this.props.tasks.map((task,index)=>
+           <Task
+          key={task.id}
+          task={task}
+          index={index}
+          innerRef={provided.innerRef}/>)}
+         {provided.placeholder}
+       </TaskList>
+     );
+  }
 };
 
-//Column should be passed a list of data to render, as well
-//as the parent pointer to update the state
-class Column extends Component{
-  constructor(props){
-    super(props);
-    this.state={
-      rerender:true
-    };
-  }
+/*
+<div
+  ref={provided.innerRef}
+  {...provided.droppableProps}
+  >{this.props.tasks.map((task,index)=> <Task key={task.id} task={task} index={index} innerRef={provided.innerRef}/>)}
+  {provided.placeholder}
+</div>
+*/
+
+export default class Column extends React.Component{
    render(){
-      return(
-        <div className="col s2 m4" >
-        <blockquote className={this.props.colName}>
-            <h4>{this.props.colName}</h4>
-        </blockquote>
+      return (
 
-        {this.props.data.map((data)=>{
-           
-          return(
-                <ToDoCard
-                id={data.cardId}
-                originalData={data}
-                state={data.cardState} parentComponent={this.props.parent} toDoItem={data.toDoItem}
-                />
-          )
-        })}
+         <div className="col s2 m4">
+       <blockquote className={this.props.column.title}>
+           <Title>{this.props.column.title}</Title>
+       </blockquote>
+     <Droppable style={{transform:"none"}} droppableId ={this.props.column.id}>
 
-        </div>
-      )
+       {(provided)=>(
+      <TaskLists provided={provided} tasks={this.props.tasks} innerRef={provided.innerRef}/>
+
+       )}
+   </Droppable>
+ </div>
+
+      );
    }
 };
-
-export default Column;
