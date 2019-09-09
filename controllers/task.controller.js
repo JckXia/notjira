@@ -61,5 +61,25 @@ module.exports={
       }else{
           return res.status(403).send('Forbidden!');
       }
+  },
+  createTask:async(req,res)=>{
+    if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
+      await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)){
+    const requestBody=req.body;
+    if(requestBody.taskTitle == null || req.params.repoName == null){
+      return res.status(400).send('Missing parameters');
+    }
+    const result=await repoManager.addTaskToRepo(req,res);
+  }
+  return res.status(200).send(result);
+  },
+  getTask:async(req,res)=>{
+
+  },
+  getAllTasks:async(req,res)=>{
+
+  },
+  deleteTask:async(req,res)=>{
+
   }
 };

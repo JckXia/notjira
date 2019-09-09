@@ -251,23 +251,52 @@ module.exports = {
    // TODO: We will need to reference the data somehow
     const requestBody=req.body;
 
-    if(requestBody.taskTitle ==null || !requestBody.taskDesc==null || req.params.repoName ==null){
+    if(requestBody.taskName ==null || req.params.repoName ==null){
     return  res.status(400).send('Missing parameters');
     }
-    const result=await repoManager.addTaskToRepo(req,res);
+    const userId= await authenticationManager.getAuthenticatedUserId(req, res);
+    if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
+      await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
 
-  },
-  //api/task/:repoName/delete_task
+    const result=await repoManager.addTaskToRepo(req,res);
+    return res.status(200).send(result);
+  }else{
+    return res.status(403).send('User unable to create new tasks');
+  }
+},
+  //api/github/:repoName/delete_task
+  //Params:
+  // taskId: req.body.taskId
+  // repoName: req.parms.repoName
   deleteTask:async(req,res)=>{
-  // We will need to update tasks at two different
-  // places
-  // 1. We need to remove this task from Task collection
-  //2. We will need to remove the task id, from the repo
+
   const requestBody=req.body;
   const repoName=req.params.repoName;
-  await taskManager.removeTask(req,res);
-  await repoManager.removeTaskFromRepo(requestBody.taskId,requestBody.repoId);
-  res.status(200).send('Successful');
+ repoManager.removeTaskFromRepo(requestBody.taskId,repoName).then(()=>{
+   taskManager.removeTask(req,res).then(()=>{
+      console.log('Deletion finished');
+        return res.status(200).send('Successful');
+   });
+ })
+
+},
+//api/github/:repoName/getTasks
+getAllTasks:async(req,res)=>{
+  const userId=await authenticationManager.getAuthenticatedUserId(req,res);
+  if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
+    await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
+        if(req.params.repoName == null){
+          return res.status(400).send('Incorrect parameters!');
+        }
+      const repo=await repoManager.getRepoByName(req.params.repoName);
+
+      return res.status(200).send(repo.taskItems);
+    }else{
+      return res.status(403).send('Forbidden!');
+    }
+},
+getOneTask:async(req,res)=>{
+
 },
   //-------------------------------------------------------//
 //api/repo/:repoName

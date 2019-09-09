@@ -23,7 +23,8 @@ const TaskList = styled.div `
 
 class TaskLists extends React.Component{
   render(){
-     const {provided,innerRef}=this.props;
+     const {repoName,provided,innerRef}=this.props;
+ 
      return (
        <TaskList
          ref={innerRef}
@@ -32,8 +33,10 @@ class TaskLists extends React.Component{
          {this.props.tasks.map((task,index)=>
            <Task
           key={task.id}
+          taskId={task.task_id}
           task={task}
           index={index}
+          repoName={repoName}
           innerRef={provided.innerRef}/>)}
          {provided.placeholder}
        </TaskList>
@@ -61,7 +64,7 @@ export default class Column extends React.Component{
      <Droppable style={{transform:"none"}} droppableId ={this.props.column.id}>
 
        {(provided)=>(
-      <TaskLists provided={provided} tasks={this.props.tasks} innerRef={provided.innerRef}/>
+      <TaskLists provided={provided} {...this.props}  innerRef={provided.innerRef}/>
 
        )}
    </Droppable>

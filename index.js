@@ -12,6 +12,7 @@ const User=require('./models/user.model');
 const user=require('./routes/user.route');
 const github=require('./routes/github.route');
 const auth=require('./routes/auth.route');
+const task=require('./routes/task.route');
 const keys = require('./config/keys');
 
 let dev_db_url= process.env.MONGODB_URI||"mongodb://127.0.0.1:27017/JiraBackEnd";
@@ -52,6 +53,7 @@ app.use('/user',user);
 //app.use('/card',card);
 app.use('/',github);
 app.use('/',auth);
+app.use('/api',task);
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.

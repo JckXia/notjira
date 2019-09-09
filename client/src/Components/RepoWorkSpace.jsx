@@ -13,13 +13,61 @@ const Container = styled.div`
   display:flex
 `;
 class RepoWorkSpace extends Component {
+
+  state={
+  tasks:{
+
+  },
+  columns:{
+    'column-1':{
+      id:'column-1',
+      title:'To do',
+      taskIds:[],
+    },
+    'column-2':{
+      id:'column-2',
+      title:'In Progress',
+      taskIds:[],
+    },
+    'column-3':{
+      id:'column-3',
+      title:'Code review',
+      taskIds:[],
+    },
+    'column-4':{
+      id:'column-4',
+      title:'Done',
+      taskIds:[ ],
+    }
+  },
+  //Facilitae rendering of the columns
+  columnOrder:['column-1','column-2','column-3','column-4'],
+};
+
  async componentDidMount(){
-    const repoName=this.props.repoName;
+    let repoName=this.props.repoName;
+    //TODO: Store this in local storage, if repoName is null
+    // Use react local-storage instead
+     if(repoName === undefined){
+    //   repoName=window.localStorage.getItem('current_repo_name');
+     }
+  //  window.localStorage.setItem('current_repo_name', repoName);
+
     const reqUrl='/api/github/repo/'+repoName;
     const APIResp=await Request.get(reqUrl).send({});
-    this.setState(APIResp);
+    const reqTaskUrl='/api/github/'+repoName+'/getTasks';
+    const taskItems=APIResp.body.taskItems;
+    let stateObject={...this.state};
+    console.log(stateObject.tasks);
+    const currentRef=this;
+    taskItems.map((item,index)=>{
 
-        return repoName;
+       const taskId='task-'+index;
+     stateObject.tasks[taskId]= {id:taskId,content:item.taskName,task_id:item._id};
+     stateObject.columns['column-1'].taskIds.push(taskId);
+    });
+     this.setState(stateObject);
+      return repoName;
  }
 
  onDragEnd=result=>{
@@ -76,59 +124,35 @@ class RepoWorkSpace extends Component {
   };
   this.setState(newState);
  };
-  state={
-  tasks:{
-    'task-1':{id:'task-1',content:'Update Git API endpoints'},
-    'task-2':{id:'task-2',content:'Update current UI with MaterialUI'},
-    'task-3':{id:'task-3',content:'Trim unused code'},
-    'task-4':{id:'task-4',content:'Rewrite controller logic to handle error thrown'}
-  },
-  columns:{
-    'column-1':{
-      id:'column-1',
-      title:'To do',
-      taskIds:['task-1','task-2','task-3','task-4'],
-    },
-    'column-2':{
-      id:'column-2',
-      title:'In Progress',
-      taskIds:[],
-    },
-    'column-3':{
-      id:'column-3',
-      title:'Code review',
-      taskIds:[],
-    },
-    'column-4':{
-      id:'column-4',
-      title:'Done',
-      taskIds:[ ],
-    }
-  },
-  //Facilitae rendering of the columns
-  columnOrder:['column-1','column-2','column-3','column-4'],
-};
+
 
 //export default initalData;
 //this.state=
   render(){
-    const {repoName} =this.props;
+    const {repoName,auth} =this.props;
+     if(auth == true){
   return (
     <DragDropContext onDragEnd={this.onDragEnd}>
     <div class="row">
       <Container>
-              {
+            {
           this.state.columnOrder.map((columnId)=>{
           const column = this.state.columns[columnId];
           const tasks=column.taskIds.map(taskId=>this.state.tasks[taskId]);
 
         //   const tasks=column.taskIds.map(taskId=>this.state.tasks[taskId]);
-           return <Column key={column.id} column={column} tasks={tasks} />;
+           return <Column key={column.id} repoName={repoName} column={column} tasks={tasks} />;
         })}
       </Container>
     </div>
   </DragDropContext>
 );
+}else{
+  return(
+    <h3> <code>Forbidden 403. Please login!</code></h3>
+  )
+}
+
 }
 };
 

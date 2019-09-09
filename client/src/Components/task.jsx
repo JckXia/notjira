@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Draggable} from 'react-beautiful-dnd';
- 
+import request from 'superagent';
+
 const Container=styled.div`
 
 `;
@@ -14,6 +15,23 @@ const Handle=styled.div`
    margin-right:8px;
 `;
 class Containers extends React.Component{
+  deleteTask(){
+     const taskId=this.props.taskId;
+     const repoName=this.props.repoName;
+
+
+     const requestData={taskId,repoName};
+     const requestUrl='/api/github/'+repoName+'/delete_task';
+     request.post(requestUrl).send(requestData).then((res)=>{
+       console.log(res);
+       if(res.statusCode == 200){
+         alert('Task deleted successfully!');
+        window.location.reload();
+       }else{
+         alert('Unkown error occured');
+       }
+     });
+  }
   render(){
     const {task,provided,innerRef,isDragging}=this.props;
     return(
@@ -31,10 +49,11 @@ class Containers extends React.Component{
                 </div>
 
                 <div class="card-action">
-                  <a href="#">Reassign</a>
-                  <a href="#">Mark as done</a>
+                  <a href="#">View more</a>
+
+                  <a onClick={()=>this.deleteTask()}>Delete</a>
                 </div>
-              </div>
+          </div>
     </Container>
     )
   }
@@ -60,7 +79,7 @@ export default class Task extends React.Component{
    return(
      <Draggable draggableId={this.props.task.id} index={this.props.index}>
        {(provided,snapshot)=>(
-         <Containers task={this.props.task} provided={provided} isDragging={snapshot.isDragging} innerRef={provided.innerRef}/>
+         <Containers {...this.props}provided={provided} isDragging={snapshot.isDragging} innerRef={provided.innerRef}/>
 
        )}
      </Draggable>

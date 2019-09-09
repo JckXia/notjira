@@ -130,8 +130,8 @@ async function addTaskToRepo(req, res) {
 
   const newTaskObject=await new Task({
     task_state:'toDo',
-    taskTitle:req.body.taskTitle,
-    taskDesc:req.body.taskDesc,
+    taskName:req.body.taskName,
+    taskDesc:req.body.taskDesc ? req.body.taskDesc:'',
     assignedTo:[],
     branch:[],
     pullRequest:[],
@@ -139,7 +139,7 @@ async function addTaskToRepo(req, res) {
   }).save();
 
  const basicTaskData={
-  taskTitle:req.body.taskTitle,
+  taskName:req.body.taskName,
   _id:newTaskObject._id
 };
 
@@ -173,10 +173,10 @@ async function getTasksFromRepo(repoId) {
   return repo.repo_cards;
 }
 
-async function removeTaskFromRepo(taskId,repoId){
+async function removeTaskFromRepo(taskId,repoName){
 
   const result=await Repo.findOneAndUpdate({
-    _id:new ObjectID(repoId)
+    repo_name:repoName
   },{
     $pull:{
        taskItems:{

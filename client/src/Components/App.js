@@ -45,6 +45,8 @@ class App extends Component {
         githubId: null,
         userName: null
       },
+      currentPage:'repo_lists',
+      currentRepo:{},
       data: [
         {
           cardId: 1,
@@ -96,7 +98,7 @@ class App extends Component {
       stateObject.user.userName = resp.body.username;
       stateObject.repos = resp.body.repo_lists;
       stateObject.userIsLoggedIn = true;
-
+      stateObject.currentPage='repo_lists';
       this.setState(stateObject);
       //SetState the data
     }
@@ -123,6 +125,7 @@ class App extends Component {
     let stateObject={...this.state};
     stateObject.currentRepo= {};
     stateObject.currentRepo.name=repoName;
+    stateObject.currentPage='repo_detail';
     this.setState(stateObject);
      //TODO: Use the cache. Such that we dont need to make calls to get more data
   //  const reqUrl=`/api/repo/data/${repoName};
@@ -138,9 +141,10 @@ class App extends Component {
 
     return (<Router>
       <div className="App">
-      <Header auth={this.state.userIsLoggedIn}/>
+      <Header repoInfo={this.state.currentRepo} currentPage={this.state.currentPage} auth={this.state.userIsLoggedIn}/>
     <Route exact path="/" render={(props)=><UnauthenticatedPage acquireProjectInfo={(obj)=>this.acquireProjectInfo(obj)} auth={this.state.userIsLoggedIn} userData={data} />}/>
-  <Route path ="/repo" auth={this.state.userIsLoggedIn} render={(props)=><RepoWorkSpace repoName={this.state.currentRepo.name}/>}/>
+
+  <Route path ="/repo"  render={(props)=><RepoWorkSpace auth={this.state.userIsLoggedIn} repoName={this.state.currentRepo.name}/>}/> 
     </div>
     </Router>);
   }

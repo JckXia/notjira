@@ -1,6 +1,7 @@
-import React, {Component} from 'react';
+import React, {Component,Link} from 'react';
 import SuperAgent from 'superagent';
 import FormDialog from './FormDialog';
+import CreateTaskDialog from './CreateTaskDialog';
 class Header extends Component {
 
   testMakingAPICall = () => {
@@ -67,6 +68,7 @@ class Header extends Component {
   };
   renderHeader() {
     //   const apiCallFunct=this.testMakingAPICall;
+    const currentPage=this.props.currentPage;
     switch (this.props.auth) {
 
       case false:
@@ -74,6 +76,7 @@ class Header extends Component {
           <a class="waves-effect waves-light btn-large" href="/auth/github/login">Login with github</a>
         </ul>);
       case true:
+        if(currentPage =='repo_lists'){
         return (<ul id="nav-mobile" class="right">
           <li>
             <a href="collapsible.html">Admin user</a>
@@ -92,14 +95,32 @@ class Header extends Component {
           </li>
 
         </ul>);
+      }
+      return (<ul id="nav-mobile" class="right">
+
+        <li>
+          <a href="sass.html">Backlog</a>
+        </li>
+        <li>
+          <CreateTaskDialog currentRepo={this.props.repoInfo}/>
+        </li>
+        <li>
+          <a href="/">Projects</a>
+        </li>
+        <li>
+          <a href="/auth/github/logout">Logout</a>
+        </li>
+      </ul>);
+
     }
   }
+
 
   render() {
     return (<header>
       <nav>
-        <div class="nav-wrapper">
-          <a href="#" class="brand-logo">NotJira</a>
+        <div className="nav-wrapper">
+          <a href="#" className="brand-logo">NotJira</a>
           {this.renderHeader()}
         </div>
       </nav>
