@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {Draggable} from 'react-beautiful-dnd';
 import request from 'superagent';
+import IssueCardDialog from './IssueCardDialog';
 
 const Container=styled.div`
 
@@ -18,8 +19,6 @@ class Containers extends React.Component{
   deleteTask(){
      const taskId=this.props.taskId;
      const repoName=this.props.repoName;
-
-
      const requestData={taskId,repoName};
      const requestUrl='/api/github/'+repoName+'/delete_task';
      request.post(requestUrl).send(requestData).then((res)=>{
@@ -49,8 +48,7 @@ class Containers extends React.Component{
                 </div>
 
                 <div class="card-action">
-                  <a href="#">View more</a>
-
+   <IssueCardDialog/>
                   <a onClick={()=>this.deleteTask()}>Delete</a>
                 </div>
           </div>

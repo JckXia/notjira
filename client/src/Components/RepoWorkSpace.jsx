@@ -49,9 +49,9 @@ class RepoWorkSpace extends Component {
     //TODO: Store this in local storage, if repoName is null
     // Use react local-storage instead
      if(repoName === undefined){
-    //   repoName=window.localStorage.getItem('current_repo_name');
+      repoName=window.localStorage.getItem('current_repo_name');
      }
-  //  window.localStorage.setItem('current_repo_name', repoName);
+    window.localStorage.setItem('current_repo_name', repoName);
 
     const reqUrl='/api/github/repo/'+repoName;
     const APIResp=await Request.get(reqUrl).send({});
@@ -130,6 +130,10 @@ class RepoWorkSpace extends Component {
 //this.state=
   render(){
     const {repoName,auth} =this.props;
+    let currentRepo=repoName;
+    if(repoName === undefined){
+       currentRepo=window.localStorage.getItem('current_repo_name');
+    }
      if(auth == true){
   return (
     <DragDropContext onDragEnd={this.onDragEnd}>
@@ -141,7 +145,7 @@ class RepoWorkSpace extends Component {
           const tasks=column.taskIds.map(taskId=>this.state.tasks[taskId]);
 
         //   const tasks=column.taskIds.map(taskId=>this.state.tasks[taskId]);
-           return <Column key={column.id} repoName={repoName} column={column} tasks={tasks} />;
+           return <Column key={column.id} repoName={currentRepo} column={column} tasks={tasks} />;
         })}
       </Container>
     </div>
