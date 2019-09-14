@@ -48,7 +48,7 @@ class Containers extends React.Component{
                 </div>
 
                 <div class="card-action">
-   <IssueCardDialog/>
+                  <IssueCardDialog/>
                   <a onClick={()=>this.deleteTask()}>Delete</a>
                 </div>
           </div>

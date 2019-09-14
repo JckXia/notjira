@@ -44,14 +44,7 @@ module.exports = function(passport) {
         //    console.log('EXIST ',existingUser);
         return done(null, resultUser);
       }
-      /*
-      console.log('EXISTING USER: ',existingUser);
-      let userInfo=await request.get('https://api.github.com/users/'+profile.username);
-      userInfo=JSON.stringify(userInfo);
-      userInfo=JSON.parse(userInfo);
-      userInfo=userInfo.text;
-      userInfo=JSON.parse(userInfo);
-      */
+ 
       const user = await new User({
         gitHubId: profile.id,
         username:profile.username,
