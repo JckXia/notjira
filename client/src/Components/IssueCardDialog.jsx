@@ -16,7 +16,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import SuperAgent from 'superagent';
+import Request from 'superagent';
 import gitBranch from '../icons/gitBranch.png';
 import gitPR from '../icons/gitPR.png';
 import addBranch from '../icons/addBranch.png';
@@ -30,7 +30,14 @@ export default class IssueCardDialog extends React.Component {
     repoWebHookUrl:''
   };
 
- componentDidMount(){
+ async componentDidMount(){
+
+    const queryData={
+        taskId:this.props.taskId,
+        repoName:this.props.repoName
+    };
+   const getTaskApiResp=await Request.get('/api/github/test/getOneTask').query(queryData);
+   const taskData=getTaskApiResp.body;
 
  }
 
@@ -55,7 +62,7 @@ export default class IssueCardDialog extends React.Component {
           aria-labelledby="form-dialog-title"
         >
           <DialogTitle id="form-dialog-title"><h5>
-            <b>7.5.6 release notes</b>
+            <b>{this.props.taskName}</b>
           </h5>
         </DialogTitle>
           <DialogContent>
@@ -64,7 +71,7 @@ export default class IssueCardDialog extends React.Component {
               completed before the release of 7.5.6 on monday. This includes fixing
               bugs surrounding the chrome extension and slack integration
             </DialogContentText>
-
+``
           <h6><img src={gitBranch} className="gitBranchLogo"/><b><strong>&nbsp; Subtasks</strong></b><a href="#"><img src={addBranch} className="right"/></a></h6>
               <table>
    <tbody>

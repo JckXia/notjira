@@ -140,6 +140,7 @@ async function addTaskToRepo(req, res) {
 
  const basicTaskData={
   taskName:req.body.taskName,
+  task_state:'toDo',
   _id:newTaskObject._id
 };
 
@@ -186,6 +187,16 @@ async function removeTaskFromRepo(taskId,repoName){
   });
    return result;
 }
+async function updateTaskStatusWithinRepo(taskId,repoName,status){
+    const result=await Repo.findOneAndUpdate({
+      repo_name:repoName,
+      taskItems: { $elemMatch: {_id:new ObjectID(taskId)}}
+    },{
+      $set:{
+        "taskItems.$.task_state":status
+      }
+    });
+}
 
 module.exports = {
   getTasksFromRepo,
@@ -199,5 +210,6 @@ module.exports = {
   userIsAdminOfRepo,
   getRepoById,
   getRepoByName,
-  removeTaskFromRepo
+  removeTaskFromRepo,
+  updateTaskStatusWithinRepo
 };

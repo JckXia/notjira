@@ -1,4 +1,5 @@
 const Task =require('../models/task.model');
+const ObjectID=require('mongodb').ObjectID;
 
 async function createTaskObject(taskTitle,taskDetail){
   const newTask=await new Task({
@@ -43,6 +44,7 @@ async function createBranchForTask(taskId,branchObject){
 }
 
 async function findTaskById(taskId){
+  taskId=new ObjectID(taskId);
   return await Task.findOne({_id:taskId});
 }
 
@@ -93,5 +95,6 @@ async function removeTask(req,res){
 
 module.exports = {
   addGitBranchToTask,
+  findTaskById,
   removeTask
 };

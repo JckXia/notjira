@@ -295,8 +295,31 @@ getAllTasks:async(req,res)=>{
       return res.status(403).send('Forbidden!');
     }
 },
-getOneTask:async(req,res)=>{
+changeTaskStatus:async(req,res)=>{
+  //POST call
+  //status: req.body.status
+  //taskId:
+  const taskId=req.body.taskId;
+  const taskStatus=req.body.taskStatus;
+  const taskData=await taskManager.findTaskById(taskId);
+  const repoName=taskData.repoName;
 
+  return res.status(200).send('Okay');
+},
+getOneTask:async(req,res)=>{
+  //This is how we will proceed:
+  //1. Get task item according to ID
+  //2. Get repo Field from said Task
+  //3. Check to see that user is the admin of the repo
+  //4. return data
+ const userId=await authenticationManager.getAuthenticatedUserId(req,res);
+  const taskId=req.query.taskId;
+  const taskData=await taskManager.findTaskById(taskId);
+  const repoName=taskData.repoName;
+  if(await repoManager.userIsAdminOfRepo(userId,repoName)){
+     return res.status(200).send(taskData);
+  }
+  return res.status(403).send('Forbidden access');
 },
   //-------------------------------------------------------//
 //api/repo/:repoName

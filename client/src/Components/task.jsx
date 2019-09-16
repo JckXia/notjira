@@ -48,7 +48,7 @@ class Containers extends React.Component{
                 </div>
 
                 <div class="card-action">
-                  <IssueCardDialog/>
+                  <IssueCardDialog taskId={this.props.taskId} taskName={this.props.task.content} repoName={this.props.repoName} />
                   <a onClick={()=>this.deleteTask()}>Delete</a>
                 </div>
           </div>
@@ -62,16 +62,7 @@ border-radius:2px;
 padding:8px;
 margin-bottom:8px;
 `;
-
-/*
-<div
-  {...provided.draggableProps}
-  {...provided.dragHandleProps}
-  ref={provided.innerRef}
-  >
-  {this.props.task.content}
-</div>
-*/
+ 
 export default class Task extends React.Component{
  render(){
    return(

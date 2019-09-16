@@ -5,6 +5,7 @@ import React, {Component} from 'react';
 import Request from 'superagent';
 import styled from 'styled-components';
 import Column from './column.js';
+
 import {DragDropContext,Droppable,Draggable} from 'react-beautiful-dnd';
 const data=[
   {cardId:1,cardState:"InProg",toDoItem:'Testing for crx'}
@@ -19,52 +20,78 @@ class RepoWorkSpace extends Component {
 
   },
   columns:{
-    'column-1':{
-      id:'column-1',
+    'toDo':{
+      id:'toDo',
       title:'To do',
       taskIds:[],
     },
-    'column-2':{
-      id:'column-2',
+    'inProg':{
+      id:'inProg',
       title:'In Progress',
       taskIds:[],
     },
-    'column-3':{
-      id:'column-3',
+    'codeReview':{
+      id:'codeReview',
       title:'Code review',
       taskIds:[],
     },
-    'column-4':{
-      id:'column-4',
+    'done':{
+      id:'done',
       title:'Done',
       taskIds:[ ],
     }
   },
   //Facilitae rendering of the columns
-  columnOrder:['column-1','column-2','column-3','column-4'],
+  columnOrder:['toDo','inProg','codeReview','done'],
 };
 
  async componentDidMount(){
     let repoName=this.props.repoName;
-    //TODO: Store this in local storage, if repoName is null
-    // Use react local-storage instead
+    let userName=this.props.userInfo.userName;
      if(repoName === undefined){
       repoName=window.localStorage.getItem('current_repo_name');
      }
-    window.localStorage.setItem('current_repo_name', repoName);
+     if(userName === undefined || userName === null){
+       userName=window.localStorage.getItem('current_repo_user');
+           window.localStorage.setItem('current_repo_user',userName);
+     }
 
+    window.localStorage.setItem('current_repo_name', repoName);
+   const checkEmptyUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/contributors';
+  const checkEmptyResp=await Request.get(checkEmptyUrl);
+
+//// TODO: Authenticate all calls to git API
+   if(checkEmptyResp.body == null){
+    this.setState({empty:true});
+     return;
+   }
+   //debugger;
     const reqUrl='/api/github/repo/'+repoName;
     const APIResp=await Request.get(reqUrl).send({});
     const reqTaskUrl='/api/github/'+repoName+'/getTasks';
     const taskItems=APIResp.body.taskItems;
     let stateObject={...this.state};
-    console.log(stateObject.tasks);
+    const targetUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/git/refs';
+    const getBranchResp=await Request.get(targetUrl);
+
+     //// TODO: At the momment, we are assuming that the repo is non empty
+    const branchRefs=getBranchResp.body;
+    stateObject.branch=[];
+    branchRefs.map((branchData,index)=>{
+        const shaKey=branchData.object.sha;
+        const linkToBranch=branchData.url;
+        const branchName=branchData.ref;
+       stateObject.branch[index]={shaKey,linkToBranch,branchName};
+    });
+
     const currentRef=this;
+
     taskItems.map((item,index)=>{
+
 
        const taskId='task-'+index;
      stateObject.tasks[taskId]= {id:taskId,content:item.taskName,task_id:item._id};
-     stateObject.columns['column-1'].taskIds.push(taskId);
+     stateObject.columns[item.task_state].taskIds.push(taskId);
     });
      this.setState(stateObject);
       return repoName;
@@ -131,6 +158,14 @@ class RepoWorkSpace extends Component {
   render(){
     const {repoName,auth} =this.props;
     let currentRepo=repoName;
+    if(this.state.empty == true){
+      return(<div>
+        <h3><code>Looks like you have an empty repo.<br/></code>
+      <h5><code>Please follow instruction on github to set up this repo</code></h5>
+    </h3>
+
+      </div>)
+    }
     if(repoName === undefined){
        currentRepo=window.localStorage.getItem('current_repo_name');
     }
@@ -145,7 +180,7 @@ class RepoWorkSpace extends Component {
           const tasks=column.taskIds.map(taskId=>this.state.tasks[taskId]);
 
         //   const tasks=column.taskIds.map(taskId=>this.state.tasks[taskId]);
-           return <Column key={column.id} repoName={currentRepo} column={column} tasks={tasks} />;
+           return <Column repoBranches={this.state.branch} key={column.id} repoName={currentRepo} column={column} tasks={tasks} />;
         })}
       </Container>
     </div>

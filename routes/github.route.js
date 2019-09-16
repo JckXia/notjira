@@ -13,6 +13,7 @@ router.post('/api/github/delete_branch',gitHub_controller.deleteBranch);
 router.post('/api/github/:repoName/create_task',gitHub_controller.createTask);
 router.get('/api/github/:repoName/getTasks',gitHub_controller.getAllTasks);
 router.post('/api/github/:repoName/delete_task',gitHub_controller.deleteTask);
+router.get('/api/github/:repoName/getOneTask',gitHub_controller.getOneTask);
 router.post('/api/github/repo/create',gitHub_controller.createRepo);
 router.post('/api/github/repo/:repoName/delete',gitHub_controller.deleteRepo);
 router.post('/api/getPullRequests',gitHub_controller.getPullRequests);
