@@ -280,6 +280,14 @@ module.exports = {
  })
 
 },
+updateTaskStatus:async (req,res)=>{
+// TODO: Add a check prior to perform this action
+  const requestBody=req.body;
+  const repoName=req.params.repoName;
+  const taskUpdateResp=await repoManager.updateTaskStatusWithinRepo(requestBody.taskId,repoName,requestBody.taskState);
+  const updateTaskCollection=await taskManager.updateTaskStatus(requestBody.taskId,requestBody.taskState);
+  return res.status(200).send(taskUpdateResp);
+},
 //api/github/:repoName/getTasks
 getAllTasks:async(req,res)=>{
   const userId=await authenticationManager.getAuthenticatedUserId(req,res);
@@ -296,6 +304,7 @@ getAllTasks:async(req,res)=>{
     }
 },
 changeTaskStatus:async(req,res)=>{
+  //
   //POST call
   //status: req.body.status
   //taskId:

@@ -53,19 +53,15 @@ class RepoWorkSpace extends Component {
      }
      if(userName === undefined || userName === null){
        userName=window.localStorage.getItem('current_repo_user');
-           window.localStorage.setItem('current_repo_user',userName);
+      //     window.localStorage.setItem('current_repo_user',userName);
      }
-
+ window.localStorage.setItem('current_repo_user',userName);
     window.localStorage.setItem('current_repo_name', repoName);
-   const checkEmptyUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/contributors';
-  const checkEmptyResp=await Request.get(checkEmptyUrl);
+   //const checkEmptyUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/contributors';
+//  const checkEmptyResp=await Request.get(checkEmptyUrl);
+//// TODO: Authenticate alL calls with github API
 
-//// TODO: Authenticate all calls to git API
-   if(checkEmptyResp.body == null){
-    this.setState({empty:true});
-     return;
-   }
-   //debugger;
+
     const reqUrl='/api/github/repo/'+repoName;
     const APIResp=await Request.get(reqUrl).send({});
     const reqTaskUrl='/api/github/'+repoName+'/getTasks';
@@ -98,6 +94,7 @@ class RepoWorkSpace extends Component {
  }
 
  onDragEnd=result=>{
+
    const {destination,source,draggableId} =result;
 
    if(!destination){
@@ -110,6 +107,8 @@ class RepoWorkSpace extends Component {
 
   const start=this.state.columns[source.droppableId];
   const finish=this.state.columns[destination.droppableId];
+
+  //If this is in the same column
   if(start === finish){
     const column=this.state.columns[source.droppableId];
     const newTaskIds = Array.from(column.taskIds);
@@ -126,9 +125,11 @@ class RepoWorkSpace extends Component {
          [newColumn.id]:newColumn,
        }
      };
+
      this.setState(newState);
      return;
   }
+  //If the task has been moved to another column
   const startTaskIds =Array.from (start.taskIds);
   startTaskIds.splice(source.index,1);
   const newStart={
@@ -149,7 +150,33 @@ class RepoWorkSpace extends Component {
           [newFinish.id]:newFinish
        },
   };
+
+  //const oldState={...state};
   this.setState(newState);
+  const taskId= start.taskIds[result.source.index];
+  const taskItem=this.state.tasks[taskId];
+  const newTaskStatus=finish.id;
+  let currentRepo=this.props.repoName;
+  if(currentRepo === undefined){
+     currentRepo=window.localStorage.getItem('current_repo_name');
+  }
+  const data={
+    taskId:taskItem.task_id,
+    taskState:newTaskStatus
+  };
+
+  //const taskItem=this.state.tasks[start.]
+  //To perform task change status,
+  //we need,
+  //1. Task Id
+  //2. TaskName
+  //3. New status
+ Request.post('/api/github/'+currentRepo+'/update_taskStatus').send(data).then((res)=>{
+   console.log(res);
+ });
+ //An update is needed to record
+ //COlumn order as well
+
  };
 
 

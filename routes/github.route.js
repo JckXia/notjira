@@ -11,6 +11,7 @@ router.get('/api/github/:repoName/branch',gitHub_controller.getAllBranch);
 router.post('/api/github/delete_branch',gitHub_controller.deleteBranch);
 
 router.post('/api/github/:repoName/create_task',gitHub_controller.createTask);
+router.post('/api/github/:repoName/update_taskStatus',gitHub_controller.updateTaskStatus);
 router.get('/api/github/:repoName/getTasks',gitHub_controller.getAllTasks);
 router.post('/api/github/:repoName/delete_task',gitHub_controller.deleteTask);
 router.get('/api/github/:repoName/getOneTask',gitHub_controller.getOneTask);

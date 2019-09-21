@@ -1,4 +1,3 @@
-
 import React from 'react';
 import styled from 'styled-components'
 import Task from './task';
@@ -23,8 +22,8 @@ const TaskList = styled.div `
 
 class TaskLists extends React.Component{
   render(){
-     const {repoName,provided,innerRef}=this.props;
- 
+     const {repoName,provided,innerRef,repoBranches}=this.props;
+
      return (
        <TaskList
          ref={innerRef}
@@ -37,6 +36,7 @@ class TaskLists extends React.Component{
           task={task}
           index={index}
           repoName={repoName}
+          repoBranches={repoBranches}
           innerRef={provided.innerRef}/>)}
          {provided.placeholder}
        </TaskList>

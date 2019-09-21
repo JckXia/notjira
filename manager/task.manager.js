@@ -24,7 +24,6 @@ async function assignTaskToCollaborator(taskId,collaborator){
   return newCard;
 }
 
-
 /*
 branchObject is of type object that contains the following information
  {
@@ -46,6 +45,17 @@ async function createBranchForTask(taskId,branchObject){
 async function findTaskById(taskId){
   taskId=new ObjectID(taskId);
   return await Task.findOne({_id:taskId});
+}
+
+async function updateTaskStatus(taskId,taskStatus){
+    taskId=new ObjectID(taskId);
+    const res=await Task.findOneAndUpdate({
+      _id:taskId
+    },{
+      $set:{
+        task_state:taskStatus
+      }
+    });
 }
 
 async function createPullReuquestForTask(taskId,pullRequest){
@@ -96,5 +106,6 @@ async function removeTask(req,res){
 module.exports = {
   addGitBranchToTask,
   findTaskById,
-  removeTask
+  removeTask,
+  updateTaskStatus
 };
