@@ -39,20 +39,21 @@ export default function ControlledOpenSelect(){
       setAge(event.target.value);
    }
 
+   function handleChange2(event){
+      const name=event.target.name;
+      const val=event.target.value;
+
+     setState(oldVal=>({
+       ...oldVal,
+       [name]:val
+     }));
+   }
+
 
    React.useEffect(() => {
      setLabelWidth(inputLabel.current.offsetWidth);
    }, []);
 
-   // const handleChange3 = name => event => {
-   //
-   //   let stateObject={...state};
-   //
-   //   stateObject.name=event.target.value;
-   //      stateObject.branchName=state.type+'/PLAT'+'-'+branchId+'-test-Task';
-   //
-   //   setState(stateObject);
-   // };
   return (
     <>
       <FormControl variant="outlined" className={classes.formControl}>
@@ -61,11 +62,11 @@ export default function ControlledOpenSelect(){
       </InputLabel>
       <Select
          native
-         value={age}
-         onChange={handleChange}
+         value={state.targetBranch}
+         onChange={handleChange2}
          labelWidth={labelWidth}
          inputProps={{
-           name: 'age',
+           name: 'targetBranch',
            id: 'outlined-age-native-simple',
          }}
        >
