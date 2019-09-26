@@ -1,65 +1,83 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import MenuList from '@material-ui/core/MenuList';
+import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
 
-const useStyles = makeStyles(theme => ({
-  button: {
-    display: 'block',
-    marginTop: theme.spacing(2),
-  },
-  formControl: {
+const useStyles = makeStyles(theme =>({
+   formControl:{
     margin: theme.spacing(1),
-    minWidth: 120,
+    minWidth:500,
   },
+  selectEmpty:{
+    marginTop:theme.spacing(2),
+  },
+  textField: {
+   marginLeft: theme.spacing(1),
+   marginRight: theme.spacing(0),
+   minWidth:500
+ },
 }));
 
-export default function ControlledOpenSelect() {
-  const classes = useStyles();
-  const [age, setAge] = React.useState('');
-  const [open, setOpen] = React.useState(false);
+export default function ControlledOpenSelect(){
+  const classes=useStyles();
+  const branchId=Math.floor((Math.random()*10000)+1);
+   const [state,setState]=React.useState({
+      targetBranch:'',
+      type:'feature',
+      branchName:''
+   });
+   const inputLabel = React.useRef(null);
+   const [labelWidth, setLabelWidth] = React.useState(0);
 
-  function handleChange(event) {
-    setAge(event.target.value);
-  }
+   const [age,setAge]=React.useState('');
+   function handleChange(event){
+      setAge(event.target.value);
+   }
 
-  function handleClose() {
-    setOpen(false);
-  }
 
-  function handleOpen() {
-    setOpen(true);
-  }
+   React.useEffect(() => {
+     setLabelWidth(inputLabel.current.offsetWidth);
+   }, []);
 
+   // const handleChange3 = name => event => {
+   //
+   //   let stateObject={...state};
+   //
+   //   stateObject.name=event.target.value;
+   //      stateObject.branchName=state.type+'/PLAT'+'-'+branchId+'-test-Task';
+   //
+   //   setState(stateObject);
+   // };
   return (
-    <form autoComplete="off">
-      <Button className={classes.button} onClick={handleOpen}>
-        Open the select
-      </Button>
-      <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="demo-controlled-open-select">Age</InputLabel>
-        <Select
-          open={open}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          value={age}
-          onChange={handleChange}
-          inputProps={{
-            name: 'age',
-            id: 'demo-controlled-open-select',
-          }}
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-      </FormControl>
-    </form>
+    <>
+      <FormControl variant="outlined" className={classes.formControl}>
+      <InputLabel ref={inputLabel} htmlFor="outlined-age-native-simple">
+             From
+      </InputLabel>
+      <Select
+         native
+         value={age}
+         onChange={handleChange}
+         labelWidth={labelWidth}
+         inputProps={{
+           name: 'age',
+           id: 'outlined-age-native-simple',
+         }}
+       >
+       <option value=""/>
+       <option value="master">master</option>
+       <option value="hotfix">hotfix</option>
+       <option value="feature/PLAT-6357">feature/PLAT-6357</option>
+
+      </Select>
+        </FormControl>
+
+      </>
   );
+
 }
