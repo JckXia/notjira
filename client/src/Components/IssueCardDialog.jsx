@@ -1,14 +1,4 @@
 import React from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Collapse from '@material-ui/core/Collapse';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -20,10 +10,15 @@ import Request from 'superagent';
 import gitBranch from '../icons/gitBranch.png';
 import gitPR from '../icons/gitPR.png';
 import addBranch from '../icons/addBranch.png';
-import AddBranchDialog from './AddBranchDialog.js';
-import ControlledOpenSelect from './SelectBox';
-
+import AddBranchPanel from './AddBranchPanel';
+const styles = {
+  dialogPaper: {
+      minHeight: '80px',
+      maxHeight: '80vh',
+  },
+};
 export default class IssueCardDialog extends React.Component {
+
   state = {
     open: false,
     addBranchDialogStatus:false,
@@ -57,15 +52,7 @@ export default class IssueCardDialog extends React.Component {
     this.setState({isInBranchCreationMode:true});
   };
   render() {
-    /*
-        Design components that we need
-        BranchType: 'Feature' /Could be PROD, DEVOPS,ETC
-        BranchFrom: 'master'
-        Branch Name: 'feature/PLAT-2312-add-video-chat-interface'
 
-        Actions:
-        Create branch   Cancel
-    */
     return (
 
       <div>
@@ -74,7 +61,9 @@ export default class IssueCardDialog extends React.Component {
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
+          disableBackdropClick={true}
           aria-labelledby="form-dialog-title"
+          classes={{paper:styles.dialogPaper}}
         >
           <DialogTitle id="form-dialog-title"><h5>
             <b>{this.props.taskName}</b>
@@ -83,7 +72,7 @@ export default class IssueCardDialog extends React.Component {
            {this.state.isInBranchCreationMode?
 
            <DialogContent>
-              <ControlledOpenSelect/>
+             <AddBranchPanel/>
            </DialogContent>
 
              : <DialogContent>
@@ -129,15 +118,13 @@ export default class IssueCardDialog extends React.Component {
                </tr>
              </tbody>
              </table>
-
+             <DialogActions>
+               <Button onClick={this.handleClose} color="primary">
+                 Close
+               </Button>
+             </DialogActions>
                    </DialogContent>
        }
-       <DialogActions>
-         <Button onClick={this.handleClose} color="primary">
-           Close
-         </Button>
-
-       </DialogActions>
 
 
         </Dialog>

@@ -11,7 +11,7 @@ const taskManager=require('../manager/task.manager');
 const EventSource = require('eventsource');
 const Octokit = require('@octokit/rest');
 const WebHooksApi = require('@octokit/webhooks');
-
+const request=require('superagent');
 module.exports = {
 
   //Create a repository
@@ -352,5 +352,35 @@ getOneTask:async(req,res)=>{
 
          return res.status(200).send(repoData);
       }
+  },
+  getRepoRef:async(req,res)=>{
+
+
+    const userName=req.params.userName;
+    const repoName=req.params.repoName;
+
+    if(req.user.username == req.params.userName){
+      const authToken=req.user.token;
+      const octokit = new Octokit({
+        auth: `${authToken}`
+      });
+      console.log('AUTH_TOKEN ',authToken);
+      console.log('DATA_TEST ',userName);
+      console.log('DATA_TEST ',repoName);
+
+     const dataTest=await octokit.repos.listBranches({
+       owner:userName,
+       repo:repoName
+     });
+      if(dataTest.data == null){
+        return res.status(404).send([]);
+      }
+  //   console.log('CHECK_DATA ',dataTest.data[0].commit);
+      return res.status(200).send(dataTest.data);
+    }else{
+      return res.status(403).send('Forbidden');
+    }
+    //const targetUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/git/refs';
+  //  const getBranchResp=await Request.get(targetUrl);
   }
 }

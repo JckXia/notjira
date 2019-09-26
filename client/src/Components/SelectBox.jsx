@@ -7,6 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
+import Box from '@material-ui/core/Box';
 
 const useStyles = makeStyles(theme =>({
    formControl:{
@@ -28,24 +29,29 @@ export default function ControlledOpenSelect(){
   const branchId=Math.floor((Math.random()*10000)+1);
    const [state,setState]=React.useState({
       targetBranch:'',
-      type:'feature',
+      type:'',
       branchName:''
    });
    const inputLabel = React.useRef(null);
    const [labelWidth, setLabelWidth] = React.useState(0);
 
-   const [age,setAge]=React.useState('');
    function handleChange(event){
-      setAge(event.target.value);
-   }
-
-   function handleChange2(event){
       const name=event.target.name;
       const val=event.target.value;
+      if(name == 'branchName'){
+        return;
+      }
+      console.log(name);
+      let prefix=state.type;
+      if(name == 'type'){
+        prefix = val;
+      }
 
+      const branchName=prefix+'/PLAT-'+branchId+'-TASK';
      setState(oldVal=>({
        ...oldVal,
-       [name]:val
+       [name]:val,
+       ['branchName']:branchName
      }));
    }
 
@@ -56,15 +62,16 @@ export default function ControlledOpenSelect(){
 
   return (
     <>
-      <FormControl variant="outlined" className={classes.formControl}>
+      <FormControl variant="outlined"  margin="dense" className={classes.formControl}>
       <InputLabel ref={inputLabel} htmlFor="outlined-age-native-simple">
              From
       </InputLabel>
       <Select
+
          native
          value={state.targetBranch}
-         onChange={handleChange2}
-         labelWidth={labelWidth}
+         onChange={handleChange}
+
          inputProps={{
            name: 'targetBranch',
            id: 'outlined-age-native-simple',
@@ -77,6 +84,46 @@ export default function ControlledOpenSelect(){
 
       </Select>
         </FormControl>
+        <FormControl margin="dense"/>
+      <FormControl variant="filled" className={classes.formControl}>
+        <InputLabel ref={inputLabel} htmlFor="outlined-age-native-simple">
+               Type
+        </InputLabel>
+        <Select
+           native
+           value={state.type}
+           onChange={handleChange}
+           labelWidth={labelWidth}
+           inputProps={{
+             name: 'type',
+             id: 'outlined-age-native-simple',
+           }}
+         >
+         <option value=""/>
+       <option value="feature">feature</option>
+         <option value="hotfix">hotfix</option>
+       <option value="bugfix">bugfix</option>
+     <option value="release">release</option>
+
+        </Select>
+          </FormControl>
+          <FormControl margin="dense"/>
+
+          <TextField
+           required
+           margin="normal"
+           label="Branch Name"
+           id="webHook Url"
+           type="WebHookUrl"
+           value={state.branchName}
+           onChange={handleChange}
+           inputProps={{
+              name:'branchName',
+              id:'outlined-branchName-native-simple'
+           }}
+           className={classes.textField}
+           variant="outlined"
+          />
 
       </>
   );

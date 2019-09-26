@@ -58,25 +58,34 @@ class RepoWorkSpace extends Component {
  window.localStorage.setItem('current_repo_user',userName);
     window.localStorage.setItem('current_repo_name', repoName);
    //const checkEmptyUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/contributors';
-//  const checkEmptyResp=await Request.get(checkEmptyUrl);
+   //const checkEmptyResp=await Request.get(checkEmptyUrl);
 //// TODO: Authenticate alL calls with github API
 
+
+const targetUrl='/api/github/'+userName+'/'+repoName+'/refs';
+const getBranchResp=await Request.get(targetUrl);
+if(getBranchResp.body.length === 0){
+ this.setState({empty:true})
+}
 
     const reqUrl='/api/github/repo/'+repoName;
     const APIResp=await Request.get(reqUrl).send({});
     const reqTaskUrl='/api/github/'+repoName+'/getTasks';
     const taskItems=APIResp.body.taskItems;
     let stateObject={...this.state};
-    const targetUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/git/refs';
-    const getBranchResp=await Request.get(targetUrl);
+
+     // const targetUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/git/refs';
+     // const getBranchResp=await Request.get(targetUrl);
+     //debugger;
 
      //// TODO: At the momment, we are assuming that the repo is non empty
+     //We need to send the Urls to get authenticated inorder to bypass the API rate limits
     const branchRefs=getBranchResp.body;
     stateObject.branch=[];
     branchRefs.map((branchData,index)=>{
-        const shaKey=branchData.object.sha;
-        const linkToBranch=branchData.url;
-        const branchName=branchData.ref;
+        const shaKey=branchData.commit.sha;
+        const linkToBranch=branchData.commit.url;
+        const branchName=branchData.name;
        stateObject.branch[index]={shaKey,linkToBranch,branchName};
     });
 
