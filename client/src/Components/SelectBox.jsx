@@ -8,6 +8,8 @@ import Select from '@material-ui/core/Select';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles(theme =>({
    formControl:{
@@ -24,13 +26,15 @@ const useStyles = makeStyles(theme =>({
  },
 }));
 
-export default function ControlledOpenSelect(){
+export default function ControlledOpenSelect(taskName,onBranchCreationCancel,handleSelectChange){
   const classes=useStyles();
   const branchId=Math.floor((Math.random()*10000)+1);
+  console.log(onBranchCreationCancel);
+  console.log(handleSelectChange);
    const [state,setState]=React.useState({
-      targetBranch:'',
-      type:'',
-      branchName:''
+      targetBranch:'master',
+      type:'feature',
+      branchName:'feature/PLAT-'+branchId+'-'+taskName.taskName
    });
    const inputLabel = React.useRef(null);
    const [labelWidth, setLabelWidth] = React.useState(0);
@@ -38,7 +42,12 @@ export default function ControlledOpenSelect(){
    function handleChange(event){
       const name=event.target.name;
       const val=event.target.value;
+
       if(name == 'branchName'){
+        setState(oldVal=>({
+          ...oldVal,
+         ['branchName']:val
+        }));
         return;
       }
       console.log(name);
@@ -47,7 +56,7 @@ export default function ControlledOpenSelect(){
         prefix = val;
       }
 
-      const branchName=prefix+'/PLAT-'+branchId+'-TASK';
+      const branchName=prefix+'/PLAT-'+branchId+'-'+taskName.taskName;
      setState(oldVal=>({
        ...oldVal,
        [name]:val,
@@ -70,7 +79,7 @@ export default function ControlledOpenSelect(){
 
          native
          value={state.targetBranch}
-         onChange={handleChange}
+         onChange={(event)=>{handleChange(event);}}
 
          inputProps={{
            name: 'targetBranch',
@@ -92,7 +101,7 @@ export default function ControlledOpenSelect(){
         <Select
            native
            value={state.type}
-           onChange={handleChange}
+           onChange={(event)=>{handleChange(event)}}
            labelWidth={labelWidth}
            inputProps={{
              name: 'type',
@@ -124,6 +133,7 @@ export default function ControlledOpenSelect(){
            className={classes.textField}
            variant="outlined"
           />
+         
 
       </>
   );

@@ -51,6 +51,13 @@ export default class IssueCardDialog extends React.Component {
   isInBranchCreationMode=()=>{
     this.setState({isInBranchCreationMode:true});
   };
+  exitBranchCreationMode=()=>{
+    this.setState({isInBranchCreationMode:false});
+  };
+
+  branchCreationApiCall=(targetBranchName,branchName)=>{
+
+  };
   render() {
 
     return (
@@ -72,7 +79,7 @@ export default class IssueCardDialog extends React.Component {
            {this.state.isInBranchCreationMode?
 
            <DialogContent>
-             <AddBranchPanel/>
+             <AddBranchPanel taskName={this.props.taskName} onBranchCreationCancel={this.exitBranchCreationMode}/>
            </DialogContent>
 
              : <DialogContent>
