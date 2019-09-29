@@ -216,7 +216,7 @@ if(getBranchResp.body.length === 0){
           const tasks=column.taskIds.map(taskId=>this.state.tasks[taskId]);
 
         //   const tasks=column.taskIds.map(taskId=>this.state.tasks[taskId]);
-           return <Column repoBranches={this.state.branch} key={column.id} repoName={currentRepo} column={column} tasks={tasks} />;
+           return <Column  {...this.props} repoBranches={this.state.branch} key={column.id} repoName={currentRepo} column={column} tasks={tasks} />;
         })}
       </Container>
     </div>

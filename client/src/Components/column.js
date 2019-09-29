@@ -31,6 +31,7 @@ class TaskLists extends React.Component{
          >
          {this.props.tasks.map((task,index)=>
            <Task
+             {...this.props}
           key={task.id}
           taskId={task.task_id}
           task={task}

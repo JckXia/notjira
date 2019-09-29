@@ -80,12 +80,10 @@ await Task.findOneAndUpdate({
 //4. Branch HashVal
 //5. Ref Branch name
 //6. Ref Branch HashVal
-async function addGitBranchToTask(req,res){
-    const branchData=req.body.branchData;
-     const refData=req.body.refBranchData;
-     const  gitBranchData={branchData,refData};
+async function addGitBranchToTask(branchRefData,parentRefData,taskId){
+     const  gitBranchData={branchRefData,parentRefData};
      const updateResult = await Task.findOneAndUpdate({
-       _id: req.body.taskId
+       _id: taskId
      }, {
        $push: {
          branch: gitBranchData

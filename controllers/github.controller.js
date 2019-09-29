@@ -161,30 +161,35 @@ module.exports = {
     if (userId == null) {
       return res.status(403).send('Forbidden');
     }
-
+     const requestBody=req.body;
+     if(!requestBody.taskId || !requestBody.parentRefHash ||!req.params.repoName || !requestBody.userInfo.userName){
+       return res.status(400).send('Cant complete this request based on information given');
+     }
     if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
       await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
 
       const authToken = Env === 'test' ? req.headers.user : req.user.token;
-      let platNumber = randomIntFromInterval(1000, 9999);
-      const branchName = 'refs/heads/feature/PLAT-' + platNumber + '-' + req.body.taskName;
+      const branchName = 'refs/heads/'+req.body.taskName;
+      const taskId=req.body.taskId;
+      console.log(branchName);
       const octokit = new Octokit({
         auth: `${authToken}`
       });
-      const data = await octokit.git.createRef({
-        owner: 'JckXia',
+      const createRefResp = await octokit.git.createRef({
+        owner: requestBody.userInfo.userName,
         repo: req.params.repoName,
         ref: branchName,
-        sha: req.body.oldBranchHashVal
+        sha: req.body.parentRefHash
       });
-
-      const addBranchToTaskRes=await taskManager.addGitBranchToTask(req,res);
+      const refInfo=createRefResp.data;
+      console.log(refInfo);
+      const addBranchToTaskRes=await taskManager.addGitBranchToTask({refName:refInfo.ref,gitInfo:refInfo.object},req.body.parentRefHash,taskId);
       if(addBranchToTaskRes.lastErrorObject.updatedExisting == true){
-        return res.status(200).send(data);
+        return res.status(200).send(addBranchToTaskRes);
       }
-      return res.status(500).send('Internal server err');
-    } else {
-      return res.status(403).send('Forbidden');
+      return res.status(500).send('Internal server error');
+    }else{
+      return res.status(403).send('FORBIDDEN');
     }
   },
   deleteBranch: async(req,res)=>{

@@ -48,7 +48,7 @@ class Containers extends React.Component{
                 </div>
 
                 <div class="card-action">
-                  <IssueCardDialog repoBranches={this.props.repoBranches} taskId={this.props.taskId} taskName={this.props.task.content} repoName={this.props.repoName} />
+                  <IssueCardDialog userInfo={this.props.userInfo} repoBranches={this.props.repoBranches} taskId={this.props.taskId} taskName={this.props.task.content} repoName={this.props.repoName} />
                   <a onClick={()=>this.deleteTask()}>Delete</a>
                 </div>
           </div>

@@ -15,22 +15,13 @@ import ControlledOpenSelect from './SelectBox';
 
 export default class AddBranchPanel extends React.Component {
 
-   handleSelectChange=(event)=>{
 
-   }
   render() {
-     //const {open,onClose}=this.props;
+     //// TODO: Refactor this part to make it more resuseable
     return (
       <>
-      <ControlledOpenSelect taskName={this.props.taskName} onBranchCreationCancel={this.props.onBranchCreationCancel} handleSelectChange={this.handleSelectChange}/>
-        <DialogActions>
-        <Button  onClick={this.props.onBranchCreationCancel} color="primary">
-          Cancel
-        </Button>
-        <Button color="primary">
-          Create Branch
-        </Button>
-        </DialogActions>
+      <ControlledOpenSelect {...this.props} taskName={this.props.taskName} onBranchCreationCancel={this.props.onBranchCreationCancel} handleSelectChange={this.handleSelectChange}/>
+
       </>
     );
   }

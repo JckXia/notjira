@@ -70,7 +70,7 @@ export default class IssueCardDialog extends React.Component {
           onClose={this.handleClose}
           disableBackdropClick={true}
           aria-labelledby="form-dialog-title"
-          classes={{paper:styles.dialogPaper}}
+
         >
           <DialogTitle id="form-dialog-title"><h5>
             <b>{this.props.taskName}</b>
@@ -79,7 +79,7 @@ export default class IssueCardDialog extends React.Component {
            {this.state.isInBranchCreationMode?
 
            <DialogContent>
-             <AddBranchPanel taskName={this.props.taskName} onBranchCreationCancel={this.exitBranchCreationMode}/>
+             <AddBranchPanel {...this.props} taskName={this.props.taskName} onBranchCreationCancel={this.exitBranchCreationMode}/>
            </DialogContent>
 
              : <DialogContent>

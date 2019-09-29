@@ -10,6 +10,7 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
+import Request from 'superagent';
 
 const useStyles = makeStyles(theme =>({
    formControl:{
@@ -26,15 +27,14 @@ const useStyles = makeStyles(theme =>({
  },
 }));
 
-export default function ControlledOpenSelect(taskName,onBranchCreationCancel,handleSelectChange){
+export default function ControlledOpenSelect({taskName,taskId,onBranchCreationCancel,handleSelectChange,repoBranches,repoName,userInfo}){
   const classes=useStyles();
   const branchId=Math.floor((Math.random()*10000)+1);
-  console.log(onBranchCreationCancel);
-  console.log(handleSelectChange);
+  debugger;
    const [state,setState]=React.useState({
       targetBranch:'master',
       type:'feature',
-      branchName:'feature/PLAT-'+branchId+'-'+taskName.taskName
+      branchName:'feature/PLAT-'+branchId+'-'+taskName
    });
    const inputLabel = React.useRef(null);
    const [labelWidth, setLabelWidth] = React.useState(0);
@@ -56,7 +56,7 @@ export default function ControlledOpenSelect(taskName,onBranchCreationCancel,han
         prefix = val;
       }
 
-      const branchName=prefix+'/PLAT-'+branchId+'-'+taskName.taskName;
+      const branchName=prefix+'/PLAT-'+branchId+'-'+taskName;
      setState(oldVal=>({
        ...oldVal,
        [name]:val,
@@ -64,6 +64,30 @@ export default function ControlledOpenSelect(taskName,onBranchCreationCancel,han
      }));
    }
 
+  async function createBranch(){
+     let targetRef='';
+     let foundTargetBranch=false;
+     repoBranches.map((branchData)=>{
+       if(branchData.branchName === state.targetBranch){
+    //     console.log(branchData);
+         targetRef=branchData.shaKey;
+         foundTargetBranch=true;
+       }
+     });
+     if(foundTargetBranch === false){
+        alert('ERROR! no branch can be found');
+       return;
+     }
+     const requestData={parentRefHash:targetRef,taskName:state.branchName,taskId,userInfo};
+     const targetUrl='/api/github/'+repoName+'/task/create_branch';
+     try{
+     const result=await Request.post(targetUrl).send(requestData);
+   }catch(e){
+    alert(e);
+   }
+   alert('SUCCESSFUL!');
+      window.location.reload();
+   }
 
    React.useEffect(() => {
      setLabelWidth(inputLabel.current.offsetWidth);
@@ -86,11 +110,9 @@ export default function ControlledOpenSelect(taskName,onBranchCreationCancel,han
            id: 'outlined-age-native-simple',
          }}
        >
-       <option value=""/>
-       <option value="master">master</option>
-       <option value="hotfix">hotfix</option>
-       <option value="feature/PLAT-6357">feature/PLAT-6357</option>
-
+         {repoBranches.map((item)=>{
+           return(<option value={item.branchName}>{item.branchName}</option>)
+         })}
       </Select>
         </FormControl>
         <FormControl margin="dense"/>
@@ -117,7 +139,6 @@ export default function ControlledOpenSelect(taskName,onBranchCreationCancel,han
         </Select>
           </FormControl>
           <FormControl margin="dense"/>
-
           <TextField
            required
            margin="normal"
@@ -133,7 +154,14 @@ export default function ControlledOpenSelect(taskName,onBranchCreationCancel,han
            className={classes.textField}
            variant="outlined"
           />
-         
+          <DialogActions>
+          <Button  onClick={onBranchCreationCancel} color="primary">
+            Cancel
+          </Button>
+          <Button  onClick={createBranch} color="primary">
+            Create Branch
+          </Button>
+          </DialogActions>
 
       </>
   );
