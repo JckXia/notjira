@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme =>({
 export default function ControlledOpenSelect({taskName,taskId,onBranchCreationCancel,handleSelectChange,repoBranches,repoName,userInfo}){
   const classes=useStyles();
   const branchId=Math.floor((Math.random()*10000)+1);
-  debugger;
    const [state,setState]=React.useState({
       targetBranch:'master',
       type:'feature',

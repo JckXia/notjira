@@ -34,6 +34,7 @@ export default class IssueCardDialog extends React.Component {
     };
    const getTaskApiResp=await Request.get('/api/github/test/getOneTask').query(queryData);
   const taskData=getTaskApiResp.body;
+
   this.setState(taskData);
 }
 
@@ -59,7 +60,8 @@ export default class IssueCardDialog extends React.Component {
 
   };
   render() {
-
+      const branchData=this.state.branch;
+      console.log(branchData);
     return (
 
       <div>
@@ -90,20 +92,23 @@ export default class IssueCardDialog extends React.Component {
                      </DialogContentText>
                    <h6><img src={gitBranch} className="gitBranchLogo"/><b><strong>&nbsp; Subtasks</strong></b><a href="#" onClick={this.isInBranchCreationMode}><img src={addBranch} className="right"/></a></h6>
                        <table>
-            <tbody>
-             <tr>
-               <td> <strong>feature/PLAT-6357-CHROME_EXT </strong></td>
-               <td>`https://www.google.com`</td>
-               <td><a href="#">Delete</a></td>
-               <td><a href="#">Make PR</a></td>
-             </tr>
 
-             <tr>
-               <td> <strong>feature/PLAT-6357-SLAC_POC </strong></td>
-               <td>`https://www.google.com`</td>
-               <td><a href="#">Delete</a></td>
-               <td><a href="#">Make PR</a></td>
-             </tr>
+            <tbody>
+              {branchData && branchData.map((branch)=>{
+                  let branchName= branch.branchRefData.refName.replace('refs/heads/',"");
+                  let linkUrl='https://www.github.com/'+this.props.userInfo.userName+'/'+this.props.repoName+'/tree/'+branchName;
+                  const truncateUrl=linkUrl.substring(0,28);
+                  return(
+                    <tr>
+                       <td><strong>{branchName}</strong></td>
+                       <td><a href={linkUrl}> {truncateUrl}..</a></td>
+                       <td><a href="#">Delete</a></td>
+                       <td><a href="#">Make PR</a></td>
+                    </tr>
+                  )
+                 console.log(branch)
+              })}
+
            </tbody>
            </table>
 
