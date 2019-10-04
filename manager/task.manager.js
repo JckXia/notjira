@@ -81,7 +81,8 @@ await Task.findOneAndUpdate({
 //5. Ref Branch name
 //6. Ref Branch HashVal
 async function addGitBranchToTask(branchRefData,parentRefData,taskId){
-     const  gitBranchData={branchRefData,parentRefData};
+  const refName=branchRefData.refName;
+     const  gitBranchData={branchRefData,refName,parentRefData};
      const updateResult = await Task.findOneAndUpdate({
        _id: taskId
      }, {
@@ -101,9 +102,36 @@ async function removeTask(req,res){
     return removeResult;
 }
 
+
+/*
+db.getCollection('tasks').findOneAndUpdate({
+    _id: new ObjectId("5d956d8daf5eaa4db097fccc")
+    },{
+       $pull:{
+           branch:{
+               refName:'refs/heads/feature/PLAT-2847-TRK'
+               }
+           }
+       });
+*/
+async function removeGitBranchFromTask(branchRefName,taskId){
+
+   const updateResult=await Task.findOneAndUpdate({
+     _id:new ObjectID(taskId)
+   },{
+      $pull:{
+        branch:{
+          refName:branchRefName
+        }
+      }
+   },{new:true,rawResult:true});
+   return updateResult;
+}
+
 module.exports = {
   addGitBranchToTask,
   findTaskById,
   removeTask,
-  updateTaskStatus
+  updateTaskStatus,
+  removeGitBranchFromTask
 };

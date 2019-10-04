@@ -187,6 +187,19 @@ async function removeTaskFromRepo(taskId,repoName){
   });
    return result;
 }
+
+/*
+db.getCollection('tasks').findOneAndUpdate({"_id" : new ObjectId("5d6966a17473091509f97a64")},{
+      $pull:{
+       branch:{
+          branchData:{
+              branchName:'ref/head/stuff'
+           }
+       }
+    }
+    }
+)
+*/
 async function updateTaskStatusWithinRepo(taskId,repoName,status){
     const result=await Repo.findOneAndUpdate({
       repo_name:repoName,

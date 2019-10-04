@@ -11,9 +11,9 @@ router.get('/auth/github/callback',passport.authenticate('github'),(req,res)=>{
 });
 
 router.get('/auth/github/checkForUserToken',(req,res)=>{
-
-   console.log(req.isAuthenticated());
-   console.log(req.user);
+  console.log('INFO  User login successful!');
+   //console.log(req.isAuthenticated());
+   //console.log(req.user);
    res.send(req.user);
 });
 

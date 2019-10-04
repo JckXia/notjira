@@ -11,6 +11,7 @@ import gitBranch from '../icons/gitBranch.png';
 import gitPR from '../icons/gitPR.png';
 import addBranch from '../icons/addBranch.png';
 import AddBranchPanel from './AddBranchPanel';
+import request from 'superagent';
 const styles = {
   dialogPaper: {
       minHeight: '80px',
@@ -59,6 +60,27 @@ export default class IssueCardDialog extends React.Component {
   branchCreationApiCall=(targetBranchName,branchName)=>{
 
   };
+  //router.post('/api/github/delete_branch',gitHub_controller.deleteBranch);
+   branchDeleteionApiCall=(branchToBeDeleted)=>{
+      const repoBranches=this.props.repoBranches;
+      repoBranches.map((branch)=>{
+        if(branch.branchName === branchToBeDeleted){
+
+          const repo=this.props.repoName;
+          const ref=branch.branchName;
+          const owner=this.props.userInfo.userName;
+          const taskId=this.props.taskId;
+          const requestData={repo,ref,owner,taskId};
+
+          request.post('/api/github/delete_branch').send(requestData).then((res)=>{
+            console.log(res);
+            alert('Successfully deleted branch!');
+                  window.location.reload();
+          });
+
+        }
+      });
+  };
   render() {
       const branchData=this.state.branch;
       console.log(branchData);
@@ -101,8 +123,8 @@ export default class IssueCardDialog extends React.Component {
                   return(
                     <tr>
                        <td><strong>{branchName}</strong></td>
-                       <td><a href={linkUrl}> {truncateUrl}..</a></td>
-                       <td><a href="#">Delete</a></td>
+                       <td><a href={linkUrl} target="_blank"> {truncateUrl}..</a></td>
+                     <td><a href="#" onClick={()=>{this.branchDeleteionApiCall(branchName)}} >Delete</a></td>
                        <td><a href="#">Make PR</a></td>
                     </tr>
                   )

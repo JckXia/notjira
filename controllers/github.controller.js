@@ -198,8 +198,8 @@ module.exports = {
      if(userId ==null){
        return res.status(403).send('Forbidden');
      }
-     if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
-       await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
+     if (await repoManager.userIsAdminOfRepo(userId, req.body.repo) ||
+       await repoManager.userIsCollaboratorOfRepo(userId, req.body.repo)) {
 
        const authToken = Env === 'test' ? req.headers.user : req.user.token;
        const octokit=new Octokit({
@@ -210,12 +210,31 @@ module.exports = {
        if(gitRef.includes('refs/')){
          gitRef=gitRef.replace('refs/','');
        }
+       if(!gitRef.includes('heads/')){
+         gitRef='heads/'+gitRef;
+       }
+      try{
        const data=await octokit.git.deleteRef({
          owner:req.body.owner,
          repo:req.body.repo,
          ref: gitRef
        });
-       return res.status(200).send(data);
+       gitRef='refs/'+gitRef;
+       const taskId=req.body.taskId;
+
+       try{
+      const removeBranchFromTaskRes=await taskManager.removeGitBranchFromTask(gitRef,taskId);
+    
+        if(removeBranchFromTaskRes.lastErrorObject.updatedExisting == true){
+          return res.status(200).send(removeBranchFromTaskRes);
+        }
+      }catch(e){
+       return res.status(500).send(e);
+     }
+     }catch(e){
+       return res.status(500).send(e);
+     }
+
      } else {
        return res.status(403).send('Forbidden');
      }
