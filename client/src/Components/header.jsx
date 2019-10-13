@@ -4,53 +4,33 @@ import FormDialog from './FormDialog';
 import CreateTaskDialog from './CreateTaskDialog';
 class Header extends Component {
 
-  testMakingAPICall = () => {
 
-    /*  Check login status
-    SuperAgent.post('/auth/github/checkUserStatus')
-               .then((res)=>{
-                console.log(res);
-               });
-    */
-    //Test making calls to all github APIs, expect correct results.
-    //Test the following:
-    // /api/github/:repoName/task/create_branch
+  componentDidMount() {
 
-    //  /api/github/repo/create
+    if(window.location.href.includes('repo/')){
+      this.setState({currentPage:'repo_detail'});
+    }else{
+      this.setState({currentPage:'repo_lists'});
+    }
+      window.onpopstate = ()=> {
 
+          const currentUrl=window.location.href;
+          if(currentUrl.includes('repo/')){
+            this.setState({currentPage:'repo_detail'});
+            //this.currentPage='repo_detail';
+          }else{
+                this.setState({currentPage:'repo_lists'});
+          }
+      }
+    }
 
-      const Data={
-        repoName:'TestingApiCallSsXKFTR',
-        proxyUrl:'https://smee.io/n2Zw6JWuJuWsf2gu'
-      };
-      SuperAgent.post('/api/github/repo/create')
-                .send(Data)
-                .then((res)=>{
-                  //console.log(res);
-                });
-
-    // '/api/github/repo/:repoName/delete'
-
-    /*
-      SuperAgent.post('/api/github/repo/TestingApiCallSsX/delete')
-                .then((res)=>{
-                  console.log(res);
-                })
-    */
-    //'/api/github/:ownerName/:repoName/webhook/create'
-    // SuperAgent.post('/api/github/gitDemo/task/create_branch')
-    //b5aa826799211bdf5c0f6a0bf620531abe929c6
-
-/*
-    const Data = {
-      taskName: 'Checkout_new_branch',
-      oldBranchHashVal: 'b5aa826799211bdf5c0f6a0bf620531abe929c6c'
-    };
-    SuperAgent.post('/api/github/gitDemo/task/create_branch').send(Data).then((res) => {
-      console.log(res);
-    });
-  */
-    //console.log('Yep, we good!');
+  getCurrentRepoName=()=>{
+     const currentUrl=window.location.href;
+     let repoName=currentUrl.split('repo/').pop();
+     if(repoName.slice(-1) == "#"){
+       repoName=repoName.substring(0,repoName.length-1);
+     }
+     return repoName;
   }
 
   createRepo=()=>{
@@ -68,15 +48,17 @@ class Header extends Component {
   };
   renderHeader() {
     //   const apiCallFunct=this.testMakingAPICall;
-    const currentPage=this.props.currentPage;
+      const currentRepoName= this.getCurrentRepoName();
+    const currentUrl=window.location.href;
+    console.log(this.props.currentPage);
     switch (this.props.auth) {
 
       case false:
-        return (<ul id="nav-mobile" class="right">
-          <a class="waves-effect waves-light btn-large" href="/auth/github/login">Login with github</a>
+        return (<ul id="nav-mobile" className="right">
+          <a className="waves-effect waves-light btn-large" href="/auth/github/login">Login with github</a>
         </ul>);
       case true:
-        if(currentPage =='repo_lists'){
+        if(this.state.currentPage =='repo_lists'){
         return (<ul id="nav-mobile" class="right">
           <li>
             <a href="collapsible.html">Admin user</a>
@@ -96,13 +78,13 @@ class Header extends Component {
 
         </ul>);
       }
-      return (<ul id="nav-mobile" class="right">
+      return (<ul id="nav-mobile" className="right">
 
         <li>
           <a href="sass.html">Backlog</a>
         </li>
         <li>
-          <CreateTaskDialog currentRepo={this.props.repoInfo}/>
+          <CreateTaskDialog currentRepo={currentRepoName}/>
         </li>
         <li>
           <a href="/">Projects</a>

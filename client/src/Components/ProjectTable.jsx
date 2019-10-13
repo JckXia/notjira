@@ -43,10 +43,10 @@ class ProjectTable extends Component {
       return(
         <tbody>
           {this.props.rows.map((data)=>{
-
+              const repoLinkUrl=`/repo/${data.name}`;
             return(
               <tr>
-                <td> <Link to="/repo" onClick={()=>this.supplyRepoInfo(data)}>{data.name}</Link></td>
+                <td> <Link to={repoLinkUrl} onClick={()=>this.supplyRepoInfo(data)}>{data.name}</Link></td>
                 <td>{data.date_created}</td>
                  <td><a href={data.repo_html_url} target="_blank">{data.repo_html_url}</a></td>
                 <td>{data.repo_creator}</td>

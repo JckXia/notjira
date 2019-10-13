@@ -127,8 +127,6 @@ class App extends Component {
     stateObject.currentRepo.name=repoName;
     stateObject.currentPage='repo_detail';
     this.setState(stateObject);
-     //TODO: Use the cache. Such that we dont need to make calls to get more data
-  //  const reqUrl=`/api/repo/data/${repoName};
         return repoName;
   }
 
