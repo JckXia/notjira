@@ -4,10 +4,12 @@
 import React, {Component} from 'react';
 import Header from './header';
 import DisplayUserTask from './DisplayUserTask';
+  //  <Header repoInfo={this.state.currentRepo} currentPage={this.state.currentPage} auth={this.state.userIsLoggedIn}/>
 class UnauthenticatedPage extends Component {
   render(){
   return (
     <div>
+   
     <DisplayUserTask acquireProjectInfo={this.props.acquireProjectInfo} auth={this.props.auth} userData={this.props.userData}/>
 </div>
 );

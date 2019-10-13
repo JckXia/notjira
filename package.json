@@ -32,5 +32,8 @@
     "start": "node index.js",
     "dev": "concurrently \"node index.js\" \"npm run start --prefix client\"",
     "heroku-postbuild": "cd client && npm install && npm run build"
+  },
+  "devDependencies": {
+    "prettier": "^1.18.2"
   }
 }

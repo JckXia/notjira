@@ -116,12 +116,12 @@ export default class IssueCardDialog extends React.Component {
                        <table>
 
             <tbody>
-              {branchData && branchData.map((branch)=>{
+              {branchData && branchData.map((branch,index)=>{
                   let branchName= branch.branchRefData.refName.replace('refs/heads/',"");
                   let linkUrl='https://www.github.com/'+this.props.userInfo.userName+'/'+this.props.repoName+'/tree/'+branchName;
                   const truncateUrl=linkUrl.substring(0,28);
                   return(
-                    <tr>
+                    <tr key={index}>
                        <td><strong>{branchName}</strong></td>
                        <td><a href={linkUrl} target="_blank"> {truncateUrl}..</a></td>
                      <td><a href="#" onClick={()=>{this.branchDeleteionApiCall(branchName)}} >Delete</a></td>
