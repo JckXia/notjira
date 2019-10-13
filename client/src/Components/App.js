@@ -130,6 +130,10 @@ class App extends Component {
         return repoName;
   }
 
+   currentPageOnChangeHandler=(page)=>{
+
+     this.setState({currentPage:page});
+   }
 
    render() {
     const data = {
@@ -139,7 +143,7 @@ class App extends Component {
 
     return (<Router>
       <div className="App">
-      <Header repoInfo={this.state.currentRepo} currentPage={this.state.currentPage} auth={this.state.userIsLoggedIn}/>
+      <Header repoInfo={this.state.currentRepo} currentPageOnChange={this.currentPageOnChangeHandler} currentPage={this.state.currentPage} auth={this.state.userIsLoggedIn}/>
     <Route exact path="/" render={(props)=><UnauthenticatedPage acquireProjectInfo={(obj)=>this.acquireProjectInfo(obj)} auth={this.state.userIsLoggedIn} userData={data} />}/>
   <Route path ="/repo"  render={(props)=><RepoWorkSpace userInfo={this.state.user} auth={this.state.userIsLoggedIn} repoName={this.state.currentRepo.name}/>}/>
     </div>

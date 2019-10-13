@@ -4,22 +4,26 @@ import FormDialog from './FormDialog';
 import CreateTaskDialog from './CreateTaskDialog';
 class Header extends Component {
 
-
+   state={
+     currentPage:''
+   }
   componentDidMount() {
+      if(window.location.href.includes('repo/')){
+          this.props.currentPageOnChange({currentPage:'repo_detail'});
 
-    if(window.location.href.includes('repo/')){
-      this.setState({currentPage:'repo_detail'});
-    }else{
-      this.setState({currentPage:'repo_lists'});
-    }
+      }else{
+      this.props.currentPageOnChange({currentPage:'repo_lists'})
+      }
+
       window.onpopstate = ()=> {
 
           const currentUrl=window.location.href;
           if(currentUrl.includes('repo/')){
-            this.setState({currentPage:'repo_detail'});
-            //this.currentPage='repo_detail';
+    this.props.currentPageOnChange('repo_detail');
+
           }else{
-                this.setState({currentPage:'repo_lists'});
+            this.props.currentPageOnChange('repo_lists');
+
           }
       }
     }
@@ -41,16 +45,23 @@ class Header extends Component {
     SuperAgent.post('/api/github/repo/create')
               .send(Data)
               .then((res)=>{
-                //console.log(res);
-                // TODO: Not a good solution. Need to change this somehow
+     
                 window.location.reload();
               });
   };
   renderHeader() {
-    //   const apiCallFunct=this.testMakingAPICall;
+
       const currentRepoName= this.getCurrentRepoName();
+      const trueCurrentUrl=window.location.href;
     const currentUrl=window.location.href;
-    console.log(this.props.currentPage);
+
+     let targetPage=this.props.currentPage;
+     if(window.location.href.includes('repo/')){
+         if(this.props.currentPage == 'repo_lists'){
+           targetPage='repo_detail';
+         }
+     }
+
     switch (this.props.auth) {
 
       case false:
@@ -58,7 +69,7 @@ class Header extends Component {
           <a className="waves-effect waves-light btn-large" href="/auth/github/login">Login with github</a>
         </ul>);
       case true:
-        if(this.state.currentPage =='repo_lists'){
+        if(targetPage =='repo_lists'){
         return (<ul id="nav-mobile" class="right">
           <li>
             <a href="collapsible.html">Admin user</a>
