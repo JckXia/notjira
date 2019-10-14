@@ -90,7 +90,7 @@ class App extends Component {
       ...this.state
     };
     const resp = await Request.get('/auth/github/checkForUserToken');
-
+     
     if (resp.body) {
 
       stateObject.user.userid = resp.body._id;

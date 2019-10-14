@@ -24,7 +24,7 @@ module.exports = {
     if (userId == null) {
       return res.status(403).send('Forbidden! User not authenticated');
     }
-    const authToken = Env == 'test' ? req.headers.user : req.user.token;
+    const authToken = Env == 'test' ? req.headers.user : req.user.accessToken;
 
     const octokit = new Octokit({
       auth: `${authToken}`
@@ -84,7 +84,7 @@ module.exports = {
     }
     if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName)) {
 
-      const authToken = Env == 'test' ? req.headers.user : req.user.token;
+      const authToken = Env == 'test' ? req.headers.user : req.user.accessToken;
       const octokit = new Octokit({
         auth: `${authToken}`
       });
@@ -156,7 +156,7 @@ module.exports = {
    //This is such, that we are able to insert this branch adminInformation
    //Into the branch object
     const Env = process.env.NODE_ENV;
-
+    console.log('REQUST USER TOKEN ',req.session);
     const userId = Env === 'test' ? req.body.authToken : await authenticationManager.getAuthenticatedUserId(req, res);
     if (userId == null) {
       return res.status(403).send('Forbidden');
@@ -168,7 +168,7 @@ module.exports = {
     if (await repoManager.userIsAdminOfRepo(userId, req.params.repoName) ||
       await repoManager.userIsCollaboratorOfRepo(userId, req.params.repoName)) {
 
-      const authToken = Env === 'test' ? req.headers.user : req.user.token;
+      const authToken = Env === 'test' ? req.headers.user : req.user.accessToken;
       const branchName = 'refs/heads/'+req.body.taskName;
       const taskId=req.body.taskId;
       console.log(branchName);
@@ -201,7 +201,7 @@ module.exports = {
      if (await repoManager.userIsAdminOfRepo(userId, req.body.repo) ||
        await repoManager.userIsCollaboratorOfRepo(userId, req.body.repo)) {
 
-       const authToken = Env === 'test' ? req.headers.user : req.user.token;
+       const authToken = Env === 'test' ? req.headers.user : req.user.accessToken;
        const octokit=new Octokit({
          auth:`${authToken}`
        });
@@ -224,7 +224,7 @@ module.exports = {
 
        try{
       const removeBranchFromTaskRes=await taskManager.removeGitBranchFromTask(gitRef,taskId);
-    
+
         if(removeBranchFromTaskRes.lastErrorObject.updatedExisting == true){
           return res.status(200).send(removeBranchFromTaskRes);
         }
@@ -384,7 +384,7 @@ getOneTask:async(req,res)=>{
     const repoName=req.params.repoName;
 
     if(req.user.username == req.params.userName){
-      const authToken=req.user.token;
+      const authToken=req.user.accessToken;
       const octokit = new Octokit({
         auth: `${authToken}`
       });

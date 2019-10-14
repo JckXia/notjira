@@ -4,15 +4,21 @@ var GitHubStrategy = require('passport-github2').Strategy;
 const request = require('superagent');
 const Octokit = require('@octokit/rest');
 module.exports = function(passport) {
-  passport.serializeUser(function(user, done) {
-      done(null,user.id);
+  passport.serializeUser(function(userObject, done) {
+    //  console.log('INFO USER OBJECT ',user);
+      done(null,userObject);
   });
 
-  passport.deserializeUser(function(id, done) {
+  passport.deserializeUser(function(userObject, done) {
 
-    User.findById(id).then(user => {
-      done(null, user);
+    const id=userObject.user.gitHubId;
+
+    User.findOne({gitHubId:id}).then(user=>{
+
+        user.accessToken=userObject.accessToken;
+        done(null,user);
     });
+
   });
 
   passport.use(new GitHubStrategy({
@@ -25,11 +31,10 @@ module.exports = function(passport) {
     },
     async (accessToken, refreshToken, profile, done) => {
 
-        console.log('Access tok ',accessToken);
       const existingUser = await User.findOne({
         gitHubId: profile.id
       });
-    //console.log(profile);
+
       if (existingUser) {
 
         const res = await User.findOneAndUpdate({
@@ -38,21 +43,19 @@ module.exports = function(passport) {
           token: accessToken
         });
 
-        const resultUser = await User.findOne({
+        const user = await User.findOne({
           gitHubId: profile.id
         });
-        //    console.log('EXIST ',existingUser);
-        return done(null, resultUser);
+
+        return done(null, {user,accessToken,refreshToken});
       }
- 
+
       const user = await new User({
         gitHubId: profile.id,
-        username:profile.username,
-        token: accessToken
+        username:profile.username
       }).save();
-      console.log(user);
-      //  console.log(user);
-      done(null, user);
+
+      done(null, {user,accessToken,refreshToken});
     }
   ));
 }
