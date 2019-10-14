@@ -35,7 +35,7 @@ module.exports = {
         name: repoName
       });
 
-      console.log(repoCreationResp.data.html_url);
+
       const user = await userManager.getUserById(userId);
 
       const newRepo = await repoManager.saveNewRepoToDataBase(repoName, user.username, user.id, [], [], proxyUrl,repoCreationResp.data.html_url);
@@ -156,7 +156,7 @@ module.exports = {
    //This is such, that we are able to insert this branch adminInformation
    //Into the branch object
     const Env = process.env.NODE_ENV;
-    console.log('REQUST USER TOKEN ',req.session);
+
     const userId = Env === 'test' ? req.body.authToken : await authenticationManager.getAuthenticatedUserId(req, res);
     if (userId == null) {
       return res.status(403).send('Forbidden');
@@ -171,7 +171,7 @@ module.exports = {
       const authToken = Env === 'test' ? req.headers.user : req.user.accessToken;
       const branchName = 'refs/heads/'+req.body.taskName;
       const taskId=req.body.taskId;
-      console.log(branchName);
+
       const octokit = new Octokit({
         auth: `${authToken}`
       });
@@ -182,7 +182,7 @@ module.exports = {
         sha: req.body.parentRefHash
       });
       const refInfo=createRefResp.data;
-      console.log(refInfo);
+
       const addBranchToTaskRes=await taskManager.addGitBranchToTask({refName:refInfo.ref,gitInfo:refInfo.object},req.body.parentRefHash,taskId);
       if(addBranchToTaskRes.lastErrorObject.updatedExisting == true){
         return res.status(200).send(addBranchToTaskRes);
@@ -245,7 +245,7 @@ module.exports = {
     const repo_owner_name = req.query.repo_owner_name;
     const repo_name = req.query.repo_name;
     const reqUrl = "https://api.github.com/repos/" + repo_owner_name + "/" + repo_name + "/pulls";
-    console.log(reqUrl);
+
     var options = {
       url: reqUrl,
       headers: {
@@ -298,7 +298,7 @@ module.exports = {
   const repoName=req.params.repoName;
  repoManager.removeTaskFromRepo(requestBody.taskId,repoName).then(()=>{
    taskManager.removeTask(req,res).then(()=>{
-      console.log('Deletion finished');
+
         return res.status(200).send('Successful');
    });
  })
@@ -388,9 +388,6 @@ getOneTask:async(req,res)=>{
       const octokit = new Octokit({
         auth: `${authToken}`
       });
-      console.log('AUTH_TOKEN ',authToken);
-      console.log('DATA_TEST ',userName);
-      console.log('DATA_TEST ',repoName);
 
      const dataTest=await octokit.repos.listBranches({
        owner:userName,
