@@ -1,0 +1,8 @@
+As authenticated user
+1. User can create/delete repositories
+2. If the project repo isn't set up yet, we should see text on screen
+3. Upon set up project repo, we could create/delete tasks
+4. We could create/delete branches
+5. Load task with back Button
+6. Load task page with happy path
+7. Load task page with reload 
