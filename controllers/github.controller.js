@@ -182,8 +182,9 @@ module.exports = {
         sha: req.body.parentRefHash
       });
       const refInfo=createRefResp.data;
-
-      const addBranchToTaskRes=await taskManager.addGitBranchToTask({refName:refInfo.ref,gitInfo:refInfo.object},req.body.parentRefHash,taskId);
+      let parentBranchName=req.body.parentBranchName;
+       parentBranchName='refs/heads/'+parentBranchName;
+      const addBranchToTaskRes=await taskManager.addGitBranchToTask({refName:refInfo.ref,gitInfo:refInfo.object},req.body.parentRefHash,parentBranchName,taskId);
       if(addBranchToTaskRes.lastErrorObject.updatedExisting == true){
         return res.status(200).send(addBranchToTaskRes);
       }
