@@ -37,13 +37,7 @@ module.exports = function(passport) {
 
       if (existingUser) {
 
-        const res = await User.findOneAndUpdate({
-          gitHubId: profile.id
-        }, {
-          token: accessToken
-        });
-
-        const user = await User.findOne({
+         const user = await User.findOne({
           gitHubId: profile.id
         });
 
