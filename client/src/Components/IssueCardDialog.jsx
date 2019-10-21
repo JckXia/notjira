@@ -81,6 +81,21 @@ export default class IssueCardDialog extends React.Component {
         }
       });
   };
+
+  makePullRequestForBranch=(branchName)=>{
+    const owner=this.props.userInfo.userName;
+    const repo=this.props.repoName;
+    let head='refs/heads/'+branchName;
+    //TODO: FOr now, all changes will be merged into master
+    const base='refs/heads/master';
+    const requestData={owner,repo,head,base};
+
+      request.post('/api/github/LOL/createPullRequest').send(requestData).then((res)=>{
+          console.log(res);
+        alert('Pull request successfully created!');
+      });
+  }
+
   render() {
       const branchData=this.state.branch;
       console.log(branchData);
@@ -125,7 +140,7 @@ export default class IssueCardDialog extends React.Component {
                        <td><strong>{branchName}</strong></td>
                        <td><a href={linkUrl} target="_blank"> {truncateUrl}..</a></td>
                      <td><a href="#" onClick={()=>{this.branchDeleteionApiCall(branchName)}} >Delete</a></td>
-                       <td><a href="#">Make PR</a></td>
+                   <td><a href="#" onClick={()=>{this.makePullRequestForBranch(branchName)}}>Make PR</a></td>
                     </tr>
                   )
                  console.log(branch)
@@ -134,7 +149,7 @@ export default class IssueCardDialog extends React.Component {
            </tbody>
            </table>
 
-                     <h6><img src={gitPR} className="gitBranchLogo"/><b><strong>&nbsp; Pull requests</strong></b></h6>
+               <h6><img src={gitPR} className="gitBranchLogo"/><b><strong>&nbsp; Pull requests</strong></b></h6>
                          <table>
               <tbody>
                <tr>

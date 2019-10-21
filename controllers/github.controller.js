@@ -261,7 +261,51 @@ module.exports = {
     });
   },
   createPullRequest:async (req,res)=>{
+     console.log('CREATING PULL REQUEST');
 
+     const authToken=req.user.accessToken;
+
+       const octokit=new Octokit({
+         auth:`${authToken}`
+       });
+
+    const owner=req.body.owner;
+    const repo=req.body.repo;
+    const title='RANDOM PR';
+    let head=req.body.head;
+    const base=req.body.base;
+
+
+   octokit.pulls.create({
+    owner,
+    repo,
+    title,
+    head,
+    base
+  }).then((res)=>{
+
+  }).catch((e)=>{
+      console.log(e.errors[0].message);
+      return res.send({status:e.status,message:e.errors[0].message});
+  })
+
+      // let headBranch= req.body.ref;
+      // if(headBranch.includes('refs/')){
+      //   headBranch=headBranch.replace('refs/','');
+      // }
+      // if(!headBranch.includes('heads/')){
+      //     headBranch='heads/'+headBranch;
+      // }
+      // let baseBranch=req.body.parentRef;
+
+    //   try{
+    // '//   const createPrRes=await octokit.pulls.create({
+    //
+    //    });
+    //   }catch(e){
+    //     console.log(e);
+    //   }
+  //  return res.status(200).send('OKAY');
   },
   deletePullRequest:async (req,res)=>{
 
@@ -402,7 +446,6 @@ getOneTask:async(req,res)=>{
     }else{
       return res.status(403).send('Forbidden');
     }
-    //const targetUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/git/refs';
-  //  const getBranchResp=await Request.get(targetUrl);
+
   }
 }
