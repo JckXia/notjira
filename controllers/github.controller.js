@@ -275,37 +275,19 @@ module.exports = {
     let head=req.body.head;
     const base=req.body.base;
 
-
-   octokit.pulls.create({
-    owner,
-    repo,
-    title,
-    head,
-    base
-  }).then((res)=>{
-
-  }).catch((e)=>{
-      console.log(e.errors[0].message);
+try{
+   const pullRequestCreationResponse=await octokit.pulls.create({
+     owner,
+     repo,
+     title,
+     head,
+     base
+   });
+   return res.status(200).send(pullRequestCreationResponse);
+ }catch(e){
       return res.send({status:e.status,message:e.errors[0].message});
-  })
+ }
 
-      // let headBranch= req.body.ref;
-      // if(headBranch.includes('refs/')){
-      //   headBranch=headBranch.replace('refs/','');
-      // }
-      // if(!headBranch.includes('heads/')){
-      //     headBranch='heads/'+headBranch;
-      // }
-      // let baseBranch=req.body.parentRef;
-
-    //   try{
-    // '//   const createPrRes=await octokit.pulls.create({
-    //
-    //    });
-    //   }catch(e){
-    //     console.log(e);
-    //   }
-  //  return res.status(200).send('OKAY');
   },
   deletePullRequest:async (req,res)=>{
 

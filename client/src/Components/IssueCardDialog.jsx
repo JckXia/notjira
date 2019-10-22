@@ -86,19 +86,22 @@ export default class IssueCardDialog extends React.Component {
     const owner=this.props.userInfo.userName;
     const repo=this.props.repoName;
     let head='refs/heads/'+branchName;
-    //TODO: FOr now, all changes will be merged into master
+
     const base='refs/heads/master';
     const requestData={owner,repo,head,base};
-
+    debugger;
       request.post('/api/github/LOL/createPullRequest').send(requestData).then((res)=>{
-          console.log(res);
+         const responseBody=res.body;
+        if(responseBody.status === 422){
+           return alert(responseBody.message);
+        }
         alert('Pull request successfully created!');
       });
   }
 
   render() {
       const branchData=this.state.branch;
-      console.log(branchData);
+
     return (
 
       <div>
