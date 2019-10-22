@@ -375,6 +375,7 @@ getOneTask:async(req,res)=>{
  const userId=await authenticationManager.getAuthenticatedUserId(req,res);
   const taskId=req.query.taskId;
   const taskData=await taskManager.findTaskById(taskId);
+
   const repoName=taskData.repoName;
   if(await repoManager.userIsAdminOfRepo(userId,repoName)){
      return res.status(200).send(taskData);
