@@ -87,23 +87,20 @@ export default class IssueCardDialog extends React.Component {
     const repo=this.props.repoName;
     let head='refs/heads/'+branchName;
 
-
+   const taskId=this.props.taskId;
     let base='';
-
     const taskBranches=this.state.branch;
     taskBranches.map((branch)=>{
        const trimedBranchName=branch.refName.replace('refs/heads/','');
-       console.log(trimedBranchName);
+
       if(trimedBranchName === branchName){
         //branchName is the branch that we want to make PR for
         base=branch.parentBranchName
       }
     });
-        const requestData={owner,repo,head,base};
-      debugger;
+        const requestData={owner,repo,head,base,taskId};
       request.post('/api/github/LOL/createPullRequest').send(requestData).then((res)=>{
-         const responseBody=res.body
-         debugger;
+         const responseBody=res.body;
         if(responseBody.status === 422){
            return alert(responseBody.message);
         }

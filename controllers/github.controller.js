@@ -274,6 +274,7 @@ module.exports = {
     const title='RANDOM PR';
     let head=req.body.head;
     const base=req.body.base;
+    const taskId=req.body.taskId;
 
 try{
    const pullRequestCreationResponse=await octokit.pulls.create({
@@ -283,8 +284,16 @@ try{
      head,
      base
    });
-   return res.status(200).send(pullRequestCreationResponse);
+   if(pullRequestCreationResponse.status === 201){
+
+     const pullRequestUrl=pullRequestCreationResponse.data.url;
+
+   const addPullRequestToTaskRes=await taskManager.addPullRequestToTask(title,pullRequestUrl,taskId);
+
+  }
+ return res.status(200).send(pullRequestCreationResponse);
  }catch(e){
+   console.log(e);
       return res.send({status:e.status,message:e.errors[0].message});
  }
 

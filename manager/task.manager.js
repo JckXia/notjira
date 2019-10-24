@@ -83,6 +83,7 @@ await Task.findOneAndUpdate({
 async function addGitBranchToTask(branchRefData,parentRefData,parentBranchName,taskId){
   const refName=branchRefData.refName;
      const  gitBranchData={branchRefData,refName,parentRefData,parentBranchName};
+     console.log(taskId);
      const updateResult = await Task.findOneAndUpdate({
        _id: taskId
      }, {
@@ -128,10 +129,27 @@ async function removeGitBranchFromTask(branchRefName,taskId){
    return updateResult;
 }
 
+async function addPullRequestToTask(pullRequestTitle,pullRequestUrl,taskId){
+  console.log('REACHED THIS FUNCTION');
+  const pullRequestDataObject={pullRequestTitle,pullRequestUrl,taskId};
+
+    const updateResult=await Task.findOneAndUpdate({
+      _id: new ObjectID(taskId)
+    },{
+      $push:{
+        pullRequest:pullRequestDataObject
+      }
+    },{new:true,rawResult:true});
+
+    return updateResult;
+
+}
+
 module.exports = {
   addGitBranchToTask,
   findTaskById,
   removeTask,
   updateTaskStatus,
-  removeGitBranchFromTask
+  removeGitBranchFromTask,
+  addPullRequestToTask
 };
