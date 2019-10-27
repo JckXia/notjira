@@ -19,6 +19,7 @@ router.get('/api/github/:repoName/getOneTask',gitHub_controller.getOneTask);
 router.post('/api/github/repo/create',gitHub_controller.createRepo);
 router.post('/api/github/repo/:repoName/delete',gitHub_controller.deleteRepo);
 router.post('/api/getPullRequests',gitHub_controller.getPullRequests);
+router.post('/api/github/:repoName/createPullRequest',gitHub_controller.createPullRequest);
 
 router.post('/api/github/:ownerName/:repoName/webhook/create',gitHub_controller.createWebHook);
 

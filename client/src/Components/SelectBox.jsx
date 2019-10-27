@@ -77,7 +77,7 @@ export default function ControlledOpenSelect({taskName,taskId,onBranchCreationCa
         alert('ERROR! no branch can be found');
        return;
      }
-     const requestData={parentRefHash:targetRef,taskName:state.branchName,taskId,userInfo};
+     const requestData={parentRefHash:targetRef,parentBranchName:state.targetBranch, taskName:state.branchName,taskId,userInfo};
      const targetUrl='/api/github/'+repoName+'/task/create_branch';
      try{
      const result=await Request.post(targetUrl).send(requestData);

@@ -182,8 +182,9 @@ module.exports = {
         sha: req.body.parentRefHash
       });
       const refInfo=createRefResp.data;
-
-      const addBranchToTaskRes=await taskManager.addGitBranchToTask({refName:refInfo.ref,gitInfo:refInfo.object},req.body.parentRefHash,taskId);
+      let parentBranchName=req.body.parentBranchName;
+       parentBranchName='refs/heads/'+parentBranchName;
+      const addBranchToTaskRes=await taskManager.addGitBranchToTask({refName:refInfo.ref,gitInfo:refInfo.object},req.body.parentRefHash,parentBranchName,taskId);
       if(addBranchToTaskRes.lastErrorObject.updatedExisting == true){
         return res.status(200).send(addBranchToTaskRes);
       }
@@ -261,6 +262,41 @@ module.exports = {
   },
   createPullRequest:async (req,res)=>{
 
+     const authToken=req.user.accessToken;
+
+       const octokit=new Octokit({
+         auth:`${authToken}`
+       });
+
+    const owner=req.body.owner;
+    const repo=req.body.repo;
+    const title='PR_FOR_one';
+    let head=req.body.head;
+    const base=req.body.base;
+    const taskId=req.body.taskId;
+
+try{
+   const pullRequestCreationResponse=await octokit.pulls.create({
+     owner,
+     repo,
+     title,
+     head,
+     base
+   });
+   console.log(pullRequestCreationResponse);
+   if(pullRequestCreationResponse.status === 201){
+
+     const pullRequestUrl=pullRequestCreationResponse.data.url;
+
+   const addPullRequestToTaskRes=await taskManager.addPullRequestToTask(title,pullRequestUrl,taskId);
+
+  }
+ return res.status(200).send(pullRequestCreationResponse);
+ }catch(e){
+   console.log(e);
+      return res.send({status:e.status,message:e.errors[0].message});
+ }
+
   },
   deletePullRequest:async (req,res)=>{
 
@@ -328,7 +364,7 @@ getAllTasks:async(req,res)=>{
     }
 },
 changeTaskStatus:async(req,res)=>{
-  //
+
   //POST call
   //status: req.body.status
   //taskId:
@@ -348,6 +384,7 @@ getOneTask:async(req,res)=>{
  const userId=await authenticationManager.getAuthenticatedUserId(req,res);
   const taskId=req.query.taskId;
   const taskData=await taskManager.findTaskById(taskId);
+
   const repoName=taskData.repoName;
   if(await repoManager.userIsAdminOfRepo(userId,repoName)){
      return res.status(200).send(taskData);
@@ -401,7 +438,6 @@ getOneTask:async(req,res)=>{
     }else{
       return res.status(403).send('Forbidden');
     }
-    //const targetUrl='https://api.github.com/repos/'+userName+'/'+repoName+'/git/refs';
-  //  const getBranchResp=await Request.get(targetUrl);
+
   }
 }

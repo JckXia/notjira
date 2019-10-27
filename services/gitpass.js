@@ -37,8 +37,8 @@ module.exports = function(passport) {
 
       if (existingUser) {
 
-    
-        const user = await User.findOne({
+
+      const user = await User.findOne({
           gitHubId: profile.id
         });
 

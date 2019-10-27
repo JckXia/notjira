@@ -81,9 +81,36 @@ export default class IssueCardDialog extends React.Component {
         }
       });
   };
+
+  makePullRequestForBranch=(branchName)=>{
+    const owner=this.props.userInfo.userName;
+    const repo=this.props.repoName;
+    let head='refs/heads/'+branchName;
+
+   const taskId=this.props.taskId;
+    let base='';
+    const taskBranches=this.state.branch;
+    taskBranches.map((branch)=>{
+       const trimedBranchName=branch.refName.replace('refs/heads/','');
+
+      if(trimedBranchName === branchName){
+        //branchName is the branch that we want to make PR for
+        base=branch.parentBranchName
+      }
+    });
+        const requestData={owner,repo,head,base,taskId};
+      request.post('/api/github/LOL/createPullRequest').send(requestData).then((res)=>{
+         const responseBody=res.body;
+        if(responseBody.status === 422){
+           return alert(responseBody.message);
+        }
+      return alert('Pull request successfully created!');
+      });
+  }
+
   render() {
       const branchData=this.state.branch;
-      console.log(branchData);
+      const pullRequestData=this.state.pullRequest;
     return (
 
       <div>
@@ -125,7 +152,7 @@ export default class IssueCardDialog extends React.Component {
                        <td><strong>{branchName}</strong></td>
                        <td><a href={linkUrl} target="_blank"> {truncateUrl}..</a></td>
                      <td><a href="#" onClick={()=>{this.branchDeleteionApiCall(branchName)}} >Delete</a></td>
-                       <td><a href="#">Make PR</a></td>
+                   <td><a href="#" onClick={()=>{this.makePullRequestForBranch(branchName)}}>Make PR</a></td>
                     </tr>
                   )
                  console.log(branch)
@@ -134,22 +161,21 @@ export default class IssueCardDialog extends React.Component {
            </tbody>
            </table>
 
-                     <h6><img src={gitPR} className="gitBranchLogo"/><b><strong>&nbsp; Pull requests</strong></b></h6>
+               <h6><img src={gitPR} className="gitPullRequestLogo"/><b><strong>&nbsp; Pull requests</strong></b></h6>
                          <table>
               <tbody>
-               <tr>
-                 <td> <strong>feature/PLAT-7564-FixCest</strong></td>
-                 <td>`https://www.google.com`</td>
-                 <td><a href="#">Delete</a></td>
-
-               </tr>
-
-               <tr>
-                 <td> <strong>feature/PLAT-6357-LiveCollab </strong></td>
-                 <td>`https://www.google.com`</td>
-                 <td><a href="#">Delete</a></td>
-
-               </tr>
+                {pullRequestData && pullRequestData.map((item)=>{
+                  let linkUrl=item.pullRequestUrl.replace('api.','');
+                    linkUrl=linkUrl.replace('repos/','');
+                    linkUrl=linkUrl.replace('pulls','pull');
+                  const truncateUrl=linkUrl.substring(0,28);
+                      return(
+                        <tr>
+                          <td><strong>{item.pullRequestTitle}</strong></td>
+                          <td><a href={linkUrl} target="_blank" > {truncateUrl}...</a></td>
+                        </tr>
+                      );
+                })}
              </tbody>
              </table>
              <DialogActions>
