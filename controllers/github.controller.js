@@ -261,7 +261,6 @@ module.exports = {
     });
   },
   createPullRequest:async (req,res)=>{
-     console.log('CREATING PULL REQUEST');
 
      const authToken=req.user.accessToken;
 
@@ -271,7 +270,7 @@ module.exports = {
 
     const owner=req.body.owner;
     const repo=req.body.repo;
-    const title='RANDOM PR';
+    const title='PR_FOR_one';
     let head=req.body.head;
     const base=req.body.base;
     const taskId=req.body.taskId;
@@ -284,6 +283,7 @@ try{
      head,
      base
    });
+   console.log(pullRequestCreationResponse);
    if(pullRequestCreationResponse.status === 201){
 
      const pullRequestUrl=pullRequestCreationResponse.data.url;
@@ -364,7 +364,7 @@ getAllTasks:async(req,res)=>{
     }
 },
 changeTaskStatus:async(req,res)=>{
-  //
+
   //POST call
   //status: req.body.status
   //taskId:

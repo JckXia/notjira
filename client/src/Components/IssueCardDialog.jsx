@@ -110,7 +110,7 @@ export default class IssueCardDialog extends React.Component {
 
   render() {
       const branchData=this.state.branch;
-
+      const pullRequestData=this.state.pullRequest;
     return (
 
       <div>
@@ -161,22 +161,21 @@ export default class IssueCardDialog extends React.Component {
            </tbody>
            </table>
 
-               <h6><img src={gitPR} className="gitBranchLogo"/><b><strong>&nbsp; Pull requests</strong></b></h6>
+               <h6><img src={gitPR} className="gitPullRequestLogo"/><b><strong>&nbsp; Pull requests</strong></b></h6>
                          <table>
               <tbody>
-               <tr>
-                 <td> <strong>feature/PLAT-7564-FixCest</strong></td>
-                 <td>`https://www.google.com`</td>
-                 <td><a href="#">Delete</a></td>
-
-               </tr>
-
-               <tr>
-                 <td> <strong>feature/PLAT-6357-LiveCollab </strong></td>
-                 <td>`https://www.google.com`</td>
-                 <td><a href="#">Delete</a></td>
-
-               </tr>
+                {pullRequestData && pullRequestData.map((item)=>{
+                  let linkUrl=item.pullRequestUrl.replace('api.','');
+                    linkUrl=linkUrl.replace('repos/','');
+                    linkUrl=linkUrl.replace('pulls','pull');
+                  const truncateUrl=linkUrl.substring(0,28);
+                      return(
+                        <tr>
+                          <td><strong>{item.pullRequestTitle}</strong></td>
+                          <td><a href={linkUrl} target="_blank" > {truncateUrl}...</a></td>
+                        </tr>
+                      );
+                })}
              </tbody>
              </table>
              <DialogActions>

@@ -130,7 +130,7 @@ async function removeGitBranchFromTask(branchRefName,taskId){
 }
 
 async function addPullRequestToTask(pullRequestTitle,pullRequestUrl,taskId){
-  console.log('REACHED THIS FUNCTION');
+
   const pullRequestDataObject={pullRequestTitle,pullRequestUrl,taskId};
 
     const updateResult=await Task.findOneAndUpdate({
