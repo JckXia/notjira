@@ -111,6 +111,7 @@ export default class IssueCardDialog extends React.Component {
   render() {
       const branchData=this.state.branch;
       const pullRequestData=this.state.pullRequest;
+
     return (
 
       <div>
@@ -121,7 +122,7 @@ export default class IssueCardDialog extends React.Component {
           onClose={this.handleClose}
           disableBackdropClick={true}
           aria-labelledby="form-dialog-title"
-
+          fullWidth
         >
           <DialogTitle id="form-dialog-title"><h5>
             <b>{this.props.taskName}</b>
@@ -135,9 +136,7 @@ export default class IssueCardDialog extends React.Component {
 
              : <DialogContent>
                      <DialogContentText>
-                       This ticket is to aim to solve any outstanding tickets that needed to be
-                       completed before the release of 7.5.6 on monday. This includes fixing
-                       bugs surrounding the chrome extension and slack integration
+                       {this.state.taskDesc}
                      </DialogContentText>
                    <h6><img src={gitBranch} className="gitBranchLogo"/><b><strong>&nbsp; Subtasks</strong></b><a href="#" onClick={this.isInBranchCreationMode}><img src={addBranch} className="right"/></a></h6>
                        <table>

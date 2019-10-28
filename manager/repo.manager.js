@@ -131,7 +131,7 @@ async function addTaskToRepo(req, res) {
   const newTaskObject=await new Task({
     task_state:'toDo',
     taskName:req.body.taskName,
-    taskDesc:req.body.taskDesc ? req.body.taskDesc:'',
+    taskDesc:req.body.taskDescription ? req.body.taskDescription:'',
     assignedTo:[],
     branch:[],
     pullRequest:[],
@@ -140,6 +140,7 @@ async function addTaskToRepo(req, res) {
 
  const basicTaskData={
   taskName:req.body.taskName,
+  taskDesc:req.body.taskDescription,
   task_state:'toDo',
   _id:newTaskObject._id
 };

@@ -27,7 +27,7 @@ export default class CreateTaskDialog extends React.Component {
   handleTaskNameChange=(e)=>{
 
     let state={...this.state};
-   state["taskName"]=e.target.value;
+   state[e.target.name]=e.target.value;
     this.setState(state);
   };
 
@@ -40,9 +40,10 @@ export default class CreateTaskDialog extends React.Component {
     let state={...this.state};
     const Data={
       taskName:state["taskName"],
+      taskDescription:state['taskDescription'],
       taskDesc:'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
     };
- 
+
     SuperAgent.post('/api/github/'+this.props.currentRepo+'/create_task')
               .send(Data)
               .then((res)=>{
@@ -78,19 +79,21 @@ export default class CreateTaskDialog extends React.Component {
              onChange={this.handleTaskNameChange}
              type="WebHookUrl"
              fullWidth
+             name="taskName"
              variant="outlined"
             />
             <TextField
-             required
-             autoFocus
-             margin="normal"
-             label="Assign to"
-             id="webHook Url"
-             type="WebHookUrl"
-             onChange={this.handleRepoWebHookUrlChange}
-             fullWidth
-             variant="outlined"
-            />
+            id="outlined-multiline-static"
+            name="taskDescription"
+            label="Task Description"
+            multiline
+            rows="4"
+            className="taskDescField"
+            margin="normal"
+            onChange={this.handleTaskNameChange}
+            fullWidth
+            variant="outlined"
+          />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
