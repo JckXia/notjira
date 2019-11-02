@@ -1,5 +1,11 @@
 import React from 'react';
 import Request from 'superagent';
+import {UnControlled as CodeMirror} from 'react-codemirror2';
+require('codemirror/lib/codemirror.css');
+require('codemirror/theme/material.css');
+require('codemirror/theme/neat.css');
+require('codemirror/mode/xml/xml.js');
+require('codemirror/mode/javascript/javascript.js');
 export default class CreatePullRequests extends React.Component{
 
 async componentDidMount(){
@@ -15,21 +21,28 @@ async componentDidMount(){
         if(repoBranch.name == originBranch){
           console.log(repoBranch.commit.sha);
            gitDiffUrl='https://api.github.com/repos/'+user+'/'+repoName+'/commits/'+repoBranch.commit.sha;
-
-        //      debugger;
+            return;
         }
      });
-     //application/vnd.github.VERSION.diff
-
     const result=await Request.get(gitDiffUrl).set('Accept','application/vnd.github.3.diff');
-    console.log(result);
-       debugger;
+    console.log(result.text);
+
   }
   render(){
     return(
-        <div>
-          Make PR
-      </div>
+
+      <CodeMirror
+        value='const a =10;'
+      options={{
+        mode: 'javascript',
+        theme: 'material',
+        lineNumbers: true
+      }}
+      onChange={(editor, data, value) => {
+        console.log('Uncontrolled');
+      }}
+     />
+
     )
   }
 };
