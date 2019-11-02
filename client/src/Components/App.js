@@ -140,7 +140,7 @@ class App extends Component {
       <Header repoInfo={this.state.currentRepo} currentPageOnChange={this.currentPageOnChangeHandler} currentPage={this.state.currentPage} auth={this.state.userIsLoggedIn}/>
     <Route exact path="/" render={(props)=><UnauthenticatedPage acquireProjectInfo={(obj)=>this.acquireProjectInfo(obj)} auth={this.state.userIsLoggedIn} userData={data} />}/>
   <Route path ="/repo"  render={(props)=><RepoWorkSpace userInfo={this.state.user} auth={this.state.userIsLoggedIn} repoName={this.state.currentRepo.name}/>}/>
-<Route path="/repo/pullRequest" render={(props)=><CreatePullRequests userInfo={this.state.user} auth={this.state.userIsLoggedIn} />} />
+<Route path="/pullRequest" render={(props)=><CreatePullRequests userInfo={this.state.user} auth={this.state.userIsLoggedIn} />} />
   </div>
     </Router>);
   }
