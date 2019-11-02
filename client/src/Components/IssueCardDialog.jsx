@@ -12,6 +12,7 @@ import gitPR from '../icons/gitPR.png';
 import addBranch from '../icons/addBranch.png';
 import AddBranchPanel from './AddBranchPanel';
 import request from 'superagent';
+import {Link} from 'react-router-dom';
 const styles = {
   dialogPaper: {
       minHeight: '80px',
@@ -146,15 +147,18 @@ export default class IssueCardDialog extends React.Component {
                   let branchName= branch.branchRefData.refName.replace('refs/heads/',"");
                   let linkUrl='https://www.github.com/'+this.props.userInfo.userName+'/'+this.props.repoName+'/tree/'+branchName;
                   const truncateUrl=linkUrl.substring(0,28);
+                  //Need repo Name(Acquire branches)
+                  //Need
+                  var paramsString = "https://somesite.com/?q=URLUtils.searchParams&topic=api&pullRequest=lol";
+                  const createPullRequestUrl=`/pullRequest/?repoName=${this.props.repoName}&originBranch=${branchName}`;
                   return(
                     <tr key={index}>
                        <td><strong>{branchName}</strong></td>
-                       <td><a href={linkUrl} target="_blank"> {truncateUrl}..</a></td>
+                     <td> <a href={linkUrl} target="_blank"> {truncateUrl}..</a></td>
                      <td><a href="#" onClick={()=>{this.branchDeleteionApiCall(branchName)}} >Delete</a></td>
-                   <td><a href="#" onClick={()=>{this.makePullRequestForBranch(branchName)}}>Make PR</a></td>
+                   <td><Link to={createPullRequestUrl}>Make PR</Link> </td>
                     </tr>
                   )
-                 console.log(branch)
               })}
 
            </tbody>
