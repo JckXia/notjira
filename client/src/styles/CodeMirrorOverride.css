@@ -1,0 +1,10 @@
+.CodeMirror{
+  font-family: monospace;
+  height: 30%;
+  width:45%;
+  color: black;
+  direction: ltr;
+  margin-left:auto;
+  margin-right:auto;
+  text-align: left;
+};
