@@ -18,12 +18,12 @@ const FileChangeInfo=styled.code`
    font-weight:bold;
 `;
 
-const RenderCodeDiffOntoCodeMirror=({diff})=>{
+const RenderCodeDiffOntoCodeMirror=({diff,originBranch})=>{
   const files=parse(diff);
 
   return(  <>
     <h4>
-     {`Merge feature/PLAT-3635-ASD into Master`}
+     {`Merge ${originBranch} into Master`}
    </h4>
     {files.map((file)=>{
 
@@ -49,7 +49,7 @@ const RenderCodeDiffOntoCodeMirror=({diff})=>{
                  lineWrapping:false,
                  indentUnit:0
                }}
-               
+
                onKeyDown={(editor,event)=>{
                  event.preventDefault();
                }}
@@ -95,15 +95,15 @@ async componentDidMount(){
     const result=await Request.get(gitDiffUrl).set('Accept','application/vnd.github.3.diff');
   //  console.log(result.text);
     const files=parse(result.text);
-
-    this.setState({code:result.text});
+     const stateObject={code:result.text,originBranch:originBranch}
+    this.setState(stateObject);
 
   }
   render(){
       const diff=this.state.code;
     return(
       <>
-        {diff && <RenderCodeDiffOntoCodeMirror diff={diff} />}
+        {diff && <RenderCodeDiffOntoCodeMirror diff={diff} originBranch={this.state.originBranch} />}
       </>
     )
   }
