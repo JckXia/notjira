@@ -12,6 +12,7 @@ import gitPR from '../icons/gitPR.png';
 import addBranch from '../icons/addBranch.png';
 import AddBranchPanel from './AddBranchPanel';
 import request from 'superagent';
+import {Link} from 'react-router-dom';
 const styles = {
   dialogPaper: {
       minHeight: '80px',
@@ -108,6 +109,22 @@ export default class IssueCardDialog extends React.Component {
       });
   }
 
+  getParentBranchName=(branchName)=>{
+      const onwer=this.props.userInfo.userName;
+      const repo=this.props.repoName;
+     const taskBranches=this.state.branch;
+     let retVal='';
+      taskBranches.map((branch,index)=>{
+        const trimedBranchName=branch.refName.replace('refs/heads/','');
+
+         if(trimedBranchName === branchName){
+           retVal=branch.parentBranchName;
+            return;
+         }
+      })
+      return retVal;
+  }
+
   render() {
       const branchData=this.state.branch;
       const pullRequestData=this.state.pullRequest;
@@ -146,15 +163,19 @@ export default class IssueCardDialog extends React.Component {
                   let branchName= branch.branchRefData.refName.replace('refs/heads/',"");
                   let linkUrl='https://www.github.com/'+this.props.userInfo.userName+'/'+this.props.repoName+'/tree/'+branchName;
                   const truncateUrl=linkUrl.substring(0,28);
+
+                  let parentBranch=this.getParentBranchName(branchName);
+                parentBranch= parentBranch.replace('refs/heads/','');
+                  const createPullRequestUrl=`/pullRequest/?repoName=${this.props.repoName}&originBranch=${branchName}&targetBranch=${parentBranch}&taskId=${this.props.taskId}&user=${this.props.userInfo.userName}`;
+
                   return(
                     <tr key={index}>
                        <td><strong>{branchName}</strong></td>
-                       <td><a href={linkUrl} target="_blank"> {truncateUrl}..</a></td>
+                     <td> <a href={linkUrl} target="_blank"> {truncateUrl}..</a></td>
                      <td><a href="#" onClick={()=>{this.branchDeleteionApiCall(branchName)}} >Delete</a></td>
-                   <td><a href="#" onClick={()=>{this.makePullRequestForBranch(branchName)}}>Make PR</a></td>
+                   <td><Link to={createPullRequestUrl}>Make PR</Link> </td>
                     </tr>
                   )
-                 console.log(branch)
               })}
 
            </tbody>

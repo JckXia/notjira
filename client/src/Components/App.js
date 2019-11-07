@@ -11,14 +11,8 @@ import UnauthenticatedPage from './UnauthenticatedPage';
 
 import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 import RepoWorkSpace from './RepoWorkSpace';
+import CreatePullRequests from './CreatePullRequests';
 
-//Within the App file, keep a list of all cards in this way
-/*
-  cards:[]
-     0=>[cardId=>1,cardState=>In progress,toDoItem="blah",toDoItemDetail="check chec"],
-     1=>[cardId=>2,cardState=>Finished,toDoItem="PCO",todoItemDetail="using socketio to replace old rest api"]
-  ]
-*/
 const customStyles = {
   content: {
     top: '50%',
@@ -90,7 +84,7 @@ class App extends Component {
       ...this.state
     };
     const resp = await Request.get('/auth/github/checkForUserToken');
-     
+
     if (resp.body) {
 
       stateObject.user.userid = resp.body._id;
@@ -146,7 +140,8 @@ class App extends Component {
       <Header repoInfo={this.state.currentRepo} currentPageOnChange={this.currentPageOnChangeHandler} currentPage={this.state.currentPage} auth={this.state.userIsLoggedIn}/>
     <Route exact path="/" render={(props)=><UnauthenticatedPage acquireProjectInfo={(obj)=>this.acquireProjectInfo(obj)} auth={this.state.userIsLoggedIn} userData={data} />}/>
   <Route path ="/repo"  render={(props)=><RepoWorkSpace userInfo={this.state.user} auth={this.state.userIsLoggedIn} repoName={this.state.currentRepo.name}/>}/>
-    </div>
+<Route path="/pullRequest" render={(props)=><CreatePullRequests userInfo={this.state.user} auth={this.state.userIsLoggedIn} />} />
+  </div>
     </Router>);
   }
 }
