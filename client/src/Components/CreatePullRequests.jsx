@@ -3,6 +3,8 @@ import Request from 'superagent';
 import styled from 'styled-components';
 import {UnControlled as CodeMirror} from 'react-codemirror2';
 import parse from 'parse-diff';
+import Button from '@material-ui/core/Button';
+import request from 'superagent';
 require('codemirror/lib/codemirror.css');
 require('codemirror/theme/material.css');
 require('codemirror/mode/xml/xml.js');
@@ -18,13 +20,27 @@ const FileChangeInfo=styled.code`
    font-weight:bold;
 `;
 
-const RenderCodeDiffOntoCodeMirror=({diff,originBranch})=>{
+const RenderCodeDiffOntoCodeMirror=({diff,originBranch,targetBranch,user,repoName,taskId})=>{
   const files=parse(diff);
 
   return(  <>
     <h4>
-     {`Merge ${originBranch} into Master`}
+     {`Merge ${originBranch} into ${targetBranch}`}
    </h4>
+   <Button variant="contained" color="primary" onClick={()=>{
+        
+       const requestData={owner:user,repo:repoName,base:targetBranch,head:originBranch,taskId:taskId};
+       request.post('/api/github/LOL/createPullRequest').send(requestData).then((res)=>{
+          const responseBody=res.body;
+         if(responseBody.status === 422){
+            return alert(responseBody.message);
+         }
+       return alert('Pull request successfully created!');
+       });
+
+     }}>
+      Create pull request
+   </Button>
     {files.map((file)=>{
 
     let changedCode='';
@@ -78,24 +94,25 @@ export default class CreatePullRequests extends React.Component{
  };
 async componentDidMount(){
      const parsedUrl=new URL(window.location.href);
-     const user=this.props.userInfo.userName;
+     const user=this.props.userInfo.userName || parsedUrl.searchParams.get('user');
      const repoName=parsedUrl.searchParams.get('repoName');
      const originBranch=parsedUrl.searchParams.get('originBranch');
+     const targetBranch=parsedUrl.searchParams.get('targetBranch');
+     const taskId=parsedUrl.searchParams.get('taskId');
      const targetUrl='/api/github/'+user+'/'+repoName+'/refs';
      const getBranchResp=await Request.get(targetUrl);
      const repoBranches=getBranchResp.body;
      let gitDiffUrl='';
      repoBranches.map((repoBranch,index)=>{
         if(repoBranch.name == originBranch){
-          console.log(repoBranch.commit.sha);
-           gitDiffUrl='https://api.github.com/repos/'+user+'/'+repoName+'/commits/'+repoBranch.commit.sha;
-            return;
+
+          gitDiffUrl='https://api.github.com/repos/'+user+'/'+repoName+'/compare/'+targetBranch+'...'+originBranch;
+
+          return;
         }
      });
     const result=await Request.get(gitDiffUrl).set('Accept','application/vnd.github.3.diff');
-  //  console.log(result.text);
-    const files=parse(result.text);
-     const stateObject={code:result.text,originBranch:originBranch}
+     const stateObject={code:result.text,originBranch:originBranch,targetBranch:targetBranch,user:user,repoName:repoName,taskId:taskId}
     this.setState(stateObject);
 
   }
@@ -103,7 +120,8 @@ async componentDidMount(){
       const diff=this.state.code;
     return(
       <>
-        {diff && <RenderCodeDiffOntoCodeMirror diff={diff} originBranch={this.state.originBranch} />}
+      {!diff && this.state.originBranch&&<h3>{`${this.state.originBranch} is up to date with ${this.state.targetBranch}`}</h3>}
+        {diff && <RenderCodeDiffOntoCodeMirror diff={diff} user={this.state.user} repoName={this.state.repoName} taskId={this.state.taskId} originBranch={this.state.originBranch} targetBranch={this.state.targetBranch} />}
       </>
     )
   }

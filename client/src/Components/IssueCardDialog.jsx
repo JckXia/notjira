@@ -109,6 +109,22 @@ export default class IssueCardDialog extends React.Component {
       });
   }
 
+  getParentBranchName=(branchName)=>{
+      const onwer=this.props.userInfo.userName;
+      const repo=this.props.repoName;
+     const taskBranches=this.state.branch;
+     let retVal='';
+      taskBranches.map((branch,index)=>{
+        const trimedBranchName=branch.refName.replace('refs/heads/','');
+
+         if(trimedBranchName === branchName){
+           retVal=branch.parentBranchName;
+            return;
+         }
+      })
+      return retVal;
+  }
+
   render() {
       const branchData=this.state.branch;
       const pullRequestData=this.state.pullRequest;
@@ -147,10 +163,11 @@ export default class IssueCardDialog extends React.Component {
                   let branchName= branch.branchRefData.refName.replace('refs/heads/',"");
                   let linkUrl='https://www.github.com/'+this.props.userInfo.userName+'/'+this.props.repoName+'/tree/'+branchName;
                   const truncateUrl=linkUrl.substring(0,28);
-                  //Need repo Name(Acquire branches)
-                  //Need
-                  var paramsString = "https://somesite.com/?q=URLUtils.searchParams&topic=api&pullRequest=lol";
-                  const createPullRequestUrl=`/pullRequest/?repoName=${this.props.repoName}&originBranch=${branchName}`;
+
+                  let parentBranch=this.getParentBranchName(branchName);
+                parentBranch= parentBranch.replace('refs/heads/','');
+                  const createPullRequestUrl=`/pullRequest/?repoName=${this.props.repoName}&originBranch=${branchName}&targetBranch=${parentBranch}&taskId=${this.props.taskId}&user=${this.props.userInfo.userName}`;
+
                   return(
                     <tr key={index}>
                        <td><strong>{branchName}</strong></td>
