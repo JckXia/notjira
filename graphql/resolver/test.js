@@ -1,5 +1,6 @@
 module.exports = {
-  testGet: () => {
+  testGet: (args, context) => {
+    console.log(context.user);
     return "TestGetSuccessfull";
   }
 };

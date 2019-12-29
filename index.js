@@ -11,7 +11,6 @@ var GitHubStrategy = require("passport-github2").Strategy;
 
 // GrpahQL related dependencies
 const graphQLSchema = require("./graphql/schema/index");
-const graphQLTestResolver = require("./graphql/resolver/test");
 const rootResolver = require("./graphql/resolver/index");
 const graphQLHttp = require("express-graphql");
 //-----------------------------
@@ -65,11 +64,12 @@ app.use("/api", task);
 
 app.use(
   "/graphql",
-  graphQLHttp({
+  graphQLHttp(req => ({
     schema: graphQLSchema,
     rootValue: rootResolver,
+    context: { user: req.user },
     graphiql: true
-  })
+  }))
 );
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
