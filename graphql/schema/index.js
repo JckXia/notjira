@@ -18,7 +18,7 @@ type Repo{
  repo_admin_name:String!
  repo_creator_name:String!
  repo_creator_pk:String!
- 
+ task_items:[TaskItem!]
 }
 
 type User{
