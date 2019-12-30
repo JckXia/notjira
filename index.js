@@ -2,24 +2,21 @@ const express = require("express");
 const path = require("path");
 const app = express();
 const bodyParser = require("body-parser");
-var session = require("express-session");
 const cookieSession = require("cookie-session");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const MongoClient = require("mongodb").MongoClient;
-var GitHubStrategy = require("passport-github2").Strategy;
 
 // GrpahQL related dependencies
 const graphQLSchema = require("./graphql/schema/index");
 const rootResolver = require("./graphql/resolver/index");
 const graphQLHttp = require("express-graphql");
 //-----------------------------
-const User = require("./models/user.model");
+
 const user = require("./routes/user.route");
 const github = require("./routes/github.route");
 const auth = require("./routes/auth.route");
 const task = require("./routes/task.route");
-const keys = require("./config/keys");
 
 let dev_db_url =
   process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/JiraBackEnd";
@@ -67,8 +64,8 @@ app.use(
   graphQLHttp(req => ({
     schema: graphQLSchema,
     rootValue: rootResolver,
-    context: { user: req.user },
-    graphiql: true
+    context: { requestBody: req, user: req.user },
+    graphiql: process.env.NODE_ENV !== "production"
   }))
 );
 // The "catchall" handler: for any request that doesn't
