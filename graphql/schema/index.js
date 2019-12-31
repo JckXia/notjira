@@ -32,8 +32,14 @@ type RootQuery{
    userInfo:User!
   singleRepo(repoId:ID!):Repo!
    testGet:String!
-  }  
+}  
+
+type RootMutation{
+  createRepo(repoName:String!):Repo!
+}
+
   schema{
-      query:RootQuery
+    query:RootQuery
+    mutation:RootMutation
   }
 `);
