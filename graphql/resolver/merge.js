@@ -1,5 +1,22 @@
 const Task = require("../../models/task.model");
 const Repo = require("../../models/repo.model");
+
+//TODO Refactor the database logic surrounding
+//storing branch objects
+const getBranchObjects = async branchDataObjects => {
+  return branchDataObjects.map(branchDataObject => {
+    console.log(branchDataObject.branchRefData);
+    return {
+      ...branchDataObject,
+      branchRefData: {
+        sha: branchDataObject.branchRefData.gitInfo.sha,
+        type: branchDataObject.branchRefData.gitInfo.type,
+        url: branchDataObject.branchRefData.gitInfo.url
+      }
+    };
+  });
+};
+
 const getTaskObjects = async taskItemsData => {
   const taskItemIds = taskItemsData.map(taskItem => {
     return taskItem._id;
@@ -9,6 +26,7 @@ const getTaskObjects = async taskItemsData => {
     return taskItemObjects.map(taskItemObject => {
       return {
         ...taskItemObject._doc,
+        branchList: getBranchObjects.bind(this, taskItemObject._doc.branch),
         pullRequestList: taskItemObject._doc.pullRequest
       };
     });

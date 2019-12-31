@@ -3,6 +3,19 @@ const { buildSchema } = require("graphql");
 //TODO Add TaskItem type
 module.exports = buildSchema(`
 
+type BranchRef{
+  sha:String!
+  type:String!
+  url:String!
+}
+
+type Branch{
+  branchRefData:BranchRef!
+  refName:String!
+  parentRefData:String!
+  parentBranchName:String!
+}
+
 type PullRequest{
   pullRequestTitle:String!
   pullRequestUrl:String!
@@ -13,6 +26,7 @@ type TaskItem{
   task_state:String!
   taskName:String!
   taskDesc:String!
+  branchList:[Branch!]
   pullRequestList:[PullRequest!]
 }
 
