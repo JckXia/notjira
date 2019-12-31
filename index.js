@@ -70,7 +70,7 @@ app.use(
 );
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
-console.log(process.env.NODE_ENV);
+
 if (process.env.NODE_ENV == "production") {
   app.get("*", (req, res) => {
     console.log("CAN YOU HEAR ME");

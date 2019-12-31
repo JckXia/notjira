@@ -1,6 +1,6 @@
-const Repo = require('../models/repo.model');
-const Task=require('../models/task.model');
-const ObjectID=require('mongodb').ObjectID;
+const Repo = require("../models/repo.model");
+const Task = require("../models/task.model");
+const ObjectID = require("mongodb").ObjectID;
 //A call will be in the controller
 //These functions will be storing the data
 //that is returned from the call
@@ -32,8 +32,16 @@ async function getRepoByName(repoName) {
   return repo;
 }
 
+function hasAdminAccess(repoObject, userId) {
+  if (
+    repoObject.repo_admin_pk !== userId &&
+    repoObject.repo_creator_pk !== userId
+  ) {
+    return false;
+  }
+  return true;
+}
 async function userIsAdminOfRepo(userId, repoName) {
-
   const repo = await getRepoByName(repoName);
   console.log(userId);
   const adminInfo = await getRepoAdminInfo(repo.id);
@@ -64,7 +72,7 @@ async function getRepoAdminInfo(repoId) {
   const adminInformationObject = {
     adminName: repo.repo_admin_userName,
     adminPk: repo.repo_admin_pk
-  }
+  };
   return adminInformationObject;
 }
 //Returns the repo collaborators from the repo by repoId
@@ -73,17 +81,19 @@ async function getRepoCollaborators(repoId) {
   return repo.repo_collaborators;
 }
 
-
 //Add a repo collaborator.
 //Collaborator is of mongoose object user
 async function addRepoCollaborators(repoId, collaborator) {
-  const res = await Repo.findOneAndUpdate({
-    _id: repoId
-  }, {
-    $push: {
-      repo_collaborators: collaborator
+  const res = await Repo.findOneAndUpdate(
+    {
+      _id: repoId
+    },
+    {
+      $push: {
+        repo_collaborators: collaborator
+      }
     }
-  });
+  );
 
   const updateRepo = await getRepoById(repoId);
   return updateRepo;
@@ -91,15 +101,23 @@ async function addRepoCollaborators(repoId, collaborator) {
 
 function getDate() {
   var today = new Date();
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   var yyyy = today.getFullYear();
 
-  today = mm + '/' + dd + '/' + yyyy;
+  today = mm + "/" + dd + "/" + yyyy;
   return today;
 }
 //add a new repo to the databse
-async function saveNewRepoToDataBase(repoName, repoAdminName, repoAdminPk, collaborators, tasks, webHookUrl, html_url) {
+async function saveNewRepoToDataBase(
+  repoName,
+  repoAdminName,
+  repoAdminPk,
+  collaborators,
+  tasks,
+  webHookUrl,
+  html_url
+) {
   const newRepo = await new Repo({
     repo_name: repoName,
     repo_owner_name: repoAdminName,
@@ -127,34 +145,36 @@ async function deleteRepoFromDataBase(repoId) {
 //Add a task to the repos
 //TaskObject is of mongoose object task
 async function addTaskToRepo(req, res) {
-
-  const newTaskObject=await new Task({
-    task_state:'toDo',
-    taskName:req.body.taskName,
-    taskDesc:req.body.taskDescription ? req.body.taskDescription:'',
-    assignedTo:[],
-    branch:[],
-    pullRequest:[],
-    repoName:req.params.repoName
+  const newTaskObject = await new Task({
+    task_state: "toDo",
+    taskName: req.body.taskName,
+    taskDesc: req.body.taskDescription ? req.body.taskDescription : "",
+    assignedTo: [],
+    branch: [],
+    pullRequest: [],
+    repoName: req.params.repoName
   }).save();
 
- const basicTaskData={
-  taskName:req.body.taskName,
-  taskDesc:req.body.taskDescription,
-  task_state:'toDo',
-  _id:newTaskObject._id
-};
+  const basicTaskData = {
+    taskName: req.body.taskName,
+    taskDesc: req.body.taskDescription,
+    task_state: "toDo",
+    _id: newTaskObject._id
+  };
 
-  const updateResult = await Repo.findOneAndUpdate({
-    repo_name: req.params.repoName
-  }, {
-    $push: {
-      taskItems: basicTaskData
+  const updateResult = await Repo.findOneAndUpdate(
+    {
+      repo_name: req.params.repoName
+    },
+    {
+      $push: {
+        taskItems: basicTaskData
+      }
     }
-  });
+  );
 
   return newTaskObject;
- //  console.log(newTaskObject);
+  //  console.log(newTaskObject);
 }
 
 /*
@@ -175,18 +195,20 @@ async function getTasksFromRepo(repoId) {
   return repo.repo_cards;
 }
 
-async function removeTaskFromRepo(taskId,repoName){
-
-  const result=await Repo.findOneAndUpdate({
-    repo_name:repoName
-  },{
-    $pull:{
-       taskItems:{
-         _id:new ObjectID(taskId)
-       }
+async function removeTaskFromRepo(taskId, repoName) {
+  const result = await Repo.findOneAndUpdate(
+    {
+      repo_name: repoName
+    },
+    {
+      $pull: {
+        taskItems: {
+          _id: new ObjectID(taskId)
+        }
+      }
     }
-  });
-   return result;
+  );
+  return result;
 }
 
 /*
@@ -201,15 +223,18 @@ db.getCollection('tasks').findOneAndUpdate({"_id" : new ObjectId("5d6966a1747309
     }
 )
 */
-async function updateTaskStatusWithinRepo(taskId,repoName,status){
-    const result=await Repo.findOneAndUpdate({
-      repo_name:repoName,
-      taskItems: { $elemMatch: {_id:new ObjectID(taskId)}}
-    },{
-      $set:{
-        "taskItems.$.task_state":status
+async function updateTaskStatusWithinRepo(taskId, repoName, status) {
+  const result = await Repo.findOneAndUpdate(
+    {
+      repo_name: repoName,
+      taskItems: { $elemMatch: { _id: new ObjectID(taskId) } }
+    },
+    {
+      $set: {
+        "taskItems.$.task_state": status
       }
-    });
+    }
+  );
 }
 
 module.exports = {
@@ -222,6 +247,7 @@ module.exports = {
   getRepoCollaborators,
   userIsCollaboratorOfRepo,
   userIsAdminOfRepo,
+  hasAdminAccess,
   getRepoById,
   getRepoByName,
   removeTaskFromRepo,
