@@ -29,10 +29,9 @@ type User{
 }
 
 type RootQuery{
-      userInfo:User!
-      repos:[Repo!]!
-      singleRepo:Repo!
-      testGet:String!
+   userInfo:User!
+  singleRepo(repoId:ID!):Repo!
+   testGet:String!
   }  
   schema{
       query:RootQuery
