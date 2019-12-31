@@ -8,7 +8,8 @@ const getTaskObjects = async taskItemsData => {
     const taskItemObjects = await Task.find({ _id: { $in: taskItemIds } });
     return taskItemObjects.map(taskItemObject => {
       return {
-        ...taskItemObject._doc
+        ...taskItemObject._doc,
+        pullRequestList: taskItemObject._doc.pullRequest
       };
     });
   } catch (err) {

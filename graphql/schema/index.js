@@ -3,11 +3,17 @@ const { buildSchema } = require("graphql");
 //TODO Add TaskItem type
 module.exports = buildSchema(`
 
+type PullRequest{
+  pullRequestTitle:String!
+  pullRequestUrl:String!
+}
+
 type TaskItem{
   _id:ID!
   task_state:String!
   taskName:String!
   taskDesc:String!
+  pullRequestList:[PullRequest!]
 }
 
 type Repo{
