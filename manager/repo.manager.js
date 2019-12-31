@@ -134,12 +134,27 @@ async function saveNewRepoToDataBase(
   return newRepo;
 }
 
+async function deleteRepoRecord(repoName) {
+  try {
+    const removedRepoObject = await Repo.findOneAndRemove({
+      repo_name: repoName
+    });
+    return removedRepoObject;
+  } catch (error) {
+    throw error;
+  }
+}
+
 //Delte a repo from the database
 async function deleteRepoFromDataBase(repoId) {
-  const status = await Repo.deleteOne({
+  const removedObject = await Repo.findOneAndRemove({
     _id: repoId
   });
-  return status;
+  console.log(removedObject);
+  // const status = await Repo.deleteOne({
+  //   _id: repoId
+  // });
+  return removedObject;
 }
 
 //Add a task to the repos
@@ -246,6 +261,7 @@ module.exports = {
   addRepoCollaborators,
   getRepoCollaborators,
   userIsCollaboratorOfRepo,
+  deleteRepoRecord,
   userIsAdminOfRepo,
   hasAdminAccess,
   getRepoById,

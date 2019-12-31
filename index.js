@@ -23,12 +23,16 @@ let dev_db_url =
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "client/build")));
 
-mongoose.connect(dev_db_url, { useNewUrlParser: true }, function(err, db) {
-  if (err) {
-    throw err;
+mongoose.connect(
+  dev_db_url,
+  { useNewUrlParser: true, useFindAndModify: false },
+  function(err, db) {
+    if (err) {
+      throw err;
+    }
+    console.log("Mongoose successfully connected to database");
   }
-  console.log("Mongoose successfully connected to database");
-});
+);
 
 mongoose.Promise = global.Promise;
 

@@ -34,8 +34,14 @@ type RootQuery{
    testGet:String!
 }  
 
+type ResponsePayload{
+  status:Int!
+  message:String
+}
+
 type RootMutation{
   createRepo(repoName:String!):Repo!
+  deleteRepo(repoName:String!):ResponsePayload
 }
 
   schema{

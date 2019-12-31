@@ -1,15 +1,21 @@
 const Repo = require("../../models/repo.model");
 const Octokit = require("@octokit/rest");
 const { transformRepoObject } = require("./merge");
-const { addRepoToUserProfile } = require("../../manager/user.manager");
-const { saveNewRepoToDataBase } = require("../../manager/repo.manager");
+const {
+  addRepoToUserProfile,
+  removeRepoFromUserProfile
+} = require("../../manager/user.manager");
+const {
+  saveNewRepoToDataBase,
+  deleteRepoRecord
+} = require("../../manager/repo.manager");
 const { hasAdminAccess } = require("../../manager/repo.manager");
 module.exports = {
   singleRepo: async (args, context) => {
     if (!context.requestBody.isAuthenticated()) {
       throw new Error("403! Unauthenticated user access");
     }
-    console.log(context.user);
+
     const userId = context.user._id.toString();
     const repoId = args.repoId;
     const repoObject = await Repo.findById(repoId);
@@ -58,8 +64,40 @@ module.exports = {
       } catch (error) {
         throw error;
       }
-      console.log(newRepoObject);
+
       return transformRepoObject(newRepoObject);
+    } catch (error) {
+      throw new Error(`Error! ${error.status} ${error.message}`);
+    }
+  },
+  deleteRepo: async (args, context) => {
+    if (!context.requestBody.isAuthenticated()) {
+      throw new Error("403 Unauthenticated user access!");
+    }
+
+    const userName = context.user.username.toString();
+    const repoName = args.repoName;
+    const OauthToken = context.user.accessToken;
+    const octokit = new Octokit({
+      auth: `${OauthToken}`
+    });
+
+    try {
+      await octokit.repos.delete({
+        owner: userName,
+        repo: repoName
+      });
+      const deletedRepoObject = await deleteRepoRecord(repoName);
+
+      await removeRepoFromUserProfile(
+        deletedRepoObject._doc._id.toString(),
+        repoName,
+        userName
+      );
+      return {
+        status: 200,
+        message: "Successfully deleted Repository!"
+      };
     } catch (error) {
       throw error;
     }
