@@ -1,10 +1,12 @@
 const testResolver = require("./test");
 const userResolver = require("./user");
 const repoResolver = require("./repo");
+const taskResolver = require("./task");
 const rootResolver = {
   ...repoResolver,
   ...testResolver,
-  ...userResolver
+  ...userResolver,
+  ...taskResolver
 };
 
 module.exports = rootResolver;

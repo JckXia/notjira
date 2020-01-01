@@ -68,5 +68,12 @@ module.exports = {
     return repoObjects.map(repoObject => {
       return this.transformRepoObject(repoObject);
     });
+  },
+  transformTaskObject: async taskObject => {
+    return {
+      ...taskObject._doc,
+      branchList: getBranchObjects.bind(this, taskObject._doc.branch),
+      pullRequestList: taskObject._doc.pullRequest
+    };
   }
 };

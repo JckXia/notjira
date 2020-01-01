@@ -61,7 +61,9 @@ type ResponsePayload{
 
 type RootMutation{
   createRepo(repoName:String!):Repo!
-  deleteRepo(repoName:String!):ResponsePayload
+  createTask(newTaskName:String!,repoName:String!):TaskItem!
+  deleteTask(taskId:ID!,repoName:String!):TaskItem!
+  deleteRepo(repoName:String!):ResponsePayload!
 }
 
   schema{

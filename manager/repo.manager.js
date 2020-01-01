@@ -156,6 +156,47 @@ async function deleteRepoFromDataBase(repoId) {
   // });
   return removedObject;
 }
+async function saveTaskRecordToRepo({
+  task_state,
+  task_name,
+  task_desc,
+  assigned_to,
+  branch,
+  pullRequest,
+  parent_repo
+}) {
+  const newTaskObject = await new Task({
+    task_state: task_state || "toDo",
+    taskName: task_name,
+    taskDesc: task_desc ? task_desc : "",
+    assignedTo: assigned_to ? assigned_to : [],
+    branch: [],
+    pullRequest: [],
+    repoName: parent_repo
+  }).save();
+
+  const basicTaskData = {
+    taskName: task_name,
+    taskDesc: task_desc,
+    task_state: "toDo",
+    _id: newTaskObject._id
+  };
+  try {
+    const updateResult = await Repo.findOneAndUpdate(
+      {
+        repo_name: parent_repo
+      },
+      {
+        $push: {
+          taskItems: basicTaskData
+        }
+      }
+    );
+  } catch (err) {
+    throw err;
+  }
+  return newTaskObject;
+}
 
 //Add a task to the repos
 //TaskObject is of mongoose object task
@@ -261,6 +302,7 @@ module.exports = {
   addRepoCollaborators,
   getRepoCollaborators,
   userIsCollaboratorOfRepo,
+  saveTaskRecordToRepo,
   deleteRepoRecord,
   userIsAdminOfRepo,
   hasAdminAccess,

@@ -1,26 +1,29 @@
-const Task =require('../models/task.model');
-const ObjectID=require('mongodb').ObjectID;
+const Task = require("../models/task.model");
+const ObjectID = require("mongodb").ObjectID;
 
-async function createTaskObject(taskTitle,taskDetail){
-  const newTask=await new Task({
-    taskTitle:taskTitle,
-    taskDetail:taskDetail
+async function createTaskObject(taskTitle, taskDetail) {
+  const newTask = await new Task({
+    taskTitle: taskTitle,
+    taskDetail: taskDetail
   }).save();
 
   return newTask;
 }
 
 //Collaborator is of type user
-async function assignTaskToCollaborator(taskId,collaborator){
-  const res = await Task.findOneAndUpdate({
-    _id: taskId
-  }, {
-    $push: {
-      assignedTo: collaborator
+async function assignTaskToCollaborator(taskId, collaborator) {
+  const res = await Task.findOneAndUpdate(
+    {
+      _id: taskId
+    },
+    {
+      $push: {
+        assignedTo: collaborator
+      }
     }
-  });
+  );
 
-  const newCard=await Task.findOne({_id:taskId});
+  const newCard = await Task.findOne({ _id: taskId });
   return newCard;
 }
 
@@ -31,40 +34,49 @@ branchObject is of type object that contains the following information
  branchname:'Steve'
 }
 */
-async function createBranchForTask(taskId,branchObject){
-  const res = await Task.findOneAndUpdate({
-    _id: taskId
-  }, {
+async function createBranchForTask(taskId, branchObject) {
+  const res = await Task.findOneAndUpdate(
+    {
+      _id: taskId
+    },
+    {
       branch: branchObject
-  });
+    }
+  );
 
-  const updatedTask=await Task.findOne({_id:taskId});
+  const updatedTask = await Task.findOne({ _id: taskId });
   return updatedTask;
 }
 
-async function findTaskById(taskId){
-  taskId=new ObjectID(taskId);
-  return await Task.findOne({_id:taskId});
+async function findTaskById(taskId) {
+  taskId = new ObjectID(taskId);
+  return await Task.findOne({ _id: taskId });
 }
 
-async function updateTaskStatus(taskId,taskStatus){
-    taskId=new ObjectID(taskId);
-    const res=await Task.findOneAndUpdate({
-      _id:taskId
-    },{
-      $set:{
-        task_state:taskStatus
+async function updateTaskStatus(taskId, taskStatus) {
+  taskId = new ObjectID(taskId);
+  const res = await Task.findOneAndUpdate(
+    {
+      _id: taskId
+    },
+    {
+      $set: {
+        task_state: taskStatus
       }
-    });
+    }
+  );
 }
 
-async function createPullReuquestForTask(taskId,pullRequest){
-await Task.findOneAndUpdate({
-    _id: taskId
-  }, {
+async function createPullReuquestForTask(taskId, pullRequest) {
+  await Task.findOneAndUpdate(
+    {
+      _id: taskId
+    },
+    {
       pullRequest: pullRequest
-  });
-  const updatedTask=await Task.findOne({_id:taskId});
+    }
+  );
+  const updatedTask = await Task.findOne({ _id: taskId });
   return updatedTask;
 }
 
@@ -80,29 +92,52 @@ await Task.findOneAndUpdate({
 //4. Branch HashVal
 //5. Ref Branch name
 //6. Ref Branch HashVal
-async function addGitBranchToTask(branchRefData,parentRefData,parentBranchName,taskId){
-  const refName=branchRefData.refName;
-     const  gitBranchData={branchRefData,refName,parentRefData,parentBranchName};
-     console.log(taskId);
-     const updateResult = await Task.findOneAndUpdate({
-       _id: taskId
-     }, {
-       $push: {
-         branch: gitBranchData
-       }
-     } ,{new:true,rawResult:true});
+async function addGitBranchToTask(
+  branchRefData,
+  parentRefData,
+  parentBranchName,
+  taskId
+) {
+  const refName = branchRefData.refName;
+  const gitBranchData = {
+    branchRefData,
+    refName,
+    parentRefData,
+    parentBranchName
+  };
+  console.log(taskId);
+  const updateResult = await Task.findOneAndUpdate(
+    {
+      _id: taskId
+    },
+    {
+      $push: {
+        branch: gitBranchData
+      }
+    },
+    { new: true, rawResult: true }
+  );
 
-     return updateResult;
+  return updateResult;
 }
 
-async function removeTask(req,res){
-    const taskId=req.body.taskId;
-    const removeResult=await Task.findOneAndDelete({
-      _id:taskId
-    },{rawResult:true});
-    return removeResult;
+async function removeTaskRecord(taskId) {
+  const removeTaskResponse = await Task.findOneAndRemove({
+    _id: taskId
+  });
+  return removeTaskResponse;
 }
 
+async function removeTask(req, res) {
+  const taskId = req.body.taskId;
+  const removeResult = await Task.findOneAndDelete(
+    {
+      _id: taskId
+    },
+    { rawResult: true }
+  );
+  return removeResult;
+}
 
 /*
 db.getCollection('tasks').findOneAndUpdate({
@@ -115,40 +150,46 @@ db.getCollection('tasks').findOneAndUpdate({
            }
        });
 */
-async function removeGitBranchFromTask(branchRefName,taskId){
-
-   const updateResult=await Task.findOneAndUpdate({
-     _id:new ObjectID(taskId)
-   },{
-      $pull:{
-        branch:{
-          refName:branchRefName
+async function removeGitBranchFromTask(branchRefName, taskId) {
+  const updateResult = await Task.findOneAndUpdate(
+    {
+      _id: new ObjectID(taskId)
+    },
+    {
+      $pull: {
+        branch: {
+          refName: branchRefName
         }
       }
-   },{new:true,rawResult:true});
-   return updateResult;
+    },
+    { new: true, rawResult: true }
+  );
+  return updateResult;
 }
 
-async function addPullRequestToTask(pullRequestTitle,pullRequestUrl,taskId){
+async function addPullRequestToTask(pullRequestTitle, pullRequestUrl, taskId) {
+  const pullRequestDataObject = { pullRequestTitle, pullRequestUrl, taskId };
 
-  const pullRequestDataObject={pullRequestTitle,pullRequestUrl,taskId};
-
-    const updateResult=await Task.findOneAndUpdate({
+  const updateResult = await Task.findOneAndUpdate(
+    {
       _id: new ObjectID(taskId)
-    },{
-      $push:{
-        pullRequest:pullRequestDataObject
+    },
+    {
+      $push: {
+        pullRequest: pullRequestDataObject
       }
-    },{new:true,rawResult:true});
+    },
+    { new: true, rawResult: true }
+  );
 
-    return updateResult;
-
+  return updateResult;
 }
 
 module.exports = {
   addGitBranchToTask,
   findTaskById,
   removeTask,
+  removeTaskRecord,
   updateTaskStatus,
   removeGitBranchFromTask,
   addPullRequestToTask
