@@ -1,10 +1,14 @@
 const Repo = require("../../models/repo.model");
 const {
   hasAdminAccess,
+  updateTaskStatusWithinRepo,
   saveTaskRecordToRepo,
   removeTaskFromRepo
 } = require("../../manager/repo.manager");
-const { removeTaskRecord } = require("../../manager/task.manager");
+const {
+  removeTaskRecord,
+  updateTaskStatus
+} = require("../../manager/task.manager");
 const { transformTaskObject } = require("./merge");
 
 module.exports = {
@@ -60,6 +64,30 @@ module.exports = {
       return transformTaskObject(deletedTaskObject);
     } catch (err) {
       throw new Error(`Error! ${err.status} ${err.message}`);
+    }
+  },
+  //TODO: Since we have switched over to using
+  //graphql, the first update should no longer be needed
+  updateTaskStatus: async (args, context) => {
+    if (!context.requestBody.isAuthenticated()) {
+      throw new Error("403 Unauthenticated user access");
+    }
+    const repoName = args.repoName;
+    const taskId = args.taskId;
+    const taskState = args.taskState;
+    try {
+      const taskUpdateResponse = await updateTaskStatusWithinRepo(
+        taskId,
+        repoName,
+        taskState
+      );
+      const taskUpdateResponseObject = await updateTaskStatus(
+        taskId,
+        taskState
+      );
+      return transformTaskObject(taskUpdateResponseObject);
+    } catch (err) {
+      throw err;
     }
   }
 };

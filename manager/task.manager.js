@@ -55,7 +55,7 @@ async function findTaskById(taskId) {
 
 async function updateTaskStatus(taskId, taskStatus) {
   taskId = new ObjectID(taskId);
-  const res = await Task.findOneAndUpdate(
+  const updatedTaskObject = await Task.findOneAndUpdate(
     {
       _id: taskId
     },
@@ -63,8 +63,10 @@ async function updateTaskStatus(taskId, taskStatus) {
       $set: {
         task_state: taskStatus
       }
-    }
+    },
+    { new: true }
   );
+  return updatedTaskObject;
 }
 
 async function createPullReuquestForTask(taskId, pullRequest) {

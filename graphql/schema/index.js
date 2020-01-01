@@ -1,6 +1,6 @@
 const { buildSchema } = require("graphql");
 
-//TODO Add TaskItem type
+//TODO Learn enum type to set task State
 module.exports = buildSchema(`
 
 type BranchRef{
@@ -62,6 +62,7 @@ type ResponsePayload{
 type RootMutation{
   createRepo(repoName:String!):Repo!
   createTask(newTaskName:String!,repoName:String!):TaskItem!
+  updateTaskStatus(taskId:ID!,repoName:String!,taskState:String!):TaskItem!
   deleteTask(taskId:ID!,repoName:String!):TaskItem!
   deleteRepo(repoName:String!):ResponsePayload!
 }
