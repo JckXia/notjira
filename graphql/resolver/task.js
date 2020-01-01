@@ -7,7 +7,8 @@ const {
 } = require("../../manager/repo.manager");
 const {
   removeTaskRecord,
-  updateTaskStatus
+  updateTaskStatus,
+  taskStateIsValid
 } = require("../../manager/task.manager");
 const { transformTaskObject } = require("./merge");
 
@@ -75,6 +76,9 @@ module.exports = {
     const repoName = args.repoName;
     const taskId = args.taskId;
     const taskState = args.taskState;
+    if (!taskStateIsValid(taskState)) {
+      throw new Error(`Error! 422 . ${taskState} is not a valid state`);
+    }
     try {
       const taskUpdateResponse = await updateTaskStatusWithinRepo(
         taskId,

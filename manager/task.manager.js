@@ -1,5 +1,6 @@
 const Task = require("../models/task.model");
 const ObjectID = require("mongodb").ObjectID;
+const TASK_STATE = require("../util/validTaskState");
 
 async function createTaskObject(taskTitle, taskDetail) {
   const newTask = await new Task({
@@ -8,6 +9,17 @@ async function createTaskObject(taskTitle, taskDetail) {
   }).save();
 
   return newTask;
+}
+
+function taskStateIsValid(taskState) {
+  let retVal = false;
+  for (let i in TASK_STATE) {
+    if (TASK_STATE[i] === taskState) {
+      retVal = true;
+    }
+  }
+
+  return retVal;
 }
 
 //Collaborator is of type user
@@ -191,6 +203,7 @@ module.exports = {
   addGitBranchToTask,
   findTaskById,
   removeTask,
+  taskStateIsValid,
   removeTaskRecord,
   updateTaskStatus,
   removeGitBranchFromTask,
