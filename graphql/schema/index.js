@@ -59,12 +59,22 @@ type ResponsePayload{
   message:String
 }
 
+input BranchCreationInput{
+  taskId:String!
+  parentRefHash:String!
+  parentBranchName:String!
+  repoName:String!
+  taskName:String!
+}
+
+ 
 type RootMutation{
   createRepo(repoName:String!):Repo!
   createTask(newTaskName:String!,repoName:String!):TaskItem!
   updateTaskStatus(taskId:ID!,repoName:String!,taskState:String!):TaskItem!
   deleteTask(taskId:ID!,repoName:String!):TaskItem!
   deleteRepo(repoName:String!):ResponsePayload!
+  createBranch(branchCreationInput:BranchCreationInput!): Branch!
 }
 
   schema{
