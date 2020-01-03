@@ -1,7 +1,4 @@
-const {
-  addGitBranchToTask,
-  addGitBranchRefToTaskRecord
-} = require("../../manager/task.manager");
+const { addGitBranchRefToTaskRecord } = require("../../manager/task.manager");
 const { hasAdminAccess } = require("../../manager/repo.manager");
 const Branch = require("../../models/branch.model");
 const Repo = require("../../models/repo.model");
