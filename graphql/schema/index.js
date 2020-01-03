@@ -66,6 +66,14 @@ input BranchCreationInput{
   taskName:String!
 }
 
+input PullRequestCreationInput{
+  repoOwner:String!
+  repoName:String!
+  title:String!
+  headBranchName:String!
+  baseBranchName:String!
+  taskId:String!
+}
  
 type RootMutation{
   createRepo(repoName:String!):Repo!
@@ -75,6 +83,7 @@ type RootMutation{
   deleteRepo(repoName:String!):ResponsePayload!
   createBranch(branchCreationInput:BranchCreationInput!): Branch!
   deleteBranch(repoName:String!,repoOwner:String!,branchName:String!,taskId:String!):Branch!
+  createPullRequest(pullRequestCreationInput:PullRequestCreationInput!):PullRequest!
 }
 
   schema{
