@@ -5,5 +5,12 @@ module.exports = {
     }
     branchName = "refs/heads/" + branchName;
     return branchName;
+  },
+  getValidBranchNameForDeletion: branchName => {
+    if (!branchName.includes("refs/")) {
+      return branchName;
+    }
+    branchName = branchName.replace("refs/", "");
+    return branchName;
   }
 };

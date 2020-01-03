@@ -1,5 +1,11 @@
-const { addGitBranchRefToTaskRecord } = require("../../manager/task.manager");
+const {
+  addGitBranchRefToTaskRecord,
+  removeGitBranchIdFromTask
+} = require("../../manager/task.manager");
 const { hasAdminAccess } = require("../../manager/repo.manager");
+const {
+  getValidBranchNameForDeletion
+} = require("../../util/githubUtil/githubUtil");
 const Branch = require("../../models/branch.model");
 const Repo = require("../../models/repo.model");
 const Octokit = require("@octokit/rest");
@@ -67,6 +73,49 @@ module.exports = {
         throw err;
       }
       return transformBranchObject(newBranchObject);
+    } catch (err) {
+      throw new Error(`Error! ${err.status} ${err.message}`);
+    }
+  },
+  deleteBranch: async (args, context) => {
+    if (!context.requestBody.isAuthenticated()) {
+      throw new Error("403 Unauthenticated user access!");
+    }
+    const repoName = args.repoName;
+    const repoOwner = args.repoOwner;
+    const branchName = args.branchName;
+    const OauthToken = context.user.accessToken;
+    const taskId = args.taskId;
+    const userId = context.user._id.toString();
+    const octokit = new Octokit({
+      auth: `${OauthToken}`
+    });
+
+    try {
+      const repoObject = await Repo.findOne({
+        repo_name: repoName
+      });
+      if (repoObject == null) {
+        throw new Error(`404 Repo not found!`);
+      }
+      if (!hasAdminAccess(repoObject, userId)) {
+        throw new Error(`403 Unauthenticated user access`);
+      }
+
+      await octokit.git.deleteRef({
+        owner: repoOwner,
+        repo: repoName,
+        ref: getValidBranchNameForDeletion(branchName)
+      });
+
+      const deletedBranchObject = await Branch.findOneAndRemove({
+        headBranchDataInfo: {
+          branchName: branchName
+        }
+      });
+      const deletedBranchId = deletedBranchObject._id;
+      await removeGitBranchIdFromTask(deletedBranchId, taskId);
+      return transformBranchObject(deletedBranchObject);
     } catch (err) {
       throw new Error(`Error! ${err.status} ${err.message}`);
     }

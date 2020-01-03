@@ -168,17 +168,20 @@ async function removeTask(req, res) {
   return removeResult;
 }
 
-/*
-db.getCollection('tasks').findOneAndUpdate({
-    _id: new ObjectId("5d956d8daf5eaa4db097fccc")
-    },{
-       $pull:{
-           branch:{
-               refName:'refs/heads/feature/PLAT-2847-TRK'
-               }
-           }
-       });
-*/
+async function removeGitBranchIdFromTask(branchId, taskId) {
+  const updateResult = await Task.findOneAndUpdate(
+    {
+      _id: new ObjectID(taskId)
+    },
+    {
+      $pull: {
+        branch: branchId
+      }
+    },
+    { new: true, rawResult: true }
+  );
+  return updateResult;
+}
 async function removeGitBranchFromTask(branchRefName, taskId) {
   const updateResult = await Task.findOneAndUpdate(
     {
@@ -223,5 +226,6 @@ module.exports = {
   removeTaskRecord,
   updateTaskStatus,
   removeGitBranchFromTask,
+  removeGitBranchIdFromTask,
   addPullRequestToTask
 };

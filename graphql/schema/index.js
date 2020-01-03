@@ -74,6 +74,7 @@ type RootMutation{
   deleteTask(taskId:ID!,repoName:String!):TaskItem!
   deleteRepo(repoName:String!):ResponsePayload!
   createBranch(branchCreationInput:BranchCreationInput!): Branch!
+  deleteBranch(repoName:String!,repoOwner:String!,branchName:String!,taskId:String!):Branch!
 }
 
   schema{
