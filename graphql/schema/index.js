@@ -4,16 +4,15 @@ const { buildSchema } = require("graphql");
 module.exports = buildSchema(`
 
 type BranchRef{
-  sha:String!
-  type:String!
-  url:String!
+  sha:String
+  url:String
+  branchName:String!
 }
 
 type Branch{
-  branchRefData:BranchRef!
-  refName:String!
-  parentRefData:String!
-  parentBranchName:String!
+  headBranchDataInfo:BranchRef!
+  baseBranchDataInfo:BranchRef!
+ 
 }
 
 type PullRequest{

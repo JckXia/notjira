@@ -1,8 +1,12 @@
-const { addGitBranchToTask } = require("../../manager/task.manager");
+const {
+  addGitBranchToTask,
+  addGitBranchRefToTaskRecord
+} = require("../../manager/task.manager");
 const { hasAdminAccess } = require("../../manager/repo.manager");
 const Branch = require("../../models/branch.model");
 const Repo = require("../../models/repo.model");
 const Octokit = require("@octokit/rest");
+const { transformBranchObject } = require("./merge");
 
 module.exports = {
   createBranch: async (args, context) => {
@@ -43,21 +47,29 @@ module.exports = {
         ref: branchName,
         sha: parentRefHash
       })).data;
-      const addBranchToTaskRes = await addGitBranchToTask(
-        {
-          refName: newlyCreatedBranchGitInfo.ref,
-          gitInfo: newlyCreatedBranchGitInfo.object
+
+      const newBranchObject = await new Branch({
+        headBranchDataInfo: {
+          branchName: branchName
         },
-        parentRefHash,
-        parentBranchName,
-        taskId
-      );
-      return {
-        branchName: branchName,
-        refName: newlyCreatedBranchGitInfo.ref,
-        parentRefData: parentRefHash,
-        parentBranchName: parentBranchName
-      };
+        baseBranchDataInfo: {
+          sha: parentRefHash,
+          branchName: parentBranchName
+        }
+      }).save();
+
+      try {
+        const updateTaskBranchListResp = await addGitBranchRefToTaskRecord(
+          taskId,
+          newBranchObject._id
+        );
+        if (!updateTaskBranchListResp.lastErrorObject.updatedExisting) {
+          throw new Error(`400 Error branchTaskUpdate is unsuccessful`);
+        }
+      } catch (err) {
+        throw err;
+      }
+      return transformBranchObject(newBranchObject);
     } catch (err) {
       throw new Error(`Error! ${err.status} ${err.message}`);
     }

@@ -1,19 +1,12 @@
 const Task = require("../../models/task.model");
 const Repo = require("../../models/repo.model");
-
+const Branch = require("../../models/branch.model");
 //TODO Refactor the database logic surrounding
 //storing branch objects
-const getBranchObjects = async branchDataObjects => {
+const getBranchObjects = async branchIds => {
+  const branchDataObjects = await Branch.find({ _id: { $in: branchIds } });
   return branchDataObjects.map(branchDataObject => {
-    console.log(branchDataObject.branchRefData);
-    return {
-      ...branchDataObject,
-      branchRefData: {
-        sha: branchDataObject.branchRefData.gitInfo.sha,
-        type: branchDataObject.branchRefData.gitInfo.type,
-        url: branchDataObject.branchRefData.gitInfo.url
-      }
-    };
+    return module.exports.transformBranchObject(branchDataObject);
   });
 };
 
@@ -74,6 +67,11 @@ module.exports = {
       ...taskObject._doc,
       branchList: getBranchObjects.bind(this, taskObject._doc.branch),
       pullRequestList: taskObject._doc.pullRequest
+    };
+  },
+  transformBranchObject: async branchObject => {
+    return {
+      ...branchObject._doc
     };
   }
 };

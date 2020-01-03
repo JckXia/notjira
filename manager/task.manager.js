@@ -135,6 +135,21 @@ async function addGitBranchToTask(
   return updateResult;
 }
 
+async function addGitBranchRefToTaskRecord(taskId, gitBranchRefId) {
+  const updateResult = await Task.findOneAndUpdate(
+    {
+      _id: taskId
+    },
+    {
+      $push: {
+        branch: gitBranchRefId
+      }
+    },
+    { new: true, rawResult: true }
+  );
+  return updateResult;
+}
+
 async function removeTaskRecord(taskId) {
   const removeTaskResponse = await Task.findOneAndRemove({
     _id: taskId
@@ -200,6 +215,7 @@ async function addPullRequestToTask(pullRequestTitle, pullRequestUrl, taskId) {
 }
 
 module.exports = {
+  addGitBranchRefToTaskRecord,
   addGitBranchToTask,
   findTaskById,
   removeTask,
