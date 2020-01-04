@@ -79,7 +79,7 @@ input PullRequestCreationInput{
  
 type RootMutation{
   createRepo(repoName:String!):Repo!
-  createTask(newTaskName:String!,repoName:String!):TaskItem!
+  createTask(newTaskName:String!,repoName:String!,taskDescription:String):TaskItem!
   updateTaskStatus(taskId:ID!,repoName:String!,taskState:String!):TaskItem!
   deleteTask(taskId:ID!,repoName:String!):TaskItem!
   deleteRepo(repoName:String!):ResponsePayload!

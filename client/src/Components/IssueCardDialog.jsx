@@ -72,7 +72,6 @@ export default class IssueCardDialog extends React.Component {
           const owner=this.props.userInfo.userName;
           const taskId=this.props.taskId;
           const requestData={repo,ref,owner,taskId};
-
           request.post('/api/github/delete_branch').send(requestData).then((res)=>{
             console.log(res);
             alert('Successfully deleted branch!');

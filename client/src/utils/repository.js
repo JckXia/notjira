@@ -59,6 +59,58 @@ const graphQLHelperFunction = {
       }
     };
     return sendQueryToGraphQl(reqBody);
+  },
+  createTask: async (newTaskName, repoName, newTaskDescription) => {
+    const reqBody = {
+      query: `
+        mutation createTask($newTaskName:String!,$repoName:String!,$taskDescription:String) {
+        createTask(newTaskName: $newTaskName, repoName: $repoName,taskDescription:$taskDescription) {
+          _id
+          taskName
+        }
+      }
+      
+      `,
+      variables: {
+        newTaskName: newTaskName,
+        repoName: repoName,
+        taskDescription: newTaskDescription
+      }
+    };
+    return sendQueryToGraphQl(reqBody);
+  },
+  deleteTask: async (taskId, repoName) => {
+    const reqBody = {
+      query: `
+      mutation deleteTask($taskId:ID!,$repoName:String!){
+         deleteTask(taskId:$taskId,repoName:$repoName){
+            taskName
+         }
+      }
+      `,
+      variables: {
+        taskId: taskId,
+        repoName: repoName
+      }
+    };
+    return sendQueryToGraphQl(reqBody);
+  },
+  updateTask: async (taskId, repoName, taskState) => {
+    const reqBody = {
+      query: `
+      mutation updateStatus($taskId:ID!,$repoName:String!,$taskState:String!){
+      updateTaskStatus(taskId: $taskId, repoName: $repoName, taskState: $taskState) {
+        taskName
+      }
+    }
+      `,
+      variables: {
+        taskId: taskId,
+        repoName: repoName,
+        taskState: taskState
+      }
+    };
+    return sendQueryToGraphQl(reqBody);
   }
 };
 export default graphQLHelperFunction;
