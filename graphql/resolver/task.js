@@ -19,6 +19,7 @@ module.exports = {
     }
     const newTaskName = args.newTaskName;
     const parentRepoName = args.repoName;
+    const taskDescription = args.taskDescription;
     const userId = context.user._id.toString();
     try {
       const repoObject = await Repo.findOne({
@@ -34,7 +35,7 @@ module.exports = {
       const newTaskObject = await saveTaskRecordToRepo({
         task_state: "",
         task_name: newTaskName,
-        task_desc: "",
+        task_desc: taskDescription,
         assigned_to: null,
         branch: [],
         pullRequest: [],

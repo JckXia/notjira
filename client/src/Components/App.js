@@ -11,6 +11,7 @@ import UnauthenticatedPage from "./UnauthenticatedPage";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import RepoWorkSpace from "./RepoWorkSpace";
 import CreatePullRequests from "./CreatePullRequests";
+import GraphQLHelperFunction from "../utils/repository";
 
 Modal.setAppElement("#root");
 class App extends Component {
@@ -52,47 +53,20 @@ class App extends Component {
       ...this.state
     };
 
-    const reqBody = {
-      query: `
-      query{
-        userInfo{
-          userName
-          repoLists{
-            repo_name
-            repo_admin_pk
-          }
-        }
-      }
-      `
-    };
+    let currentUserInformation = (await GraphQLHelperFunction.getUserInfo())
+      .data;
+    console.log(currentUserInformation);
 
-    try {
-      const test = await fetch("/graphql", {
-        method: "POST",
-        body: JSON.stringify(reqBody),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-      console.log(`Request status ${test.status}`);
-      const decodeData = await test.json();
-      console.log(decodeData);
-    } catch (err) {
-      console.log(`ERRROR! ${err}`);
-    }
-    const resp = await Request.get("/auth/github/checkForUserToken");
-
-    if (resp.body) {
-      stateObject.user.userid = resp.body._id;
-      stateObject.user.githubId = resp.body.gitHubId;
-      stateObject.user.userName = resp.body.username;
-      stateObject.repos = resp.body.repo_lists;
+    if (currentUserInformation) {
+      currentUserInformation = currentUserInformation.userInfo;
+      stateObject.user.userid = currentUserInformation._id;
+      stateObject.user.githubId = currentUserInformation.gitHubId;
+      stateObject.user.userName = currentUserInformation.userName;
+      stateObject.repos = currentUserInformation.repoLists;
       stateObject.userIsLoggedIn = true;
       stateObject.currentPage = "repo_lists";
       this.setState(stateObject);
-      //SetState the data
     }
-    console.log("Mounted");
   }
 
   returnFilteredData(status) {
