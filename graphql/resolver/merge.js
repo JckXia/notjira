@@ -46,6 +46,7 @@ module.exports = {
   transformUserObject: async userObject => {
     return {
       ...userObject,
+      _id: userObject._doc._id,
       userName: userObject.username,
       gitHubId: userObject.gitHubId,
       repoLists: getRepoObjects.bind(this, userObject.repo_lists)
