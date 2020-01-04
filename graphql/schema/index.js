@@ -37,6 +37,8 @@ type Repo{
  repo_admin_name:String!
  repo_creator_name:String!
  repo_creator_pk:String!
+ repo_html_url:String!
+ date_created:String!
  task_items:[TaskItem!]
 }
 

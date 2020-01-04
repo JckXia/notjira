@@ -44,8 +44,10 @@ const getRepoObjects = async repoData => {
 
 module.exports = {
   transformUserObject: async userObject => {
+    console.log(userObject);
     return {
       ...userObject,
+      _id: userObject._doc._id,
       userName: userObject.username,
       gitHubId: userObject.gitHubId,
       repoLists: getRepoObjects.bind(this, userObject.repo_lists)
