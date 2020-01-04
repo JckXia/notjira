@@ -44,6 +44,21 @@ const graphQLHelperFunction = {
     };
 
     return sendQueryToGraphQl(reqBody);
+  },
+  deleteGitHubRepository: async repoName => {
+    const reqBody = {
+      query: `
+      mutation deleteRepo($repoName:String!) {
+        deleteRepo(repoName: $repoName) {
+          status
+        }
+      }
+      `,
+      variables: {
+        repoName: repoName
+      }
+    };
+    return sendQueryToGraphQl(reqBody);
   }
 };
 export default graphQLHelperFunction;

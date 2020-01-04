@@ -6,7 +6,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import SuperAgent from "superagent";
+import GraphQLHelperFunction from "../utils/repository";
 
 export default class DeleteFormDialog extends React.Component {
   state = {
@@ -45,10 +45,12 @@ export default class DeleteFormDialog extends React.Component {
     const repoName = this.props.data.repo_name;
 
     if (this.state.nameMatch == true) {
-      const deleteUrl = "/api/github/repo/" + repoName + "/delete";
-      SuperAgent.post(deleteUrl).then(res => {
-        alert(`Successfully deleted ${repoName}`);
-        window.location.reload();
+      GraphQLHelperFunction.deleteGitHubRepository(repoName).then(res => {
+        console.log(res);
+        if (res.data.deleteRepo.status === 200) {
+          alert(`Successfuuly deleted ${repoName}`);
+          window.location.reload();
+        }
       });
     }
   };
