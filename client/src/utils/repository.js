@@ -1,10 +1,7 @@
 async function sendQueryToGraphQl(query) {
-  const reqBody = {
-    query: `${query}`
-  };
   const requestResult = await fetch("/graphql", {
     method: "POST",
-    body: JSON.stringify(reqBody),
+    body: JSON.stringify(query),
     headers: {
       "Content-Type": "application/json"
     }
@@ -14,7 +11,8 @@ async function sendQueryToGraphQl(query) {
 
 const graphQLHelperFunction = {
   getUserInfo: async () => {
-    const query = `query{
+    const reqBody = {
+      query: `query{
       userInfo {
         _id
         userName
@@ -28,8 +26,24 @@ const graphQLHelperFunction = {
         }
       }
     }
-     `;
-    return sendQueryToGraphQl(query);
+     `
+    };
+    return sendQueryToGraphQl(reqBody);
+  },
+  createGitHubRepository: async repoName => {
+    const reqBody = {
+      query: `mutation createRepositories($repoName:String!){
+        createRepo(repoName: $repoName) {  
+          repo_name
+        }
+      }
+      `,
+      variables: {
+        repoName: repoName
+      }
+    };
+
+    return sendQueryToGraphQl(reqBody);
   }
 };
 export default graphQLHelperFunction;

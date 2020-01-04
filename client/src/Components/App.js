@@ -53,41 +53,12 @@ class App extends Component {
       ...this.state
     };
 
-    const reqBody = {
-      query: `
-      query{
-        userInfo{
-          userName
-          repoLists{
-            repo_name
-            repo_admin_pk
-          }
-        }
-      }
-      `
-    };
-
-    try {
-      const test = await fetch("/graphql", {
-        method: "POST",
-        body: JSON.stringify(reqBody),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-      console.log(`Request status ${test.status}`);
-      const decodeData = await test.json();
-      console.log(decodeData);
-    } catch (err) {
-      console.log(`ERRROR! ${err}`);
-    }
-    const currentUserInformation = (await GraphQLHelperFunction.getUserInfo())
-      .data.userInfo;
+    let currentUserInformation = (await GraphQLHelperFunction.getUserInfo())
+      .data;
     console.log(currentUserInformation);
 
-    const resp = await Request.get("/auth/github/checkForUserToken");
-
     if (currentUserInformation) {
+      currentUserInformation = currentUserInformation.userInfo;
       stateObject.user.userid = currentUserInformation._id;
       stateObject.user.githubId = currentUserInformation.gitHubId;
       stateObject.user.userName = currentUserInformation.userName;
@@ -96,18 +67,6 @@ class App extends Component {
       stateObject.currentPage = "repo_lists";
       this.setState(stateObject);
     }
-
-    // if (resp.body) {
-    //   stateObject.user.userid = resp.body._id;
-    //   stateObject.user.githubId = resp.body.gitHubId;
-    //   stateObject.user.userName = resp.body.username;
-    //   stateObject.repos = resp.body.repo_lists;
-    //   stateObject.userIsLoggedIn = true;
-    //   stateObject.currentPage = "repo_lists";
-    //   this.setState(stateObject);
-    //   //SetState the data
-    // }
-    console.log("Mounted");
   }
 
   returnFilteredData(status) {
