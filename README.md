@@ -30,9 +30,10 @@ module.exports={
    gitClientSecret:Client_Secret
 };
  ```
--   Run
-   `cd notjira `
- `npm install && cd client && npm install`
+-   First cd into the repo, then run
+   `npm install && cd client && npm install`
+-    To start development, run 
+    `npm run dev`
 ---
 
 ## Features
